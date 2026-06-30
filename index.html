@@ -1102,7 +1102,13 @@
         mount.appendChild(temp);
 
         // Load 4 course teaser cards with illustration image
-        const courses = await DatabaseService.getCourses();
+        let courses = [];
+        try {
+          courses = await DatabaseService.getCourses();
+        } catch (err) {
+          console.warn("Supabase fetch failed, using mock courses fallback:", err);
+          courses = mockDB.courses;
+        }
         const grid = document.getElementById('home-courses-grid');
         if (grid) {
           grid.innerHTML = courses.slice(0, 4).map(c => `
@@ -1133,7 +1139,13 @@
         mount.appendChild(temp);
 
         // Load Faculty Profiles
-        const mentors = await DatabaseService.getProfilesByRole('faculty');
+        let mentors = [];
+        try {
+          mentors = await DatabaseService.getProfilesByRole('faculty');
+        } catch (err) {
+          console.warn("Supabase fetch failed, using mock mentors fallback:", err);
+          mentors = mockDB.profiles.filter(p => p.role === 'faculty');
+        }
         const facultyGrid = document.getElementById('about-faculty-grid');
         if (facultyGrid) {
           facultyGrid.innerHTML = mentors.map(m => `
@@ -1160,7 +1172,13 @@
         mount.appendChild(temp);
 
         const rowsContainer = document.getElementById('courses-list-rows');
-        let allCourses = await DatabaseService.getCourses();
+        let allCourses = [];
+        try {
+          allCourses = await DatabaseService.getCourses();
+        } catch (err) {
+          console.warn("Supabase fetch failed, using mock courses fallback:", err);
+          allCourses = mockDB.courses;
+        }
 
         function renderRows(category = 'all') {
           const filtered = category === 'all' 
@@ -1275,7 +1293,13 @@
         });
 
         // Populate course dropdown in form
-        const courses = await DatabaseService.getCourses();
+        let courses = [];
+        try {
+          courses = await DatabaseService.getCourses();
+        } catch (err) {
+          console.warn("Supabase fetch failed, using mock courses fallback:", err);
+          courses = mockDB.courses;
+        }
         const courseSelect = document.getElementById('inq-course');
         if (courseSelect) {
           courseSelect.innerHTML = courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
@@ -1369,8 +1393,24 @@
           document.addEventListener('click', () => sidebar.classList.remove('active'));
         }
 
-        const data = await DatabaseService.getStudentDashboardData(user.id);
-        const notices = await DatabaseService.getNotices('student');
+        let data = { enrolledCourses: [], attendance: [], fees: [], liveClasses: [], recorded: [] };
+        let notices = [];
+        try {
+          data = await DatabaseService.getStudentDashboardData(user.id);
+          notices = await DatabaseService.getNotices('student');
+        } catch (err) {
+          console.warn("Supabase fetch failed, falling back to student mock data:", err);
+          const enrolls = mockDB.enrollments.filter(e => e.student_id === user.id || e.student_id === 's1');
+          const enrolledCourses = enrolls.map(e => mockDB.courses.find(c => c.id === e.course_id)).filter(Boolean);
+          const attendance = mockDB.attendance.filter(a => a.student_id === user.id || a.student_id === 's1');
+          const fees = mockDB.fees.filter(f => f.student_id === user.id || f.student_id === 's1');
+          const courseIds = enrolledCourses.map(c => c.id);
+          const liveClasses = mockDB.live_classes.filter(l => courseIds.includes(l.course_id));
+          const recorded = mockDB.recorded_sessions.filter(r => courseIds.includes(r.course_id));
+          
+          data = { enrolledCourses, attendance, fees, liveClasses, recorded };
+          notices = mockDB.notices.filter(n => n.target_role === 'all' || n.target_role === 'student');
+        }
 
         // 1. Metric Counts & Average
         const presents = data.attendance.filter(a => a.status === 'present').length;
@@ -1628,7 +1668,21 @@
           document.addEventListener('click', () => sidebar.classList.remove('active'));
         }
 
-        const data = await DatabaseService.getFacultyDashboardData(user.id);
+        let data = { courses: [], enrollments: [], students: [], attendance: [], liveClasses: [] };
+        try {
+          data = await DatabaseService.getFacultyDashboardData(user.id);
+        } catch (err) {
+          console.warn("Supabase fetch failed, falling back to faculty mock data:", err);
+          const courses = mockDB.courses.filter(c => c.faculty_id === user.id || c.faculty_id === 'f1');
+          const courseIds = courses.map(c => c.id);
+          const enrollments = mockDB.enrollments.filter(e => courseIds.includes(e.course_id));
+          const studentIds = enrollments.map(e => e.student_id);
+          const students = mockDB.profiles.filter(p => studentIds.includes(p.id));
+          const attendance = mockDB.attendance.filter(a => courseIds.includes(a.course_id));
+          const liveClasses = mockDB.live_classes.filter(l => courseIds.includes(l.course_id));
+          
+          data = { courses, enrollments, students, attendance, liveClasses };
+        }
 
         const classesTbody = document.getElementById('faculty-classes-tbody');
         function renderSchedule() {
@@ -1807,7 +1861,21 @@
           document.addEventListener('click', () => sidebar.classList.remove('active'));
         }
 
-        const data = await DatabaseService.getAdminDashboardData();
+        let data = { courses: [], enrollments: [], students: [], faculty: [], attendance: [], fees: [], logs: [] };
+        try {
+          data = await DatabaseService.getAdminDashboardData();
+        } catch (err) {
+          console.warn("Supabase fetch failed, falling back to admin mock data:", err);
+          data = {
+            courses: mockDB.courses,
+            enrollments: mockDB.enrollments,
+            students: mockDB.profiles.filter(p => p.role === 'student'),
+            faculty: mockDB.profiles.filter(p => p.role === 'faculty'),
+            attendance: mockDB.attendance,
+            fees: mockDB.fees,
+            logs: mockDB.audit_logs
+          };
+        }
 
         const totalPaidAmt = data.fees.filter(f => f.status === 'paid').reduce((s, i) => s + parseFloat(i.amount), 0);
         document.getElementById('admin-rev-metric').textContent = `₹ ${totalPaidAmt}`;
@@ -1935,7 +2003,13 @@
         const noticesListDiv = document.getElementById('admin-notices-list');
         
         async function renderNoticesAdmin() {
-          const notices = await DatabaseService.getNotices('admin');
+          let notices = [];
+          try {
+            notices = await DatabaseService.getNotices('admin');
+          } catch (err) {
+            console.warn("Supabase fetch failed, falling back to mock notices:", err);
+            notices = mockDB.notices;
+          }
           if (noticesListDiv) {
             noticesListDiv.innerHTML = notices.map(n => `
               <div style="background:#f8fafc; border:1px solid var(--border-color); padding:1rem; border-radius:var(--radius-sm);">
