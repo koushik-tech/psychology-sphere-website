@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psychology Sphere | Premium Psychology Institute & Portal</title>
+  <meta name="description" content="Psychology Sphere is a leading competitive coaching institute providing advanced education and training in psychology and behavioral sciences.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Floating Blur Decoration -->
+  <div class="blur-blob blob-1"></div>
+  <div class="blur-blob blob-2"></div>
+
+  <!-- Global Header (Public Navigation) -->
+  <header id="main-header">
+    <div class="container header-container">
+      <a href="#home" class="logo">
+        <i data-lucide="brain"></i>
+        <span>Psychology Sphere</span>
+      </a>
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#home" class="active">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#courses">Courses</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li class="auth-only student-only" style="display:none;"><a href="#student">Student Portal</a></li>
+          <li class="auth-only faculty-only" style="display:none;"><a href="#faculty">Faculty Portal</a></li>
+          <li class="auth-only admin-only" style="display:none;"><a href="#admin">Admin Dashboard</a></li>
+          <li class="guest-only"><a href="#login" class="btn btn-secondary btn-sm">Login</a></li>
+          <li class="guest-only"><a href="#signup" class="btn btn-primary btn-sm">Enroll Now</a></li>
+          <li class="auth-only" style="display:none;"><button id="logout-btn" class="btn btn-outline btn-sm">Logout</button></li>
+        </ul>
+      </nav>
+      <div class="menu-toggle" id="menu-toggle">
+        <i data-lucide="menu"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- SPA Target Mounting Container -->
+  <main id="app-mount">
+    <!-- Dynamic views will mount here -->
+  </main>
+
+  <!-- Global Footer -->
+  <footer id="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-info">
+          <a href="#home" class="logo" style="margin-bottom: 1rem;">
+            <i data-lucide="brain"></i>
+            <span>Psychology Sphere</span>
+          </a>
+          <p>Demystifying the human mind, empowering the next generation of clinical psychologists, researchers, and counselors.</p>
+          <div class="social-links">
+            <a href="#"><i data-lucide="facebook"></i></a>
+            <a href="#"><i data-lucide="twitter"></i></a>
+            <a href="#"><i data-lucide="instagram"></i></a>
+            <a href="#"><i data-lucide="linkedin"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#courses">Our Courses</a></li>
+            <li><a href="#contact">Inquiries</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Portals</h4>
+          <ul>
+            <li><a href="#login">Student Portal</a></li>
+            <li><a href="#login">Faculty Desk</a></li>
+            <li><a href="#login">Admin Office</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Contact Info</h4>
+          <ul>
+            <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
+              <i data-lucide="map-pin" style="width:16px;"></i> 77 Cognitive Way, Science Park, NY
+            </li>
+            <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
+              <i data-lucide="phone" style="width:16px;"></i> +1 (555) PSY-SPHERE
+            </li>
+            <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
+              <i data-lucide="mail" style="width:16px;"></i> admissions@psysphere.edu
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Psychology Sphere. All rights reserved.</p>
+        <p>Built for Scalable Educational Management.</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ==================== VIEW TEMPLATES ==================== -->
+
+  <!-- 1. Home View Template -->
+  <template id="home-view">
+    <section class="section hero-section" style="padding: 100px 0 60px;">
+      <div class="container grid-2" style="align-items: center;">
+        <div class="hero-text">
+          <span class="subtitle">Empowering Minds, Shaping Careers</span>
+          <h1 style="margin: 1rem 0; background: linear-gradient(135deg, #ffffff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Your Journey Into The <br><span style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Human Mind</span> Starts Here
+          </h1>
+          <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+            Psychology Sphere is a premier training and competitive coaching institute offering advanced curriculums, live classes, research guidance, and counselor certification tracks.
+          </p>
+          <div style="display:flex; gap:1rem;">
+            <a href="#courses" class="btn btn-primary">Explore Courses <i data-lucide="arrow-right"></i></a>
+            <a href="#about" class="btn btn-secondary">Learn More</a>
+          </div>
+        </div>
+        <div class="hero-image-container" style="position:relative;">
+          <img src="images/hero.png" alt="Psychology Neural Network Illustration" style="width: 100%; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
+          <div style="position:absolute; bottom:-20px; left:-20px; background:var(--bg-surface); border:1px solid var(--border-color-active); padding:1rem; border-radius:var(--radius-md); display:flex; gap:1rem; align-items:center; box-shadow:var(--shadow);">
+            <div style="width:40px; height:40px; border-radius:50%; background:rgba(16,185,129,0.1); color:var(--accent-emerald); display:flex; align-items:center; justify-content:center;">
+              <i data-lucide="award"></i>
+            </div>
+            <div>
+              <h4 style="font-size:0.95rem;">Rank #1 Institute</h4>
+              <p style="font-size:0.8rem; margin:0;">Psychology Competitive Exam Prep</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section" style="padding: 40px 0;">
+      <div class="container">
+        <div class="grid-4">
+          <div class="metric-card">
+            <div class="metric-info">
+              <h3>Total Students</h3>
+              <div class="metric-value">1,500+</div>
+            </div>
+            <div class="metric-icon icon-purple"><i data-lucide="users"></i></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-info">
+              <h3>Active Programs</h3>
+              <div class="metric-value">12+</div>
+            </div>
+            <div class="metric-icon icon-pink"><i data-lucide="book-open"></i></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-info">
+              <h3>Success Rate</h3>
+              <div class="metric-value">98.2%</div>
+            </div>
+            <div class="metric-icon icon-cyan"><i data-lucide="trending-up"></i></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-info">
+              <h3>Expert Faculty</h3>
+              <div class="metric-value">15+</div>
+            </div>
+            <div class="metric-icon icon-emerald"><i data-lucide="award"></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Teaser Video -->
+    <section class="section" style="background: rgba(255, 255, 255, 0.01); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="subtitle">Demo Lecture Library</span>
+          <h2>Experience Our Teaching Style</h2>
+          <p>Watch a sample session on Cognitive Neuropsychology from our signature preparation program.</p>
+        </div>
+        <div style="max-width: 800px; margin: 0 auto; border-radius: var(--radius-lg); overflow:hidden; border:1px solid var(--border-color); box-shadow: var(--shadow);">
+          <video controls style="width: 100%; display:block;" poster="images/hero.png">
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="subtitle">Testimonials</span>
+          <h2>Alumni Success Stories</h2>
+          <p>Hear from our students who successfully cleared clinical licensing examinations and counseling entrances.</p>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1.5rem;">
+              <div class="user-avatar" style="width:50px; height:50px;">AM</div>
+              <div>
+                <h4 style="font-size:1.05rem;">Alisha Mehta</h4>
+                <p style="font-size:0.8rem; margin:0;">Licensed Clinical Psychologist</p>
+              </div>
+            </div>
+            <p>"The counseling prep modules at Psychology Sphere were structured, comprehensive, and focused on core concepts. The mock trials helped me clear my licensing on the first attempt."</p>
+          </div>
+          <div class="card">
+            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1.5rem;">
+              <div class="user-avatar" style="width:50px; height:50px;">RK</div>
+              <div>
+                <h4 style="font-size:1.05rem;">Rohan Kapoor</h4>
+                <p style="font-size:0.8rem; margin:0;">Research Associate, NIMH</p>
+              </div>
+            </div>
+            <p>"The research methodology guidance is top-tier. Mentors guide you through research papers and thesis structure. I highly recommend it for any postgraduate aspirant."</p>
+          </div>
+          <div class="card">
+            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1.5rem;">
+              <div class="user-avatar" style="width:50px; height:50px;">SP</div>
+              <div>
+                <h4 style="font-size:1.05rem;">Sanya Patel</h4>
+                <p style="font-size:0.8rem; margin:0;">School Counselor</p>
+              </div>
+            </div>
+            <p>"Live classes fit perfectly into my schedule. The faculty is approachable, and the portal dashboard makes tracking class schedules and fees exceptionally seamless."</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- 2. About View Template -->
+  <template id="about-view">
+    <section class="section">
+      <div class="container">
+        <div class="section-header text-center" style="max-width: 800px;">
+          <span class="subtitle">About Psychology Sphere</span>
+          <h2>Shaping the Pioneers of Mental Healthcare</h2>
+          <p>Founded with the core vision of standardizing competitive prep in behavioral sciences, Psychology Sphere has evolved into an academic center of excellence.</p>
+        </div>
+
+        <!-- Mission/Vision Grid -->
+        <div class="grid-2" style="margin-bottom: 80px; align-items: stretch;">
+          <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+            <div style="width:50px; height:50px; border-radius:var(--radius-sm); background:rgba(139,92,246,0.1); color:var(--primary-color); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1.5rem;">
+              <i data-lucide="target"></i>
+            </div>
+            <h3 style="margin-bottom:1rem;">Our Mission</h3>
+            <p>To deliver structured, conceptual, and clinical coaching that enables students to crack elite counseling, research, and psychiatric entrance examinations, while fostering clinical competence.</p>
+          </div>
+          <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+            <div style="width:50px; height:50px; border-radius:var(--radius-sm); background:rgba(236,72,153,0.1); color:var(--secondary-color); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1.5rem;">
+              <i data-lucide="eye"></i>
+            </div>
+            <h3 style="margin-bottom:1rem;">Our Vision</h3>
+            <p>To establish a digital-first global academy that bridges the gap between academic theory and practical clinical application, producing empathetic and highly capable mental health professionals.</p>
+          </div>
+        </div>
+
+        <!-- Faculty Profiles -->
+        <div class="section-header text-center">
+          <span class="subtitle">Academic Counsel</span>
+          <h2>Our Esteemed Faculty</h2>
+          <p>Learn from leading researchers, consulting psychologists, and board-certified counselors.</p>
+        </div>
+        <div class="grid-3" id="about-faculty-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- 3. Courses View Template -->
+  <template id="courses-view">
+    <section class="section">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="subtitle">Educational Programs</span>
+          <h2>Curated Psychology Courses</h2>
+          <p>Find the program matching your academic qualifications and career goals. Search and filter below.</p>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="card" style="margin-bottom: 40px; padding: 1.5rem;">
+          <div class="grid-3" style="align-items: center; gap:1.5rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="course-search-input">Search Course</label>
+              <div style="position:relative;">
+                <input type="text" id="course-search-input" class="form-control" placeholder="Search by title, description..." style="padding-left: 2.5rem;">
+                <i data-lucide="search" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); width:18px; color:var(--text-muted);"></i>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="course-duration-filter">Duration</label>
+              <select id="course-duration-filter" class="form-control">
+                <option value="all">All Durations</option>
+                <option value="3 Months">3 Months</option>
+                <option value="4 Months">4 Months</option>
+                <option value="6 Months">6 Months</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="course-fee-filter">Max Tuition Fee</label>
+              <select id="course-fee-filter" class="form-control">
+                <option value="all">Any Fee</option>
+                <option value="500">Under $500</option>
+                <option value="600">Under $600</option>
+                <option value="1000">Under $1000</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Courses Card Grid -->
+        <div class="grid-3" id="courses-list-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Dynamic Course details modal -->
+    <div class="modal-overlay" id="course-detail-modal">
+      <div class="modal-box">
+        <i data-lucide="x" class="modal-close" id="course-modal-close"></i>
+        <div id="course-modal-content">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- 4. Contact View Template -->
+  <template id="contact-view">
+    <section class="section">
+      <div class="container grid-2" style="align-items: flex-start; gap: 4rem;">
+        
+        <!-- FAQs Accordion -->
+        <div>
+          <span class="subtitle">Help Desk</span>
+          <h2 style="margin-bottom: 2rem;">Frequently Asked Questions</h2>
+          <div class="accordion">
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <h4>What are the eligibility criteria for the Clinical track?</h4>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+              </div>
+              <div class="accordion-content">
+                <p>Eligible applicants must hold a Bachelor's degree (B.A./B.Sc.) in Psychology or behavioral sciences from an accredited university. Final year students can also apply conditionally.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <h4>Are classes live or pre-recorded?</h4>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+              </div>
+              <div class="accordion-content">
+                <p>All core modules feature live classrooms with direct interactions. Recorded playbacks are uploaded to the Student Portal within 2 hours of session completion for revision.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <h4>How does the installment billing work?</h4>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+              </div>
+              <div class="accordion-content">
+                <p>You can pay your enrollment fee in full or split it into 3 equal monthly installments. Installment reminders and payment channels are available directly inside your dashboard.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <h4>Do you offer internship opportunities?</h4>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+              </div>
+              <div class="accordion-content">
+                <p>Yes, students enrolled in the advanced counseling program gain direct exposure through clinical tie-ups, working under supervisors for case-history records.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Public Inquiry Form -->
+        <div class="card">
+          <span class="subtitle">Enrollment Desk</span>
+          <h3 style="margin-bottom: 1.5rem;">Admission Inquiry</h3>
+          <form id="public-inquiry-form">
+            <div class="form-group">
+              <label for="inq-name">Full Name</label>
+              <input type="text" id="inq-name" class="form-control" required placeholder="e.g. John Doe">
+            </div>
+            <div class="form-group">
+              <label for="inq-email">Email Address</label>
+              <input type="email" id="inq-email" class="form-control" required placeholder="e.g. john@example.com">
+            </div>
+            <div class="form-group">
+              <label for="inq-phone">Contact Number</label>
+              <input type="tel" id="inq-phone" class="form-control" placeholder="e.g. +1 555-0100">
+            </div>
+            <div class="form-group">
+              <label for="inq-course">Course of Interest</label>
+              <select id="inq-course" class="form-control">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="inq-message">Message/Queries</label>
+              <textarea id="inq-message" class="form-control" rows="4" placeholder="Briefly describe your objectives..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Inquiry</button>
+          </form>
+        </div>
+
+      </div>
+    </section>
+  </template>
+
+  <!-- 5. Login View Template -->
+  <template id="login-view">
+    <section class="section" style="display:flex; align-items:center; min-height:70vh;">
+      <div class="container" style="max-width: 480px;">
+        <div class="card">
+          <div class="text-center" style="margin-bottom: 2rem;">
+            <a href="#home" class="logo" style="justify-content:center; margin-bottom:0.5rem;">
+              <i data-lucide="brain"></i>
+              <span>Psychology Sphere</span>
+            </a>
+            <h3 style="margin-top:1rem;">Access Portals</h3>
+            <p>Login to your Student, Faculty, or Admin dashboard</p>
+          </div>
+          
+          <form id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" class="form-control" required placeholder="name@domain.com">
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" class="form-control" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Authenticate</button>
+          </form>
+
+          <!-- Quick access credentials (highly useful for review!) -->
+          <div style="margin-top:2rem; padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:var(--radius-sm);">
+            <h5 style="margin-bottom:0.75rem; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary);">Quick Test Accounts:</h5>
+            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='student@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between;">
+                <span>Student Login</span> <span>student@test.com</span>
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='faculty@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between;">
+                <span>Faculty Login</span> <span>faculty@test.com</span>
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='admin@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between;">
+                <span>Admin Login</span> <span>admin@test.com</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="text-center" style="margin-top:1.5rem; font-size:0.9rem;">
+            New student? <a href="#signup" style="color:var(--primary-color); font-weight:600;">Apply & Enroll</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- 6. Signup View Template -->
+  <template id="signup-view">
+    <section class="section" style="display:flex; align-items:center; min-height:75vh;">
+      <div class="container" style="max-width: 520px;">
+        <div class="card">
+          <div class="text-center" style="margin-bottom: 1.5rem;">
+            <a href="#home" class="logo" style="justify-content:center; margin-bottom:0.5rem;">
+              <i data-lucide="brain"></i>
+              <span>Psychology Sphere</span>
+            </a>
+            <h3 style="margin-top:1rem;">Student Registration</h3>
+            <p>Enroll in classes and set up your student portal</p>
+          </div>
+
+          <form id="signup-form">
+            <div class="form-group">
+              <label for="signup-name">Full Name</label>
+              <input type="text" id="signup-name" class="form-control" required placeholder="e.g. John Doe">
+            </div>
+            <div class="form-group">
+              <label for="signup-email">Email Address</label>
+              <input type="email" id="signup-email" class="form-control" required placeholder="name@domain.com">
+            </div>
+            <div class="form-group">
+              <label for="signup-phone">Contact Number</label>
+              <input type="tel" id="signup-phone" class="form-control" placeholder="+1 555-0000">
+            </div>
+            <div class="form-group">
+              <label for="signup-password">Choose Password</label>
+              <input type="password" id="signup-password" class="form-control" required minlength="6" placeholder="At least 6 characters">
+            </div>
+            <div class="form-group">
+              <label for="signup-role">Register As</label>
+              <select id="signup-role" class="form-control">
+                <option value="student">Student</option>
+                <option value="faculty">Faculty / Trainer</option>
+              </select>
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1.5rem; display:flex; gap:0.5rem; align-items:flex-start;">
+              <input type="checkbox" required id="signup-terms" style="margin-top:0.25rem;">
+              <label for="signup-terms">I agree to clear the pending course fees inside the Student Portal upon successful admissions approval.</label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Create Account & Enroll</button>
+          </form>
+
+          <p class="text-center" style="margin-top:1.5rem; font-size:0.9rem;">
+            Already registered? <a href="#login" style="color:var(--primary-color); font-weight:600;">Sign In</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- 7. Student Dashboard View Template -->
+  <template id="student-view">
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="dashboard-sidebar">
+        <div class="sidebar-brand">
+          <a href="#home" class="logo">
+            <i data-lucide="brain"></i>
+            <span style="font-size:1.15rem;">Psychology Sphere</span>
+          </a>
+        </div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="student-overview"><i data-lucide="grid"></i> Overview</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-courses"><i data-lucide="book-open"></i> Enrolled Courses</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-fees"><i data-lucide="credit-card"></i> Fee Management</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-classroom"><i data-lucide="tv"></i> Live & Recorded Classes</a></li>
+        </ul>
+        <div class="sidebar-user">
+          <div class="user-avatar" id="student-avatar-initials">S</div>
+          <div class="user-details">
+            <div class="user-name" id="student-display-name">Student Name</div>
+            <div class="user-role">Student Portal</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Dashboard Main -->
+      <div class="main-content">
+        <div class="dashboard-header">
+          <div style="display:flex; align-items:center;">
+            <i data-lucide="menu" class="db-menu-toggle" id="db-menu-toggle"></i>
+            <h2 id="student-section-title">Overview</h2>
+          </div>
+          <div class="badge badge-success">Online Session Active</div>
+        </div>
+
+        <!-- Student Notices/Announcements Section -->
+        <div id="student-notices-container" style="margin-bottom: 2rem;">
+          <!-- Notices loaded here -->
+        </div>
+
+        <!-- TAB CONTENT: Overview -->
+        <div id="student-overview-tab" class="dashboard-tab-content">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Attendance Average</h3>
+                <div class="metric-value" id="student-attendance-percent">0%</div>
+              </div>
+              <div class="metric-icon icon-purple"><i data-lucide="calendar"></i></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Course Enrolled</h3>
+                <div class="metric-value" id="student-course-count">0</div>
+              </div>
+              <div class="metric-icon icon-pink"><i data-lucide="graduation-cap"></i></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Pending Invoices</h3>
+                <div class="metric-value" id="student-pending-fees">$0</div>
+              </div>
+              <div class="metric-icon icon-cyan"><i data-lucide="dollar-sign"></i></div>
+            </div>
+          </div>
+
+          <h3 style="margin-bottom:1.25rem;">Upcoming Schedule Today</h3>
+          <div id="student-today-classes" style="margin-bottom:2.5rem;">
+            <!-- Loaded by JS -->
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Enrolled Courses -->
+        <div id="student-courses-tab" class="dashboard-tab-content" style="display:none;">
+          <div class="grid-2" id="student-courses-grid">
+            <!-- Loaded by JS -->
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Fee Management -->
+        <div id="student-fees-tab" class="dashboard-tab-content" style="display:none;">
+          <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
+            <h3 style="margin-bottom:1rem;">Invoices & Payments</h3>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Invoice / Course</th>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action / Receipt</th>
+                  </tr>
+                </thead>
+                <tbody id="student-fees-tbody">
+                  <!-- Loaded by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Live & Recorded -->
+        <div id="student-classroom-tab" class="dashboard-tab-content" style="display:none;">
+          <h3 style="margin-bottom:1.5rem;">Live Broadcast Sessions</h3>
+          <div class="grid-2" id="student-live-grid" style="margin-bottom:3rem;">
+            <!-- Populated by JS -->
+          </div>
+
+          <h3 style="margin-bottom:1.5rem;">Recorded Classes Library</h3>
+          <div class="grid-3" id="student-recorded-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payments Modal -->
+    <div class="modal-overlay" id="checkout-modal">
+      <div class="modal-box" style="max-width: 480px;">
+        <i data-lucide="x" class="modal-close" id="checkout-modal-close"></i>
+        <h3>Secure Checkout</h3>
+        <p style="margin-bottom:1.5rem; font-size:0.9rem;">Psychology Sphere Tuition Clearing Portal</p>
+        
+        <div style="background:rgba(255,255,255,0.02); padding:1rem; border-radius:var(--radius-sm); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);">
+          <span style="font-weight:600;" id="checkout-course-title">Course Tuition</span>
+          <span style="font-weight:700; color:var(--primary-color); font-size:1.25rem;" id="checkout-amount">$0</span>
+        </div>
+
+        <form id="payment-gate-form">
+          <input type="hidden" id="checkout-fee-id">
+          <div class="form-group">
+            <label>Payment Method</label>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <label class="card" style="padding:1rem; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:0.5rem; border-color:var(--primary-color);">
+                <input type="radio" name="pay-method" value="Card" checked style="display:none;">
+                <i data-lucide="credit-card"></i>
+                <span style="font-size:0.85rem; font-weight:600;">Credit / Debit Card</span>
+              </label>
+              <label class="card" style="padding:1rem; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+                <input type="radio" name="pay-method" value="UPI" style="display:none;">
+                <i data-lucide="smartphone"></i>
+                <span style="font-size:0.85rem; font-weight:600;">UPI / Net Banking</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="card-payment-fields">
+            <div class="form-group">
+              <label for="card-num">Card Number</label>
+              <input type="text" id="card-num" class="form-control" placeholder="4111 2222 3333 4444" pattern="\d{16}" title="Must be a 16-digit card number">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="form-group">
+                <label for="card-expiry">Expiry Date</label>
+                <input type="text" id="card-expiry" class="form-control" placeholder="MM/YY" pattern="\d{2}/\d{2}">
+              </div>
+              <div class="form-group">
+                <label for="card-cvv">CVV</label>
+                <input type="password" id="card-cvv" class="form-control" placeholder="•••" pattern="\d{3}">
+              </div>
+            </div>
+          </div>
+
+          <div id="upi-payment-fields" style="display:none; text-align:center; padding:1rem; background:rgba(255,255,255,0.01); border:1px dashed var(--border-color); border-radius:var(--radius-sm); margin-bottom:1.5rem;">
+            <p style="font-size:0.85rem; margin-bottom:1rem;">Scan QR code with any UPI app (GPay, PhonePe, Paytm)</p>
+            <div style="width:140px; height:140px; background:white; margin:0 auto; padding:0.5rem; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;">
+              <!-- Mock QR code -->
+              <i data-lucide="qr-code" style="width:120px; height:120px; color:black;"></i>
+            </div>
+            <div class="form-group" style="margin-top:1rem; text-align:left;">
+              <label for="upi-id">Or Enter UPI ID</label>
+              <input type="text" id="upi-id" class="form-control" placeholder="username@upi">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Authorize Payment</button>
+        </form>
+      </div>
+    </div>
+  </template>
+
+  <!-- 8. Faculty Dashboard View Template -->
+  <template id="faculty-view">
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="faculty-sidebar">
+        <div class="sidebar-brand">
+          <a href="#home" class="logo">
+            <i data-lucide="brain"></i>
+            <span style="font-size:1.15rem;">Psychology Sphere</span>
+          </a>
+        </div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="faculty-classes"><i data-lucide="calendar"></i> Class Schedules</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="faculty-attendance"><i data-lucide="users"></i> Mark Attendance</a></li>
+        </ul>
+        <div class="sidebar-user">
+          <div class="user-avatar" id="faculty-avatar-initials">F</div>
+          <div class="user-details">
+            <div class="user-name" id="faculty-display-name">Faculty Name</div>
+            <div class="user-role">Faculty Desk</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Panel -->
+      <div class="main-content">
+        <div class="dashboard-header">
+          <div style="display:flex; align-items:center;">
+            <i data-lucide="menu" class="db-menu-toggle" id="faculty-menu-toggle"></i>
+            <h2 id="faculty-section-title">Class Schedules</h2>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-schedule-class"><i data-lucide="plus"></i> Schedule Class</button>
+        </div>
+
+        <!-- TAB CONTENT: Class Schedule -->
+        <div id="faculty-classes-tab" class="dashboard-tab-content">
+          <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
+            <h3 style="margin-bottom:1.25rem;">Upcoming Broadcasts</h3>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Class Title / Topic</th>
+                    <th>Scheduled Date & Time</th>
+                    <th>Meeting Link</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="faculty-classes-tbody">
+                  <!-- Loaded by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Mark Attendance -->
+        <div id="faculty-attendance-tab" class="dashboard-tab-content" style="display:none;">
+          <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
+            <h3 style="margin-bottom:1.5rem;">Attendance Registry</h3>
+            <div class="grid-3" style="gap:1rem; margin-bottom:1.5rem; align-items:flex-end;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="att-course-select">Select Program</label>
+                <select id="att-course-select" class="form-control">
+                  <!-- Loaded dynamically -->
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="att-date-select">Registry Date</label>
+                <input type="date" id="att-date-select" class="form-control" required>
+              </div>
+              <button class="btn btn-secondary" id="btn-load-attendance-list" style="height:40px;">Load Class List</button>
+            </div>
+
+            <div class="table-container" id="attendance-table-wrapper" style="display:none;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Email Address</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Late</th>
+                  </tr>
+                </thead>
+                <tbody id="faculty-attendance-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+              <div style="padding:1.5rem; text-align:right;">
+                <button class="btn btn-primary" id="btn-save-attendance-record">Save Logs to Cloud</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule Class Modal -->
+    <div class="modal-overlay" id="schedule-class-modal">
+      <div class="modal-box">
+        <i data-lucide="x" class="modal-close" id="schedule-class-close"></i>
+        <h3>Schedule New Live Lecture</h3>
+        <p style="margin-bottom:1.5rem;">Stream directly to Student Portals</p>
+        
+        <form id="schedule-class-form">
+          <div class="form-group">
+            <label for="sc-course-id">Select Course</label>
+            <select id="sc-course-id" class="form-control" required>
+              <!-- Loaded dynamically -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sc-title">Lecture Topic / Title</label>
+            <input type="text" id="sc-title" class="form-control" required placeholder="e.g. Cognitive Behavior Therapy (CBT)">
+          </div>
+          <div class="form-group">
+            <label for="sc-time">Scheduled Date & Time</label>
+            <input type="datetime-local" id="sc-time" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="sc-link">Zoom/Meet link</label>
+            <input type="url" id="sc-link" class="form-control" required placeholder="https://zoom.us/j/...">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Broadcast Lecture</button>
+        </form>
+      </div>
+    </div>
+  </template>
+
+  <!-- 9. Admin Dashboard View Template -->
+  <template id="admin-view">
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="admin-sidebar">
+        <div class="sidebar-brand">
+          <a href="#home" class="logo">
+            <i data-lucide="brain"></i>
+            <span style="font-size:1.15rem;">Psychology Sphere</span>
+          </a>
+        </div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="admin-analytics"><i data-lucide="bar-chart-2"></i> Analytics Desk</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-courses"><i data-lucide="book-open"></i> Manage Courses</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-users"><i data-lucide="users"></i> Student & Faculty</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-notices"><i data-lucide="megaphone"></i> Notice Broadcaster</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-logs"><i data-lucide="file-text"></i> Security Audit Logs</a></li>
+        </ul>
+        <div class="sidebar-user">
+          <div class="user-avatar">A</div>
+          <div class="user-details">
+            <div class="user-name">Administrator</div>
+            <div class="user-role">Management Portal</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Body -->
+      <div class="main-content">
+        <div class="dashboard-header">
+          <div style="display:flex; align-items:center;">
+            <i data-lucide="menu" class="db-menu-toggle" id="admin-menu-toggle"></i>
+            <h2 id="admin-section-title">Analytics Desk</h2>
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn btn-secondary btn-sm" id="btn-admin-export"><i data-lucide="download"></i> Backup Store</button>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Analytics Desk -->
+        <div id="admin-analytics-tab" class="dashboard-tab-content">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Total Gross Revenue</h3>
+                <div class="metric-value" id="admin-rev-metric">$0</div>
+              </div>
+              <div class="metric-icon icon-emerald"><i data-lucide="dollar-sign"></i></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Registered Students</h3>
+                <div class="metric-value" id="admin-students-metric">0</div>
+              </div>
+              <div class="metric-icon icon-purple"><i data-lucide="users"></i></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Total Active Enrollments</h3>
+                <div class="metric-value" id="admin-enrolls-metric">0</div>
+              </div>
+              <div class="metric-icon icon-pink"><i data-lucide="graduation-cap"></i></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Attendance Average</h3>
+                <div class="metric-value" id="admin-attendance-metric">0%</div>
+              </div>
+              <div class="metric-icon icon-cyan"><i data-lucide="check-square"></i></div>
+            </div>
+          </div>
+
+          <!-- Revenue Stats chart mockup -->
+          <div class="grid-2" style="margin-bottom:2.5rem;">
+            <div class="card">
+              <h3 style="margin-bottom:1.5rem;">Monthly Collections</h3>
+              <div style="display:flex; align-items:flex-end; justify-content:space-between; height:180px; padding-top:1rem; border-bottom:1px solid var(--border-color);">
+                <div style="width:12%; height:40%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
+                <div style="width:12%; height:55%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
+                <div style="width:12%; height:75%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
+                <div style="width:12%; height:90%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
+                <span>March</span><span>April</span><span>May</span><span>June (Current)</span>
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="margin-bottom:1.5rem;">Course wise enrollment split</h3>
+              <div style="display:flex; flex-direction:column; gap:1rem;" id="admin-course-split-bars">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Manage Courses -->
+        <div id="admin-courses-tab" class="dashboard-tab-content" style="display:none;">
+          <div style="text-align:right; margin-bottom:1.5rem;">
+            <button class="btn btn-primary" id="btn-admin-add-course"><i data-lucide="plus"></i> Add Course</button>
+          </div>
+          <div class="card" style="padding:1.5rem;">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Course Code / Title</th>
+                    <th>Duration</th>
+                    <th>Fees</th>
+                    <th>Instructor Assigned</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-courses-tbody">
+                  <!-- Loaded by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Student & Faculty Registry -->
+        <div id="admin-users-tab" class="dashboard-tab-content" style="display:none;">
+          <div class="grid-2">
+            <!-- Student Table -->
+            <div class="card" style="padding:1.5rem;">
+              <h3 style="margin-bottom:1rem;">Student Records</h3>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-students-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Faculty Table -->
+            <div class="card" style="padding:1.5rem;">
+              <h3 style="margin-bottom:1rem;">Faculty Registry</h3>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-faculty-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Broadcast notices -->
+        <div id="admin-notices-tab" class="dashboard-tab-content" style="display:none;">
+          <div class="grid-2" style="align-items: flex-start;">
+            <div class="card">
+              <h3 style="margin-bottom:1.5rem;">Compose Announcement</h3>
+              <form id="admin-notice-form">
+                <div class="form-group">
+                  <label for="nt-title">Title / Headline</label>
+                  <input type="text" id="nt-title" class="form-control" required placeholder="e.g. Schedule Update or Fee Reminder">
+                </div>
+                <div class="form-group">
+                  <label for="nt-role">Target Audience</label>
+                  <select id="nt-role" class="form-control">
+                    <option value="all">Everyone (All users)</option>
+                    <option value="student">Students Only</option>
+                    <option value="faculty">Faculty Only</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="nt-content">Content / Body Text</label>
+                  <textarea id="nt-content" class="form-control" rows="5" required placeholder="Type notice parameters here..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Broadcast Announcement</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <h3 style="margin-bottom:1.5rem;">Notice Board Feed</h3>
+              <div id="admin-notices-list" style="display:flex; flex-direction:column; gap:1rem;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Audit logs -->
+        <div id="admin-logs-tab" class="dashboard-tab-content" style="display:none;">
+          <div class="card" style="padding:1.5rem;">
+            <h3 style="margin-bottom:1rem;">Operation Security Audit Logs</h3>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Action</th>
+                    <th>User ID / Name</th>
+                    <th>Details</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-logs-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Add Course Modal -->
+    <div class="modal-overlay" id="admin-add-course-modal">
+      <div class="modal-box">
+        <i data-lucide="x" class="modal-close" id="admin-add-course-close"></i>
+        <h3>Add New Academic Course</h3>
+        <p style="margin-bottom:1.5rem;">Insert details to populate program offerings</p>
+        
+        <form id="admin-add-course-form">
+          <div class="form-group">
+            <label for="ac-title">Course Title</label>
+            <input type="text" id="ac-title" class="form-control" required placeholder="e.g. Cognitive Neuropsychology">
+          </div>
+          <div class="form-group">
+            <label for="ac-desc">Description</label>
+            <textarea id="ac-desc" class="form-control" rows="3" placeholder="Syllabus details..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="ac-duration">Duration</label>
+            <input type="text" id="ac-duration" class="form-control" required placeholder="e.g. 4 Months">
+          </div>
+          <div class="form-group">
+            <label for="ac-fees">Tuition Fee ($)</label>
+            <input type="number" id="ac-fees" class="form-control" required placeholder="e.g. 599">
+          </div>
+          <div class="form-group">
+            <label for="ac-faculty">Assign Mentor</label>
+            <select id="ac-faculty" class="form-control">
+              <!-- Loaded dynamically -->
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Create Course Record</button>
+        </form>
+      </div>
+    </div>
+  </template>
+
+  <!-- Mount bindings script file -->
+  <script src="app.js"></script>
+  <!-- Mount views implementation -->
+  <script>
+    // Self-initializing views registry on load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile header toggle
+      const menuToggle = document.getElementById('menu-toggle');
+      const navLinks = document.getElementById('nav-links');
+      if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', () => {
+          navLinks.classList.toggle('active');
+        });
+      }
+
+      // Logout handler
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          await AuthService.logout();
+          updateHeaderNav();
+          Toast.show("Logout successful", "success");
+          window.location.hash = '#home';
+        });
+      }
+
+      // ----------------- Dynamic Nav Update Helper -----------------
+      function updateHeaderNav() {
+        const user = AuthService.getCurrentUser();
+        const guests = document.querySelectorAll('.guest-only');
+        const auths = document.querySelectorAll('.auth-only');
+        
+        if (user) {
+          guests.forEach(el => el.style.display = 'none');
+          auths.forEach(el => el.style.display = 'block');
+          
+          // Role-specific nav links
+          document.querySelectorAll('.student-only').forEach(el => el.style.display = (user.role === 'student' ? 'block' : 'none'));
+          document.querySelectorAll('.faculty-only').forEach(el => el.style.display = (user.role === 'faculty' ? 'block' : 'none'));
+          document.querySelectorAll('.admin-only').forEach(el => el.style.display = (user.role === 'admin' ? 'block' : 'none'));
+        } else {
+          guests.forEach(el => el.style.display = 'block');
+          auths.forEach(el => el.style.display = 'none');
+        }
+        lucide.createIcons();
+      }
+      window.updateHeaderNav = updateHeaderNav;
+
+      // ==========================================
+      // REGISTER ROUTE RENDERING BINDERS
+      // ==========================================
+
+      // -- 1. HOME VIEW --
+      Router.register('#home', async (mount) => {
+        updateHeaderNav();
+        const temp = document.getElementById('home-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+      });
+
+      // -- 2. ABOUT VIEW --
+      Router.register('#about', async (mount) => {
+        updateHeaderNav();
+        const temp = document.getElementById('about-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+
+        // Fetch faculty list
+        const mentors = await DatabaseService.getProfilesByRole('faculty');
+        const facultyGrid = document.getElementById('about-faculty-grid');
+        if (facultyGrid) {
+          facultyGrid.innerHTML = mentors.map(m => `
+            <div class="card text-center" style="padding: 2rem;">
+              <div class="user-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1.5rem; border:2px solid var(--border-color-active);">${m.full_name.charAt(0)}</div>
+              <h3>${m.full_name}</h3>
+              <p class="subtitle" style="margin-bottom:1rem; font-size:0.8rem;">Faculty Consultant</p>
+              <p style="font-size:0.9rem;">Expert in Counseling & Cognitive Behavioral Studies. Over 10 years of mentoring clinical graduates.</p>
+              <div style="display:flex; justify-content:center; gap:0.75rem; margin-top:1.5rem; color:var(--text-muted);">
+                <i data-lucide="mail" style="width:18px; cursor:pointer;" title="${m.email}"></i>
+                <i data-lucide="phone" style="width:18px; cursor:pointer;" title="${m.phone || 'N/A'}"></i>
+              </div>
+            </div>
+          `).join('');
+        }
+      });
+
+      // -- 3. COURSES VIEW --
+      Router.register('#courses', async (mount) => {
+        updateHeaderNav();
+        const temp = document.getElementById('courses-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+
+        const coursesListGrid = document.getElementById('courses-list-grid');
+        const searchInput = document.getElementById('course-search-input');
+        const durationFilter = document.getElementById('course-duration-filter');
+        const feeFilter = document.getElementById('course-fee-filter');
+
+        let allCourses = await DatabaseService.getCourses();
+
+        function renderFilteredCourses() {
+          const query = searchInput.value.toLowerCase();
+          const duration = durationFilter.value;
+          const feeLimit = feeFilter.value;
+
+          const filtered = allCourses.filter(c => {
+            const matchesQuery = c.title.toLowerCase().includes(query) || c.description.toLowerCase().includes(query);
+            const matchesDuration = duration === 'all' || c.duration === duration;
+            const matchesFee = feeLimit === 'all' || c.fees <= parseFloat(feeLimit);
+            return matchesQuery && matchesDuration && matchesFee;
+          });
+
+          if (coursesListGrid) {
+            if (filtered.length === 0) {
+              coursesListGrid.innerHTML = `<div style="grid-column: 1/-1;" class="text-center section"><p>No courses match your search criteria.</p></div>`;
+              return;
+            }
+
+            coursesListGrid.innerHTML = filtered.map(c => `
+              <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+                <div>
+                  <span class="badge badge-primary" style="margin-bottom:1rem;">${c.duration}</span>
+                  <h3 style="margin-bottom:0.75rem; font-size:1.35rem;">${c.title}</h3>
+                  <p style="font-size:0.9rem; margin-bottom:1.5rem;">${c.description}</p>
+                </div>
+                <div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-top:1rem; border-top:1px solid var(--border-color);">
+                    <span style="font-size:1.25rem; font-weight:700; color:var(--text-primary);">$${c.fees}</span>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Assigned: ${c.faculty_name || 'Sarah Jenkins'}</span>
+                  </div>
+                  <button class="btn btn-secondary btn-sm btn-view-details" data-id="${c.id}" style="width:100%;">Detailed Syllabus</button>
+                </div>
+              </div>
+            `).join('');
+
+            // Bind modal popups
+            document.querySelectorAll('.btn-view-details').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const courseId = btn.getAttribute('data-id');
+                const course = allCourses.find(item => item.id == courseId);
+                if (course) {
+                  const modal = document.getElementById('course-detail-modal');
+                  const modalContent = document.getElementById('course-modal-content');
+                  modalContent.innerHTML = `
+                    <span class="badge badge-primary" style="margin-bottom:1rem;">Syllabus Overview</span>
+                    <h2 style="margin-bottom:1rem;">${course.title}</h2>
+                    <p style="margin-bottom:1.5rem; font-size:1.05rem;">${course.description}</p>
+                    
+                    <h4 style="margin-bottom:0.5rem; color:var(--primary-color);">Curriculum Modules</h4>
+                    <ul style="list-style:none; padding:0; margin-bottom:2rem; display:flex; flex-direction:column; gap:0.5rem;">
+                      <li style="display:flex; gap:0.5rem; font-size:0.95rem;"><i data-lucide="check" style="width:18px; color:var(--accent-emerald);"></i> Module 1: Foundations & Historical Timeline</li>
+                      <li style="display:flex; gap:0.5rem; font-size:0.95rem;"><i data-lucide="check" style="width:18px; color:var(--accent-emerald);"></i> Module 2: Research Design & Experimental Methods</li>
+                      <li style="display:flex; gap:0.5rem; font-size:0.95rem;"><i data-lucide="check" style="width:18px; color:var(--accent-emerald);"></i> Module 3: Clinical Case Histories & Assessments</li>
+                      <li style="display:flex; gap:0.5rem; font-size:0.95rem;"><i data-lucide="check" style="width:18px; color:var(--accent-emerald);"></i> Module 4: Board Exam Mock Tests & Reviews</li>
+                    </ul>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1.5rem;">
+                      <div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">Total Fees</div>
+                        <div style="font-size:1.5rem; font-weight:800; color:var(--text-primary);">$${course.fees}</div>
+                      </div>
+                      <a href="#signup" onclick="document.getElementById('course-detail-modal').classList.remove('active');" class="btn btn-primary">Enroll Program</a>
+                    </div>
+                  `;
+                  modal.classList.add('active');
+                  lucide.createIcons();
+                }
+              });
+            });
+          }
+        }
+
+        if (searchInput) searchInput.addEventListener('input', renderFilteredCourses);
+        if (durationFilter) durationFilter.addEventListener('change', renderFilteredCourses);
+        if (feeFilter) feeFilter.addEventListener('change', renderFilteredCourses);
+
+        // First render
+        renderFilteredCourses();
+
+        // Bind modal close
+        const modalClose = document.getElementById('course-modal-close');
+        if (modalClose) {
+          modalClose.addEventListener('click', () => {
+            document.getElementById('course-detail-modal').classList.remove('active');
+          });
+        }
+      });
+
+      // -- 4. CONTACT VIEW --
+      Router.register('#contact', async (mount) => {
+        updateHeaderNav();
+        const temp = document.getElementById('contact-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+
+        // Bind Accordion headers
+        document.querySelectorAll('.accordion-header').forEach(header => {
+          header.addEventListener('click', () => {
+            const item = header.parentElement;
+            item.classList.toggle('active');
+          });
+        });
+
+        // Populate course dropdown in form
+        const courses = await DatabaseService.getCourses();
+        const courseSelect = document.getElementById('inq-course');
+        if (courseSelect) {
+          courseSelect.innerHTML = courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+        }
+
+        // Form submit
+        const inqForm = document.getElementById('public-inquiry-form');
+        if (inqForm) {
+          inqForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            Toast.show("Inquiry submitted successfully! Admissions desk will contact you soon.", "success");
+            inqForm.reset();
+          });
+        }
+      });
+
+      // -- 5. LOGIN VIEW --
+      Router.register('#login', async (mount) => {
+        updateHeaderNav();
+        const temp = document.getElementById('login-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+          loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+
+            try {
+              const profile = await AuthService.login(email, pass);
+              Toast.show(`Welcome back, ${profile.full_name}!`, "success");
+              updateHeaderNav();
+              window.location.hash = `#${profile.role}`;
+            } catch (err) {
+              Toast.show(err.message, "error");
+            }
+          });
+        }
+      });
+
+      // -- 6. SIGNUP VIEW --
+      Router.register('#signup', async (mount) => {
+        updateHeaderNav();
+        const temp = document.getElementById('signup-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+
+        const signupForm = document.getElementById('signup-form');
+        if (signupForm) {
+          signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const phone = document.getElementById('signup-phone').value;
+            const pass = document.getElementById('signup-password').value;
+            const role = document.getElementById('signup-role').value;
+
+            try {
+              const profile = await AuthService.signup(name, email, pass, phone, role);
+              Toast.show("Registration Successful! Portal activated.", "success");
+              updateHeaderNav();
+              window.location.hash = `#${profile.role}`;
+            } catch (err) {
+              Toast.show(err.message, "error");
+            }
+          });
+        }
+      });
+
+      // -- 7. STUDENT DASHBOARD VIEW --
+      Router.register('#student', async (mount) => {
+        updateHeaderNav();
+        const user = AuthService.getCurrentUser();
+        const temp = document.getElementById('student-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+
+        // Sidebar display details
+        document.getElementById('student-display-name').textContent = user.full_name;
+        document.getElementById('student-avatar-initials').textContent = user.full_name.charAt(0);
+
+        // Hamburger mobile toggle
+        const sidebar = document.getElementById('dashboard-sidebar');
+        const dbToggle = document.getElementById('db-menu-toggle');
+        if (dbToggle && sidebar) {
+          dbToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+          });
+          document.addEventListener('click', () => sidebar.classList.remove('active'));
+        }
+
+        // Fetch Dashboard Data
+        const data = await DatabaseService.getStudentDashboardData(user.id);
+        const notices = await DatabaseService.getNotices('student');
+
+        // Render Notices
+        const noticesContainer = document.getElementById('student-notices-container');
+        if (noticesContainer) {
+          noticesContainer.innerHTML = notices.map(n => `
+            <div class="card" style="padding: 1.25rem; border-left: 4px solid var(--primary-color); display:flex; gap:1rem; align-items:flex-start; margin-bottom: 0.75rem;">
+              <i data-lucide="megaphone" style="color:var(--primary-color); flex-shrink:0;"></i>
+              <div>
+                <h4 style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">${n.title}</h4>
+                <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">${n.content}</p>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        // Attendance Metric
+        const studentAttendanceMetric = document.getElementById('student-attendance-percent');
+        if (studentAttendanceMetric) {
+          const presents = data.attendance.filter(a => a.status === 'present').length;
+          const totalAtt = data.attendance.length;
+          const attRate = totalAtt > 0 ? Math.round((presents / totalAtt) * 100) : 100;
+          studentAttendanceMetric.textContent = `${attRate}%`;
+          if (attRate < 75) {
+            studentAttendanceMetric.style.color = 'var(--accent-rose)';
+          } else {
+            studentAttendanceMetric.style.color = 'var(--accent-emerald)';
+          }
+        }
+
+        // Course count
+        document.getElementById('student-course-count').textContent = data.enrolledCourses.length;
+
+        // Pending invoices metric
+        const pendingFees = data.fees.filter(f => f.status === 'pending');
+        const totalPending = pendingFees.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        document.getElementById('student-pending-fees').textContent = `$${totalPending}`;
+
+        // Render Today's Scheduled Lectures (under Overview Tab)
+        const todayClassesDiv = document.getElementById('student-today-classes');
+        if (todayClassesDiv) {
+          if (data.liveClasses.length === 0) {
+            todayClassesDiv.innerHTML = `<div class="card text-center" style="padding:1.5rem;"><p style="margin:0;">No lectures scheduled for today.</p></div>`;
+          } else {
+            todayClassesDiv.innerHTML = data.liveClasses.map(l => {
+              const diffMs = new Date(l.scheduled_at) - Date.now();
+              const isLive = diffMs <= 30 * 60 * 1000 && diffMs >= -2 * 60 * 60 * 1000; // Live if within range
+              const stateBadge = isLive ? `<span class="badge badge-success">LIVE NOW</span>` : `<span class="badge badge-warning">Starts Soon</span>`;
+              return `
+                <div class="card" style="padding:1.5rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-color:${isLive ? 'var(--accent-emerald)' : 'var(--border-color)'};">
+                  <div>
+                    <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem;">
+                      ${stateBadge}
+                      <span style="font-size:0.8rem; color:var(--text-muted);">${new Date(l.scheduled_at).toLocaleString()}</span>
+                    </div>
+                    <h4 style="font-size:1.1rem; margin:0;">${l.title}</h4>
+                  </div>
+                  <a href="${l.meeting_link}" target="_blank" class="btn ${isLive ? 'btn-primary' : 'btn-secondary'} btn-sm"><i data-lucide="video"></i> Launch Class</a>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+
+        // Render Enrolled Courses Tab
+        const coursesGrid = document.getElementById('student-courses-grid');
+        if (coursesGrid) {
+          coursesGrid.innerHTML = data.enrolledCourses.map(c => `
+            <div class="card">
+              <span class="badge badge-primary" style="margin-bottom:1rem;">Active Program</span>
+              <h3 style="margin-bottom:0.5rem;">${c.title}</h3>
+              <p style="font-size:0.9rem; margin-bottom:1rem;">Duration: ${c.duration} | Tuition: $${c.fees}</p>
+              <div style="background:rgba(255,255,255,0.01); padding:0.75rem; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-size:0.85rem; color:var(--text-secondary);">
+                <strong>Assigned Instructor:</strong> Dr. Sarah Jenkins (admissions@psysphere.edu)
+              </div>
+            </div>
+          `).join('');
+        }
+
+        // Render Fees Tab Table
+        const feesTbody = document.getElementById('student-fees-tbody');
+        function renderFeesTable() {
+          if (feesTbody) {
+            feesTbody.innerHTML = data.fees.map(f => {
+              const courseTitle = data.enrolledCourses.find(c => c.id === f.course_id)?.title || "General Fee Invoice";
+              const actionBtn = f.status === 'pending' 
+                ? `<button class="btn btn-primary btn-sm btn-pay-fee" data-id="${f.id}" data-amount="${f.amount}" data-title="${courseTitle}">Pay Invoice</button>`
+                : `<div style="font-size:0.8rem; color:var(--text-muted); font-family:monospace;">Receipt: ${f.receipt_no}</div>`;
+              
+              const statusBadge = f.status === 'paid' 
+                ? `<span class="badge badge-success">Cleared</span>`
+                : `<span class="badge badge-danger">Unpaid</span>`;
+              
+              return `
+                <tr>
+                  <td style="font-weight:600;">${courseTitle}</td>
+                  <td>${f.due_date}</td>
+                  <td><strong>$${f.amount}</strong></td>
+                  <td>${statusBadge}</td>
+                  <td>${actionBtn}</td>
+                </tr>
+              `;
+            }).join('');
+
+            // Bind Pay Invoice buttons
+            document.querySelectorAll('.btn-pay-fee').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const amt = btn.getAttribute('data-amount');
+                const title = btn.getAttribute('data-title');
+                
+                document.getElementById('checkout-fee-id').value = id;
+                document.getElementById('checkout-amount').textContent = `$${amt}`;
+                document.getElementById('checkout-course-title').textContent = title;
+                
+                document.getElementById('checkout-modal').classList.add('active');
+              });
+            });
+          }
+        }
+        renderFeesTable();
+
+        // Toggle checkout radio fields
+        const payMethods = document.querySelectorAll('input[name="pay-method"]');
+        payMethods.forEach(rad => {
+          rad.parentElement.addEventListener('click', () => {
+            payMethods.forEach(r => r.parentElement.style.borderColor = 'var(--border-color)');
+            rad.checked = true;
+            rad.parentElement.style.borderColor = 'var(--primary-color)';
+            
+            if (rad.value === 'UPI') {
+              document.getElementById('upi-payment-fields').style.display = 'block';
+              document.getElementById('card-payment-fields').style.display = 'none';
+            } else {
+              document.getElementById('upi-payment-fields').style.display = 'none';
+              document.getElementById('card-payment-fields').style.display = 'block';
+            }
+          });
+        });
+
+        // Checkout form submit
+        const paymentGateForm = document.getElementById('payment-gate-form');
+        if (paymentGateForm) {
+          paymentGateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const feeId = document.getElementById('checkout-fee-id').value;
+            const method = document.querySelector('input[name="pay-method"]:checked').value;
+            
+            try {
+              await DatabaseService.payFee(feeId, method);
+              Toast.show("Tuition invoice cleared successfully! Receipt generated.", "success");
+              document.getElementById('checkout-modal').classList.remove('active');
+              paymentGateForm.reset();
+              
+              // Reload tab data
+              const freshData = await DatabaseService.getStudentDashboardData(user.id);
+              data.fees = freshData.fees;
+              
+              // Re-update metrics
+              const pending = data.fees.filter(f => f.status === 'pending');
+              const sum = pending.reduce((s, i) => s + parseFloat(i.amount), 0);
+              document.getElementById('student-pending-fees').textContent = `$${sum}`;
+              
+              renderFeesTable();
+            } catch (err) {
+              Toast.show(err.message, "error");
+            }
+          });
+        }
+
+        // Close checkout modal
+        const checkoutClose = document.getElementById('checkout-modal-close');
+        if (checkoutClose) {
+          checkoutClose.addEventListener('click', () => {
+            document.getElementById('checkout-modal').classList.remove('active');
+          });
+        }
+
+        // Render Live/Recorded classroom tab
+        const liveGrid = document.getElementById('student-live-grid');
+        if (liveGrid) {
+          if (data.liveClasses.length === 0) {
+            liveGrid.innerHTML = `<div style="grid-column: 1/-1;" class="card text-center"><p style="margin:0;">No live classes broadcasted currently.</p></div>`;
+          } else {
+            liveGrid.innerHTML = data.liveClasses.map(l => `
+              <div class="card" style="padding:1.5rem;">
+                <span class="badge badge-primary" style="margin-bottom:0.75rem;">Scheduled Interactive Lecture</span>
+                <h4 style="margin-bottom:0.5rem; font-size:1.15rem;">${l.title}</h4>
+                <p style="font-size:0.85rem; margin-bottom:1.5rem;"><i data-lucide="clock" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> ${new Date(l.scheduled_at).toLocaleString()}</p>
+                <a href="${l.meeting_link}" target="_blank" class="btn btn-outline btn-sm"><i data-lucide="video"></i> Launch Zoom Room</a>
+              </div>
+            `).join('');
+          }
+        }
+
+        const recordedGrid = document.getElementById('student-recorded-grid');
+        if (recordedGrid) {
+          if (data.recorded.length === 0) {
+            recordedGrid.innerHTML = `<div style="grid-column: 1/-1;" class="card text-center"><p style="margin:0;">No recordings uploaded yet.</p></div>`;
+          } else {
+            recordedGrid.innerHTML = data.recorded.map(r => `
+              <div class="card" style="padding:1rem;">
+                <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); margin-bottom:1rem;">
+                  <video controls style="width: 100%; display:block;">
+                    <source src="${r.video_url}" type="video/mp4">
+                  </video>
+                </div>
+                <h4 style="font-size:0.95rem; margin-bottom:0.25rem;">${r.title}</h4>
+                <p style="font-size:0.8rem; margin:0;">Recorded Session Playback</p>
+              </div>
+            `).join('');
+          }
+        }
+
+        // Tab selection listener
+        document.querySelectorAll('#dashboard-sidebar .sidebar-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Tab active states
+            document.querySelectorAll('#dashboard-sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            const activeTab = link.getAttribute('data-tab');
+            document.getElementById('student-section-title').textContent = link.textContent.trim();
+            
+            document.querySelectorAll('.dashboard-tab-content').forEach(tc => tc.style.display = 'none');
+            document.getElementById(`${activeTab}-tab`).style.display = 'block';
+            
+            sidebar.classList.remove('active');
+            lucide.createIcons();
+          });
+        });
+      });
+
+      // -- 8. FACULTY DASHBOARD VIEW --
+      Router.register('#faculty', async (mount) => {
+        updateHeaderNav();
+        const user = AuthService.getCurrentUser();
+        const temp = document.getElementById('faculty-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+
+        document.getElementById('faculty-display-name').textContent = user.full_name;
+        document.getElementById('faculty-avatar-initials').textContent = user.full_name.charAt(0);
+
+        // Sidebar mobile toggler
+        const sidebar = document.getElementById('faculty-sidebar');
+        const dbToggle = document.getElementById('faculty-menu-toggle');
+        if (dbToggle && sidebar) {
+          dbToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+          });
+          document.addEventListener('click', () => sidebar.classList.remove('active'));
+        }
+
+        const data = await DatabaseService.getFacultyDashboardData(user.id);
+
+        // Render schedule table
+        const classesTbody = document.getElementById('faculty-classes-tbody');
+        function renderSchedule() {
+          if (classesTbody) {
+            if (data.liveClasses.length === 0) {
+              classesTbody.innerHTML = `<tr><td colspan="4" class="text-center">No broadcasts scheduled yet.</td></tr>`;
+              return;
+            }
+            classesTbody.innerHTML = data.liveClasses.map(l => `
+              <tr>
+                <td style="font-weight:600;">${l.title}</td>
+                <td>${new Date(l.scheduled_at).toLocaleString()}</td>
+                <td><a href="${l.meeting_link}" target="_blank" style="color:var(--primary-color); text-decoration:underline;">Meeting Link</a></td>
+                <td><span class="badge badge-success">${l.status}</span></td>
+              </tr>
+            `).join('');
+          }
+        }
+        renderSchedule();
+
+        // Populate course dropdown selectors (in Schedule Class Modal & Attendance registry)
+        const courseSelect = document.getElementById('att-course-select');
+        const scheduleCourseSelect = document.getElementById('sc-course-id');
+        
+        if (courseSelect) {
+          courseSelect.innerHTML = `<option value="">Choose Course...</option>` + 
+            data.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+        }
+        if (scheduleCourseSelect) {
+          scheduleCourseSelect.innerHTML = data.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+        }
+
+        // Date selection defaults to today
+        const attDateInput = document.getElementById('att-date-select');
+        if (attDateInput) {
+          attDateInput.value = new Date().toISOString().split('T')[0];
+        }
+
+        // Attendance student loading
+        const btnLoadAtt = document.getElementById('btn-load-attendance-list');
+        const attTableWrapper = document.getElementById('attendance-table-wrapper');
+        const attTbody = document.getElementById('faculty-attendance-tbody');
+        
+        let loadedStudents = [];
+
+        if (btnLoadAtt) {
+          btnLoadAtt.addEventListener('click', () => {
+            const courseId = courseSelect.value;
+            const date = attDateInput.value;
+            
+            if (!courseId || !date) {
+              Toast.show("Please select both course and date registry", "error");
+              return;
+            }
+
+            // Load student list enrolled in selected course
+            const enrollments = data.enrollments.filter(e => e.course_id === parseInt(courseId));
+            loadedStudents = enrollments.map(e => data.students.find(s => s.id === e.student_id)).filter(Boolean);
+
+            if (loadedStudents.length === 0) {
+              Toast.show("No active students enrolled in this course.", "info");
+              attTableWrapper.style.display = 'none';
+              return;
+            }
+
+            attTbody.innerHTML = loadedStudents.map(s => {
+              // Check if attendance already logged for today
+              const existingRecord = data.attendance.find(a => a.student_id === s.id && a.course_id === parseInt(courseId) && a.date === date);
+              const presentChecked = (!existingRecord || existingRecord.status === 'present') ? 'checked' : '';
+              const absentChecked = (existingRecord && existingRecord.status === 'absent') ? 'checked' : '';
+              const lateChecked = (existingRecord && existingRecord.status === 'late') ? 'checked' : '';
+
+              return `
+                <tr data-student-id="${s.id}">
+                  <td style="font-weight:600;">${s.full_name}</td>
+                  <td>${s.email}</td>
+                  <td><input type="radio" name="att-${s.id}" value="present" ${presentChecked}></td>
+                  <td><input type="radio" name="att-${s.id}" value="absent" ${absentChecked}></td>
+                  <td><input type="radio" name="att-${s.id}" value="late" ${lateChecked}></td>
+                </tr>
+              `;
+            }).join('');
+
+            attTableWrapper.style.display = 'block';
+            lucide.createIcons();
+          });
+        }
+
+        // Save Attendance
+        const btnSaveAtt = document.getElementById('btn-save-attendance-record');
+        if (btnSaveAtt) {
+          btnSaveAtt.addEventListener('click', async () => {
+            const courseId = courseSelect.value;
+            const date = attDateInput.value;
+            const rows = attTbody.querySelectorAll('tr');
+            
+            try {
+              for (let row of rows) {
+                const studentId = row.getAttribute('data-student-id');
+                const status = row.querySelector(`input[name="att-${studentId}"]:checked`).value;
+                await DatabaseService.markAttendance(studentId, courseId, date, status, user.id);
+              }
+              Toast.show("Attendance registries synced successfully!", "success");
+              
+              // Refresh state data
+              const freshData = await DatabaseService.getFacultyDashboardData(user.id);
+              data.attendance = freshData.attendance;
+            } catch (err) {
+              Toast.show(err.message, "error");
+            }
+          });
+        }
+
+        // Schedule class handlers
+        const btnShowSchedule = document.getElementById('btn-schedule-class');
+        const modal = document.getElementById('schedule-class-modal');
+        const scheduleForm = document.getElementById('schedule-class-form');
+        
+        if (btnShowSchedule && modal) {
+          btnShowSchedule.addEventListener('click', () => modal.classList.add('active'));
+        }
+        if (scheduleForm) {
+          scheduleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const courseId = document.getElementById('sc-course-id').value;
+            const title = document.getElementById('sc-title').value;
+            const time = document.getElementById('sc-time').value;
+            const link = document.getElementById('sc-link').value;
+            
+            try {
+              const newC = await DatabaseService.scheduleLiveClass(courseId, title, time, link);
+              Toast.show("Lecture Broadcasted & Scheduled!", "success");
+              modal.classList.remove('active');
+              scheduleForm.reset();
+              
+              // Refresh layout
+              const freshData = await DatabaseService.getFacultyDashboardData(user.id);
+              data.liveClasses = freshData.liveClasses;
+              renderSchedule();
+            } catch (err) {
+              Toast.show(err.message, "error");
+            }
+          });
+        }
+
+        const modalClose = document.getElementById('schedule-class-close');
+        if (modalClose) {
+          modalClose.addEventListener('click', () => modal.classList.remove('active'));
+        }
+
+        // Tab selection listeners
+        document.querySelectorAll('#faculty-sidebar .sidebar-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            document.querySelectorAll('#faculty-sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            const activeTab = link.getAttribute('data-tab');
+            document.getElementById('faculty-section-title').textContent = link.textContent.trim();
+            
+            document.querySelectorAll('.dashboard-tab-content').forEach(tc => tc.style.display = 'none');
+            document.getElementById(`${activeTab}-tab`).style.display = 'block';
+            
+            sidebar.classList.remove('active');
+            lucide.createIcons();
+          });
+        });
+      });
+
+      // -- 9. ADMIN DASHBOARD VIEW --
+      Router.register('#admin', async (mount) => {
+        updateHeaderNav();
+        const user = AuthService.getCurrentUser();
+        const temp = document.getElementById('admin-view').content.cloneNode(true);
+        mount.innerHTML = '';
+        mount.appendChild(temp);
+
+        // Sidebar mobile toggler
+        const sidebar = document.getElementById('admin-sidebar');
+        const dbToggle = document.getElementById('admin-menu-toggle');
+        if (dbToggle && sidebar) {
+          dbToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+          });
+          document.addEventListener('click', () => sidebar.classList.remove('active'));
+        }
+
+        const data = await DatabaseService.getAdminDashboardData();
+
+        // 1. Populate general metrics
+        const totalPaidAmt = data.fees.filter(f => f.status === 'paid').reduce((s, i) => s + parseFloat(i.amount), 0);
+        document.getElementById('admin-rev-metric').textContent = `$${totalPaidAmt}`;
+        document.getElementById('admin-students-metric').textContent = data.students.length;
+        document.getElementById('admin-enrolls-metric').textContent = data.enrollments.length;
+        
+        const presents = data.attendance.filter(a => a.status === 'present').length;
+        const totalAtt = data.attendance.length;
+        document.getElementById('admin-attendance-metric').textContent = totalAtt > 0 ? `${Math.round((presents / totalAtt) * 100)}%` : '100%';
+
+        // 2. Load bar charts split
+        const splitBarDiv = document.getElementById('admin-course-split-bars');
+        if (splitBarDiv) {
+          splitBarDiv.innerHTML = data.courses.map(c => {
+            const count = data.enrollments.filter(e => e.course_id === c.id).length;
+            const pct = data.enrollments.length > 0 ? Math.round((count / data.enrollments.length) * 100) : 0;
+            return `
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
+                  <span>${c.title}</span><strong>${count} Enrolled</strong>
+                </div>
+                <div style="width:100%; height:8px; background:rgba(255,255,255,0.03); border-radius:10px; overflow:hidden;">
+                  <div style="width:${pct}%; height:100%; background:var(--primary-gradient);"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // 3. Render courses list CRUD
+        const coursesTbody = document.getElementById('admin-courses-tbody');
+        function renderCoursesList() {
+          if (coursesTbody) {
+            coursesTbody.innerHTML = data.courses.map(c => `
+              <tr>
+                <td style="font-weight:600;">${c.title}</td>
+                <td><span class="badge badge-primary">${c.duration}</span></td>
+                <td><strong>$${c.fees}</strong></td>
+                <td>${c.faculty_name || 'Dr. Sarah Jenkins'}</td>
+                <td>
+                  <button class="btn btn-outline btn-sm btn-delete-course" data-id="${c.id}" style="border-color:var(--accent-rose); color:var(--accent-rose); padding:0.25rem 0.5rem;"><i data-lucide="trash-2" style="width:16px;"></i></button>
+                </td>
+              </tr>
+            `).join('');
+
+            // Bind delete button
+            document.querySelectorAll('.btn-delete-course').forEach(btn => {
+              btn.addEventListener('click', async () => {
+                const courseId = btn.getAttribute('data-id');
+                if (confirm("Are you sure you want to remove this course and all associated enrollments?")) {
+                  await DatabaseService.deleteCourse(courseId);
+                  Toast.show("Course deleted successfully.", "success");
+                  
+                  // Reload
+                  const freshData = await DatabaseService.getAdminDashboardData();
+                  data.courses = freshData.courses;
+                  renderCoursesList();
+                }
+              });
+            });
+            lucide.createIcons();
+          }
+        }
+        renderCoursesList();
+
+        // Populate instructors dropdown in modal
+        const facultySelect = document.getElementById('ac-faculty');
+        if (facultySelect) {
+          facultySelect.innerHTML = data.faculty.map(f => `<option value="${f.id}">${f.full_name}</option>`).join('');
+        }
+
+        // Course Modal bindings
+        const showAddCourse = document.getElementById('btn-admin-add-course');
+        const courseModal = document.getElementById('admin-add-course-modal');
+        const courseForm = document.getElementById('admin-add-course-form');
+        
+        if (showAddCourse && courseModal) {
+          showAddCourse.addEventListener('click', () => courseModal.classList.add('active'));
+        }
+        if (courseForm) {
+          courseForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('ac-title').value;
+            const desc = document.getElementById('ac-desc').value;
+            const duration = document.getElementById('ac-duration').value;
+            const fees = document.getElementById('ac-fees').value;
+            const facultyId = document.getElementById('ac-faculty').value;
+
+            try {
+              await DatabaseService.addCourse(title, desc, duration, fees, facultyId);
+              Toast.show("New course successfully listed!", "success");
+              courseModal.classList.remove('active');
+              courseForm.reset();
+
+              // Reload
+              const freshData = await DatabaseService.getAdminDashboardData();
+              data.courses = freshData.courses;
+              renderCoursesList();
+            } catch (err) {
+              Toast.show(err.message, "error");
+            }
+          });
+        }
+        const courseModalClose = document.getElementById('admin-add-course-close');
+        if (courseModalClose) {
+          courseModalClose.addEventListener('click', () => courseModal.classList.remove('active'));
+        }
+
+        // 4. Render students/faculty tables
+        const studentsTbody = document.getElementById('admin-students-tbody');
+        if (studentsTbody) {
+          studentsTbody.innerHTML = data.students.map(s => `
+            <tr>
+              <td style="font-weight:600;">${s.full_name}</td>
+              <td>${s.email}</td>
+              <td>${s.phone || 'N/A'}</td>
+            </tr>
+          `).join('');
+        }
+
+        const facultyTbody = document.getElementById('admin-faculty-tbody');
+        if (facultyTbody) {
+          facultyTbody.innerHTML = data.faculty.map(f => `
+            <tr>
+              <td style="font-weight:600;">${f.full_name}</td>
+              <td>${f.email}</td>
+              <td>${f.phone || 'N/A'}</td>
+            </tr>
+          `).join('');
+        }
+
+        // 5. Compose announcements notice form
+        const noticeForm = document.getElementById('admin-notice-form');
+        const noticesListDiv = document.getElementById('admin-notices-list');
+        
+        async function renderNoticesAdmin() {
+          const notices = await DatabaseService.getNotices('admin');
+          if (noticesListDiv) {
+            noticesListDiv.innerHTML = notices.map(n => `
+              <div style="background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:1rem; border-radius:var(--radius-sm);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                  <span style="font-weight:600; font-size:0.95rem;">${n.title}</span>
+                  <span class="badge badge-primary">${n.target_role.toUpperCase()}</span>
+                </div>
+                <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">${n.content}</p>
+              </div>
+            `).join('');
+          }
+        }
+        renderNoticesAdmin();
+
+        if (noticeForm) {
+          noticeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('nt-title').value;
+            const role = document.getElementById('nt-role').value;
+            const content = document.getElementById('nt-content').value;
+
+            try {
+              await DatabaseService.addNotice(title, content, role);
+              Toast.show("Notice broadcasted successfully!", "success");
+              noticeForm.reset();
+              renderNoticesAdmin();
+            } catch (err) {
+              Toast.show(err.message, "error");
+            }
+          });
+        }
+
+        // 6. Security Logs listing
+        const logsTbody = document.getElementById('admin-logs-tbody');
+        if (logsTbody) {
+          logsTbody.innerHTML = data.logs.map(l => `
+            <tr>
+              <td><strong>${l.action}</strong></td>
+              <td>${l.user_name || 'System / Guest'}</td>
+              <td>${l.details}</td>
+              <td>${new Date(l.created_at).toLocaleTimeString()}</td>
+            </tr>
+          `).join('');
+        }
+
+        // 7. Backup database export trigger
+        const btnExport = document.getElementById('btn-admin-export');
+        if (btnExport) {
+          btnExport.addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mockDB, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "psychology_sphere_db_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            Toast.show("Backup JSON archive exported successfully!", "success");
+          });
+        }
+
+        // Tab selection listeners
+        document.querySelectorAll('#admin-sidebar .sidebar-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            document.querySelectorAll('#admin-sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            const activeTab = link.getAttribute('data-tab');
+            document.getElementById('admin-section-title').textContent = link.textContent.trim();
+            
+            document.querySelectorAll('.dashboard-tab-content').forEach(tc => tc.style.display = 'none');
+            document.getElementById(`${activeTab}-tab`).style.display = 'block';
+            
+            sidebar.classList.remove('active');
+            lucide.createIcons();
+          });
+        });
+      });
+
+      // ---------------- INITIALIZE ROUTER ----------------
+      Router.init();
+    });
+  </script>
+</body>
+</html>
