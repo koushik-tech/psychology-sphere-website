@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Psychology Sphere | Premium Psychology Institute & Portal</title>
-  <meta name="description" content="Psychology Sphere is a leading competitive coaching institute providing advanced education and training in psychology and behavioral sciences.">
+  <meta name="description" content="Psychology Sphere is a leading competitive coaching institute providing advanced education and training in psychology and competitive exam preparation.">
   <link rel="stylesheet" href="styles.css">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,11 +13,17 @@
 </head>
 <body>
 
-  <!-- Floating Blur Decoration -->
-  <div class="blur-blob blob-1"></div>
-  <div class="blur-blob blob-2"></div>
+  <!-- Top View Switcher Control Bar -->
+  <div class="view-switcher-bar" id="view-switcher-bar">
+    <button class="switcher-btn active" id="btn-view-desktop">
+      <i data-lucide="monitor" style="width:16px;"></i> Desktop Web View
+    </button>
+    <button class="switcher-btn" id="btn-view-mobile">
+      <i data-lucide="smartphone" style="width:16px;"></i> Mobile App Simulator
+    </button>
+  </div>
 
-  <!-- Global Header (Public Navigation) -->
+  <!-- Global Header (Public Desktop Navigation) -->
   <header id="main-header">
     <div class="container header-container">
       <a href="#home" class="logo">
@@ -27,14 +33,13 @@
       <nav>
         <ul class="nav-links" id="nav-links">
           <li><a href="#home" class="active">Home</a></li>
-          <li><a href="#about">About</a></li>
           <li><a href="#courses">Courses</a></li>
+          <li><a href="#about">Faculty</a></li>
           <li><a href="#contact">Contact</a></li>
           <li class="auth-only student-only" style="display:none;"><a href="#student">Student Portal</a></li>
           <li class="auth-only faculty-only" style="display:none;"><a href="#faculty">Faculty Portal</a></li>
           <li class="auth-only admin-only" style="display:none;"><a href="#admin">Admin Dashboard</a></li>
-          <li class="guest-only"><a href="#login" class="btn btn-secondary btn-sm">Login</a></li>
-          <li class="guest-only"><a href="#signup" class="btn btn-primary btn-sm">Enroll Now</a></li>
+          <li class="guest-only"><a href="#login" class="btn btn-primary btn-sm" style="color:white;">Login</a></li>
           <li class="auth-only" style="display:none;"><button id="logout-btn" class="btn btn-outline btn-sm">Logout</button></li>
         </ul>
       </nav>
@@ -44,21 +49,21 @@
     </div>
   </header>
 
-  <!-- SPA Target Mounting Container -->
+  <!-- SPA Target Mounting Container (Desktop) -->
   <main id="app-mount">
     <!-- Dynamic views will mount here -->
   </main>
 
-  <!-- Global Footer -->
+  <!-- Global Footer (Desktop) -->
   <footer id="main-footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-info">
           <a href="#home" class="logo" style="margin-bottom: 1rem;">
             <i data-lucide="brain"></i>
-            <span>Psychology Sphere</span>
+            <span style="color:white;">Psychology Sphere</span>
           </a>
-          <p>Demystifying the human mind, empowering the next generation of clinical psychologists, researchers, and counselors.</p>
+          <p>India's trusted institute for psychology education and competitive exam preparation.</p>
           <div class="social-links">
             <a href="#"><i data-lucide="facebook"></i></a>
             <a href="#"><i data-lucide="twitter"></i></a>
@@ -70,8 +75,8 @@
           <h4>Quick Links</h4>
           <ul>
             <li><a href="#home">Home</a></li>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#courses">Our Courses</a></li>
+            <li><a href="#courses">Courses Offered</a></li>
+            <li><a href="#about">Faculty Details</a></li>
             <li><a href="#contact">Inquiries</a></li>
           </ul>
         </div>
@@ -87,10 +92,10 @@
           <h4>Contact Info</h4>
           <ul>
             <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
-              <i data-lucide="map-pin" style="width:16px;"></i> 77 Cognitive Way, Science Park, NY
+              <i data-lucide="map-pin" style="width:16px;"></i> 77 Cognitive Way, Science Park
             </li>
             <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
-              <i data-lucide="phone" style="width:16px;"></i> +1 (555) PSY-SPHERE
+              <i data-lucide="phone" style="width:16px;"></i> +91 98765 43210
             </li>
             <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
               <i data-lucide="mail" style="width:16px;"></i> admissions@psysphere.edu
@@ -105,223 +110,143 @@
     </div>
   </footer>
 
+  <!-- ==================== MOBILE DEVICE FRAME SIMULATOR ==================== -->
+  <div id="mobile-simulator-container" class="mobile-simulator-container" style="display: none;">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-status-bar">
+        <span>9:41</span>
+        <div style="display:flex; gap:0.25rem; align-items:center;">
+          <i data-lucide="signal" style="width:12px; height:12px;"></i>
+          <i data-lucide="wifi" style="width:12px; height:12px;"></i>
+          <i data-lucide="battery" style="width:14px; height:14px;"></i>
+        </div>
+      </div>
+      <div class="phone-screen" id="phone-app-mount">
+        <!-- Active view mounts here when in mobile mode -->
+      </div>
+      <!-- Mobile Bottom Navigation Bar -->
+      <div class="mobile-nav-bar">
+        <div class="mobile-nav-item active" data-route="#home">
+          <i data-lucide="home"></i>
+          <span>Home</span>
+        </div>
+        <div class="mobile-nav-item" data-route="#courses">
+          <i data-lucide="book-open"></i>
+          <span>Courses</span>
+        </div>
+        <div class="mobile-nav-item" id="mobile-nav-classroom" data-route="#login">
+          <i data-lucide="video"></i>
+          <span>Live Class</span>
+        </div>
+        <div class="mobile-nav-item" id="mobile-nav-profile" data-route="#login">
+          <i data-lucide="user"></i>
+          <span>Profile</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- ==================== VIEW TEMPLATES ==================== -->
 
   <!-- 1. Home View Template -->
   <template id="home-view">
-    <section class="section hero-section" style="padding: 100px 0 60px;">
+    <section class="section hero-section" style="padding: 60px 0;">
       <div class="container grid-2" style="align-items: center;">
         <div class="hero-text">
-          <span class="subtitle">Empowering Minds, Shaping Careers</span>
-          <h1 style="margin: 1rem 0; background: linear-gradient(135deg, #ffffff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            Your Journey Into The <br><span style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Human Mind</span> Starts Here
+          <h1 style="margin: 0 0 1.25rem 0; line-height:1.15; color:#0f172a; font-size:3rem;">
+            Empowering Minds.<br>Building Futures.
           </h1>
-          <p style="font-size: 1.1rem; margin-bottom: 2rem;">
-            Psychology Sphere is a premier training and competitive coaching institute offering advanced curriculums, live classes, research guidance, and counselor certification tracks.
+          <p style="font-size: 1.1rem; margin-bottom: 2.25rem; color:var(--text-secondary); max-width:500px;">
+            India's trusted institute for psychology education and competitive exam preparation.
           </p>
           <div style="display:flex; gap:1rem;">
-            <a href="#courses" class="btn btn-primary">Explore Courses <i data-lucide="arrow-right"></i></a>
-            <a href="#about" class="btn btn-secondary">Learn More</a>
+            <a href="#courses" class="btn btn-primary">Explore Courses</a>
+            <a href="#signup" class="btn btn-secondary">Enroll Now</a>
           </div>
         </div>
         <div class="hero-image-container" style="position:relative;">
-          <img src="images/hero.png" alt="Psychology Neural Network Illustration" style="width: 100%; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
-          <div style="position:absolute; bottom:-20px; left:-20px; background:var(--bg-surface); border:1px solid var(--border-color-active); padding:1rem; border-radius:var(--radius-md); display:flex; gap:1rem; align-items:center; box-shadow:var(--shadow);">
-            <div style="width:40px; height:40px; border-radius:50%; background:rgba(16,185,129,0.1); color:var(--accent-emerald); display:flex; align-items:center; justify-content:center;">
-              <i data-lucide="award"></i>
-            </div>
-            <div>
-              <h4 style="font-size:0.95rem;">Rank #1 Institute</h4>
-              <p style="font-size:0.8rem; margin:0;">Psychology Competitive Exam Prep</p>
-            </div>
+          <!-- Circular graphical outline shell -->
+          <div style="width:340px; height:340px; border-radius:50%; background:var(--primary-gradient); padding:10px; display:flex; align-items:center; justify-content:center; box-shadow:0 15px 35px rgba(79,70,229,0.25);">
+            <img src="images/hero.png" alt="Psychology Graphic" style="width:100%; height:100%; object-fit:cover; border-radius:50%; border:4px solid white;">
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="section" style="padding: 40px 0;">
+    <!-- Public Features Row (Expert Faculty, Live Classes, Study Materials, Proven Results) -->
+    <section class="section" style="padding: 20px 0 60px;">
       <div class="container">
         <div class="grid-4">
-          <div class="metric-card">
-            <div class="metric-info">
-              <h3>Total Students</h3>
-              <div class="metric-value">1,500+</div>
-            </div>
-            <div class="metric-icon icon-purple"><i data-lucide="users"></i></div>
+          <div class="card text-center" style="padding: 1.5rem 1.25rem;">
+            <div class="metric-icon icon-purple" style="margin:0 auto 1rem;"><i data-lucide="users"></i></div>
+            <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">Expert Faculty</h4>
+            <p style="font-size:0.8rem; margin:0;">Learn from industry experts</p>
           </div>
-          <div class="metric-card">
-            <div class="metric-info">
-              <h3>Active Programs</h3>
-              <div class="metric-value">12+</div>
-            </div>
-            <div class="metric-icon icon-pink"><i data-lucide="book-open"></i></div>
+          <div class="card text-center" style="padding: 1.5rem 1.25rem;">
+            <div class="metric-icon icon-pink" style="margin:0 auto 1rem;"><i data-lucide="video"></i></div>
+            <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">Live Classes</h4>
+            <p style="font-size:0.8rem; margin:0;">Interactive & engaging sessions</p>
           </div>
-          <div class="metric-card">
-            <div class="metric-info">
-              <h3>Success Rate</h3>
-              <div class="metric-value">98.2%</div>
-            </div>
-            <div class="metric-icon icon-cyan"><i data-lucide="trending-up"></i></div>
+          <div class="card text-center" style="padding: 1.5rem 1.25rem;">
+            <div class="metric-icon icon-cyan" style="margin:0 auto 1rem;"><i data-lucide="book-open"></i></div>
+            <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">Study Materials</h4>
+            <p style="font-size:0.8rem; margin:0;">Well structured & exam focused</p>
           </div>
-          <div class="metric-card">
-            <div class="metric-info">
-              <h3>Expert Faculty</h3>
-              <div class="metric-value">15+</div>
-            </div>
-            <div class="metric-icon icon-emerald"><i data-lucide="award"></i></div>
+          <div class="card text-center" style="padding: 1.5rem 1.25rem;">
+            <div class="metric-icon icon-emerald" style="margin:0 auto 1rem;"><i data-lucide="award"></i></div>
+            <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">Proven Results</h4>
+            <p style="font-size:0.8rem; margin:0;">Thousands of success stories</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Interactive Teaser Video -->
-    <section class="section" style="background: rgba(255, 255, 255, 0.01); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <!-- Top Courses Section -->
+    <section class="section" style="border-top: 1px solid var(--border-color); background:#fafbfd;">
       <div class="container">
-        <div class="section-header text-center">
-          <span class="subtitle">Demo Lecture Library</span>
-          <h2>Experience Our Teaching Style</h2>
-          <p>Watch a sample session on Cognitive Neuropsychology from our signature preparation program.</p>
-        </div>
-        <div style="max-width: 800px; margin: 0 auto; border-radius: var(--radius-lg); overflow:hidden; border:1px solid var(--border-color); box-shadow: var(--shadow);">
-          <video controls style="width: 100%; display:block;" poster="images/hero.png">
-            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section class="section">
-      <div class="container">
-        <div class="section-header text-center">
-          <span class="subtitle">Testimonials</span>
-          <h2>Alumni Success Stories</h2>
-          <p>Hear from our students who successfully cleared clinical licensing examinations and counseling entrances.</p>
-        </div>
-        <div class="grid-3">
-          <div class="card">
-            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1.5rem;">
-              <div class="user-avatar" style="width:50px; height:50px;">AM</div>
-              <div>
-                <h4 style="font-size:1.05rem;">Alisha Mehta</h4>
-                <p style="font-size:0.8rem; margin:0;">Licensed Clinical Psychologist</p>
-              </div>
-            </div>
-            <p>"The counseling prep modules at Psychology Sphere were structured, comprehensive, and focused on core concepts. The mock trials helped me clear my licensing on the first attempt."</p>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:30px;">
+          <div>
+            <span class="subtitle">Curriculum</span>
+            <h2 style="margin:0; font-size:1.85rem;">Our Top Courses</h2>
           </div>
-          <div class="card">
-            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1.5rem;">
-              <div class="user-avatar" style="width:50px; height:50px;">RK</div>
-              <div>
-                <h4 style="font-size:1.05rem;">Rohan Kapoor</h4>
-                <p style="font-size:0.8rem; margin:0;">Research Associate, NIMH</p>
-              </div>
-            </div>
-            <p>"The research methodology guidance is top-tier. Mentors guide you through research papers and thesis structure. I highly recommend it for any postgraduate aspirant."</p>
-          </div>
-          <div class="card">
-            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1.5rem;">
-              <div class="user-avatar" style="width:50px; height:50px;">SP</div>
-              <div>
-                <h4 style="font-size:1.05rem;">Sanya Patel</h4>
-                <p style="font-size:0.8rem; margin:0;">School Counselor</p>
-              </div>
-            </div>
-            <p>"Live classes fit perfectly into my schedule. The faculty is approachable, and the portal dashboard makes tracking class schedules and fees exceptionally seamless."</p>
-          </div>
+          <a href="#courses" style="color:var(--primary-color); font-weight:600; font-size:0.95rem; display:flex; align-items:center; gap:0.25rem;">View All <i data-lucide="chevron-right" style="width:16px;"></i></a>
+        </div>
+        
+        <div class="grid-4" id="home-courses-grid">
+          <!-- Dynamically loaded courses -->
         </div>
       </div>
     </section>
   </template>
 
-  <!-- 2. About View Template -->
-  <template id="about-view">
-    <section class="section">
-      <div class="container">
-        <div class="section-header text-center" style="max-width: 800px;">
-          <span class="subtitle">About Psychology Sphere</span>
-          <h2>Shaping the Pioneers of Mental Healthcare</h2>
-          <p>Founded with the core vision of standardizing competitive prep in behavioral sciences, Psychology Sphere has evolved into an academic center of excellence.</p>
-        </div>
-
-        <!-- Mission/Vision Grid -->
-        <div class="grid-2" style="margin-bottom: 80px; align-items: stretch;">
-          <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
-            <div style="width:50px; height:50px; border-radius:var(--radius-sm); background:rgba(139,92,246,0.1); color:var(--primary-color); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1.5rem;">
-              <i data-lucide="target"></i>
-            </div>
-            <h3 style="margin-bottom:1rem;">Our Mission</h3>
-            <p>To deliver structured, conceptual, and clinical coaching that enables students to crack elite counseling, research, and psychiatric entrance examinations, while fostering clinical competence.</p>
-          </div>
-          <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
-            <div style="width:50px; height:50px; border-radius:var(--radius-sm); background:rgba(236,72,153,0.1); color:var(--secondary-color); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1.5rem;">
-              <i data-lucide="eye"></i>
-            </div>
-            <h3 style="margin-bottom:1rem;">Our Vision</h3>
-            <p>To establish a digital-first global academy that bridges the gap between academic theory and practical clinical application, producing empathetic and highly capable mental health professionals.</p>
-          </div>
-        </div>
-
-        <!-- Faculty Profiles -->
-        <div class="section-header text-center">
-          <span class="subtitle">Academic Counsel</span>
-          <h2>Our Esteemed Faculty</h2>
-          <p>Learn from leading researchers, consulting psychologists, and board-certified counselors.</p>
-        </div>
-        <div class="grid-3" id="about-faculty-grid">
-          <!-- Dynamically populated -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <!-- 3. Courses View Template -->
+  <!-- 2. Courses View Template -->
   <template id="courses-view">
     <section class="section">
       <div class="container">
-        <div class="section-header text-center">
-          <span class="subtitle">Educational Programs</span>
-          <h2>Curated Psychology Courses</h2>
-          <p>Find the program matching your academic qualifications and career goals. Search and filter below.</p>
+        <div style="margin-bottom: 2rem;">
+          <h2 style="font-size:2rem; margin-bottom:0.25rem;">Courses Offered</h2>
+          <p style="font-size:0.9rem; color:var(--text-muted);">Home &gt; Courses</p>
         </div>
 
-        <!-- Search and Filter Bar -->
-        <div class="card" style="margin-bottom: 40px; padding: 1.5rem;">
-          <div class="grid-3" style="align-items: center; gap:1.5rem;">
-            <div class="form-group" style="margin-bottom: 0;">
-              <label for="course-search-input">Search Course</label>
-              <div style="position:relative;">
-                <input type="text" id="course-search-input" class="form-control" placeholder="Search by title, description..." style="padding-left: 2.5rem;">
-                <i data-lucide="search" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); width:18px; color:var(--text-muted);"></i>
-              </div>
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label for="course-duration-filter">Duration</label>
-              <select id="course-duration-filter" class="form-control">
-                <option value="all">All Durations</option>
-                <option value="3 Months">3 Months</option>
-                <option value="4 Months">4 Months</option>
-                <option value="6 Months">6 Months</option>
-              </select>
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label for="course-fee-filter">Max Tuition Fee</label>
-              <select id="course-fee-filter" class="form-control">
-                <option value="all">Any Fee</option>
-                <option value="500">Under $500</option>
-                <option value="600">Under $600</option>
-                <option value="1000">Under $1000</option>
-              </select>
-            </div>
+        <div class="courses-page-layout">
+          <!-- Left categories filter list -->
+          <aside class="courses-sidebar">
+            <h4 style="font-size:1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">Categories</h4>
+            <ul class="category-list">
+              <li class="category-item active" data-category="all">All Courses</li>
+              <li class="category-item" data-category="UGC NET">UGC NET</li>
+              <li class="category-item" data-category="MA Psychology">MA Psychology</li>
+              <li class="category-item" data-category="CUET PG">CUET PG</li>
+              <li class="category-item" data-category="TISSNET">TISSNET</li>
+            </ul>
+          </aside>
+
+          <!-- Right side horizontal course rows -->
+          <div id="courses-list-rows">
+            <!-- Dynamically populated -->
           </div>
-        </div>
-
-        <!-- Courses Card Grid -->
-        <div class="grid-3" id="courses-list-grid">
-          <!-- Dynamically populated -->
         </div>
       </div>
     </section>
@@ -335,6 +260,24 @@
         </div>
       </div>
     </div>
+  </template>
+
+  <!-- 3. Faculty View Template -->
+  <template id="about-view">
+    <section class="section">
+      <div class="container">
+        <div class="section-header text-center" style="max-width: 600px; margin-bottom:60px;">
+          <span class="subtitle">Academic Leadership</span>
+          <h2>Our Expert Faculty</h2>
+          <p>Learn from the best minds in psychology education.</p>
+        </div>
+
+        <!-- Faculty Profiles in Grid -->
+        <div class="grid-3" id="about-faculty-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
   </template>
 
   <!-- 4. Contact View Template -->
@@ -374,15 +317,6 @@
                 <p>You can pay your enrollment fee in full or split it into 3 equal monthly installments. Installment reminders and payment channels are available directly inside your dashboard.</p>
               </div>
             </div>
-            <div class="accordion-item">
-              <div class="accordion-header">
-                <h4>Do you offer internship opportunities?</h4>
-                <i data-lucide="chevron-down" class="accordion-icon"></i>
-              </div>
-              <div class="accordion-content">
-                <p>Yes, students enrolled in the advanced counseling program gain direct exposure through clinical tie-ups, working under supervisors for case-history records.</p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -401,17 +335,13 @@
             </div>
             <div class="form-group">
               <label for="inq-phone">Contact Number</label>
-              <input type="tel" id="inq-phone" class="form-control" placeholder="e.g. +1 555-0100">
+              <input type="tel" id="inq-phone" class="form-control" placeholder="e.g. +91 98765-43210">
             </div>
             <div class="form-group">
               <label for="inq-course">Course of Interest</label>
               <select id="inq-course" class="form-control">
                 <!-- Populated dynamically -->
               </select>
-            </div>
-            <div class="form-group">
-              <label for="inq-message">Message/Queries</label>
-              <textarea id="inq-message" class="form-control" rows="4" placeholder="Briefly describe your objectives..."></textarea>
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Inquiry</button>
           </form>
@@ -424,47 +354,47 @@
   <!-- 5. Login View Template -->
   <template id="login-view">
     <section class="section" style="display:flex; align-items:center; min-height:70vh;">
-      <div class="container" style="max-width: 480px;">
-        <div class="card">
+      <div class="container" style="max-width: 440px;">
+        <div class="card" style="border-radius: var(--radius-lg); box-shadow:var(--shadow-lg);">
           <div class="text-center" style="margin-bottom: 2rem;">
             <a href="#home" class="logo" style="justify-content:center; margin-bottom:0.5rem;">
               <i data-lucide="brain"></i>
               <span>Psychology Sphere</span>
             </a>
-            <h3 style="margin-top:1rem;">Access Portals</h3>
-            <p>Login to your Student, Faculty, or Admin dashboard</p>
+            <h3 style="margin-top:1.5rem;">Welcome Back!</h3>
+            <p>Login to continue</p>
           </div>
           
           <form id="login-form">
             <div class="form-group">
-              <label for="login-email">Email Address</label>
-              <input type="email" id="login-email" class="form-control" required placeholder="name@domain.com">
+              <label for="login-email">Email or Mobile Number</label>
+              <input type="email" id="login-email" class="form-control" required placeholder="Enter your email or mobile">
             </div>
             <div class="form-group">
               <label for="login-password">Password</label>
-              <input type="password" id="login-password" class="form-control" required placeholder="••••••••">
+              <input type="password" id="login-password" class="form-control" required placeholder="Enter your password">
             </div>
-            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Authenticate</button>
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem; border-radius:30px;">Login</button>
           </form>
 
           <!-- Quick access credentials (highly useful for review!) -->
-          <div style="margin-top:2rem; padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:var(--radius-sm);">
-            <h5 style="margin-bottom:0.75rem; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary);">Quick Test Accounts:</h5>
+          <div style="margin-top:2rem; padding:1rem; background:#f8fafc; border:1px solid var(--border-color); border-radius:var(--radius-sm);">
+            <h5 style="margin-bottom:0.75rem; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary);">Quick Test Accounts:</h5>
             <div style="display:flex; flex-direction:column; gap:0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='student@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between;">
-                <span>Student Login</span> <span>student@test.com</span>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='student@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px;">
+                <span>Student Portal</span> <span>student@test.com</span>
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='faculty@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between;">
-                <span>Faculty Login</span> <span>faculty@test.com</span>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='faculty@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px;">
+                <span>Faculty Portal</span> <span>faculty@test.com</span>
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='admin@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between;">
-                <span>Admin Login</span> <span>admin@test.com</span>
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='admin@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px;">
+                <span>Admin Portal</span> <span>admin@test.com</span>
               </button>
             </div>
           </div>
 
-          <p class="text-center" style="margin-top:1.5rem; font-size:0.9rem;">
-            New student? <a href="#signup" style="color:var(--primary-color); font-weight:600;">Apply & Enroll</a>
+          <p class="text-center" style="margin-top:1.5rem; font-size:0.85rem;">
+            Don't have an account? <a href="#signup" style="color:var(--primary-color); font-weight:600;">Sign Up</a>
           </p>
         </div>
       </div>
@@ -474,15 +404,15 @@
   <!-- 6. Signup View Template -->
   <template id="signup-view">
     <section class="section" style="display:flex; align-items:center; min-height:75vh;">
-      <div class="container" style="max-width: 520px;">
-        <div class="card">
+      <div class="container" style="max-width: 480px;">
+        <div class="card" style="border-radius: var(--radius-lg); box-shadow:var(--shadow-lg);">
           <div class="text-center" style="margin-bottom: 1.5rem;">
             <a href="#home" class="logo" style="justify-content:center; margin-bottom:0.5rem;">
               <i data-lucide="brain"></i>
               <span>Psychology Sphere</span>
             </a>
-            <h3 style="margin-top:1rem;">Student Registration</h3>
-            <p>Enroll in classes and set up your student portal</p>
+            <h3 style="margin-top:1.5rem;">Create Account</h3>
+            <p>Enroll in classes and set up your portal</p>
           </div>
 
           <form id="signup-form">
@@ -496,7 +426,7 @@
             </div>
             <div class="form-group">
               <label for="signup-phone">Contact Number</label>
-              <input type="tel" id="signup-phone" class="form-control" placeholder="+1 555-0000">
+              <input type="tel" id="signup-phone" class="form-control" placeholder="+91 98765-43210">
             </div>
             <div class="form-group">
               <label for="signup-password">Choose Password</label>
@@ -509,14 +439,10 @@
                 <option value="faculty">Faculty / Trainer</option>
               </select>
             </div>
-            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1.5rem; display:flex; gap:0.5rem; align-items:flex-start;">
-              <input type="checkbox" required id="signup-terms" style="margin-top:0.25rem;">
-              <label for="signup-terms">I agree to clear the pending course fees inside the Student Portal upon successful admissions approval.</label>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width:100%;">Create Account & Enroll</button>
+            <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; margin-top:1rem;">Sign Up</button>
           </form>
 
-          <p class="text-center" style="margin-top:1.5rem; font-size:0.9rem;">
+          <p class="text-center" style="margin-top:1.5rem; font-size:0.85rem;">
             Already registered? <a href="#login" style="color:var(--primary-color); font-weight:600;">Sign In</a>
           </p>
         </div>
@@ -527,37 +453,40 @@
   <!-- 7. Student Dashboard View Template -->
   <template id="student-view">
     <div class="dashboard-layout">
-      <!-- Sidebar -->
+      <!-- Sidebar (Midnight Indigo) -->
       <aside class="sidebar" id="dashboard-sidebar">
         <div class="sidebar-brand">
           <a href="#home" class="logo">
             <i data-lucide="brain"></i>
-            <span style="font-size:1.15rem;">Psychology Sphere</span>
+            <span style="font-size:1.15rem; color:white;">Psychology Sphere</span>
           </a>
         </div>
         <ul class="sidebar-menu">
-          <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="student-overview"><i data-lucide="grid"></i> Overview</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-courses"><i data-lucide="book-open"></i> Enrolled Courses</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-fees"><i data-lucide="credit-card"></i> Fee Management</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-classroom"><i data-lucide="tv"></i> Live & Recorded Classes</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="student-overview"><i data-lucide="grid"></i> Dashboard</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-courses"><i data-lucide="book-open"></i> My Courses</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-attendance"><i data-lucide="calendar"></i> Attendance</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-fees"><i data-lucide="credit-card"></i> Fees & Payments</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-classroom"><i data-lucide="tv"></i> Study Materials</a></li>
         </ul>
         <div class="sidebar-user">
           <div class="user-avatar" id="student-avatar-initials">S</div>
           <div class="user-details">
-            <div class="user-name" id="student-display-name">Student Name</div>
+            <div class="user-name" id="student-display-name">Ananya Verma</div>
             <div class="user-role">Student Portal</div>
           </div>
         </div>
       </aside>
 
-      <!-- Dashboard Main -->
+      <!-- Dashboard Main Content -->
       <div class="main-content">
         <div class="dashboard-header">
           <div style="display:flex; align-items:center;">
             <i data-lucide="menu" class="db-menu-toggle" id="db-menu-toggle"></i>
-            <h2 id="student-section-title">Overview</h2>
+            <div style="text-align:left;">
+              <h2 id="student-section-title" style="margin:0; font-size:1.75rem;">Welcome back, Ananya 👋</h2>
+              <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.25rem;">Here's what's happening with your learning journey.</p>
+            </div>
           </div>
-          <div class="badge badge-success">Online Session Active</div>
         </div>
 
         <!-- Student Notices/Announcements Section -->
@@ -567,53 +496,115 @@
 
         <!-- TAB CONTENT: Overview -->
         <div id="student-overview-tab" class="dashboard-tab-content">
+          <!-- Summary Metrics Cards (exactly matching mockup structure) -->
           <div class="metrics-grid">
             <div class="metric-card">
               <div class="metric-info">
-                <h3>Attendance Average</h3>
-                <div class="metric-value" id="student-attendance-percent">0%</div>
+                <h3>My Courses</h3>
+                <div class="metric-value" id="student-course-count" style="color:var(--primary-color);">3</div>
+                <div class="metric-sub">Active</div>
               </div>
-              <div class="metric-icon icon-purple"><i data-lucide="calendar"></i></div>
+              <div class="metric-icon" style="background:#eef2ff; color:var(--primary-color);"><i data-lucide="book-open"></i></div>
             </div>
             <div class="metric-card">
               <div class="metric-info">
-                <h3>Course Enrolled</h3>
-                <div class="metric-value" id="student-course-count">0</div>
+                <h3>Attendance</h3>
+                <div class="metric-value" id="student-attendance-percent" style="color:var(--accent-emerald);">85%</div>
+                <div class="metric-sub">This Month</div>
               </div>
-              <div class="metric-icon icon-pink"><i data-lucide="graduation-cap"></i></div>
+              <div class="metric-icon" style="background:#ecfdf5; color:var(--accent-emerald);"><i data-lucide="check-square"></i></div>
             </div>
             <div class="metric-card">
               <div class="metric-info">
-                <h3>Pending Invoices</h3>
-                <div class="metric-value" id="student-pending-fees">$0</div>
+                <h3>Fee Due</h3>
+                <div class="metric-value" id="student-pending-fees" style="color:var(--accent-amber);">₹ 2,500</div>
+                <div class="metric-sub">Pending</div>
               </div>
-              <div class="metric-icon icon-cyan"><i data-lucide="dollar-sign"></i></div>
+              <div class="metric-icon" style="background:#fffbeb; color:var(--accent-amber);"><i data-lucide="credit-card"></i></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Upcoming Class</h3>
+                <div class="metric-value" style="font-size:1.1rem; font-weight:700; margin-top:0.5rem; color:var(--text-primary);">Today, 6:00 PM</div>
+                <div class="metric-sub" id="student-next-class-title">Research Methods</div>
+              </div>
+              <div class="metric-icon" style="background:#fff1f2; color:var(--accent-rose);"><i data-lucide="clock"></i></div>
             </div>
           </div>
 
-          <h3 style="margin-bottom:1.25rem;">Upcoming Schedule Today</h3>
-          <div id="student-today-classes" style="margin-bottom:2.5rem;">
-            <!-- Loaded by JS -->
+          <!-- Two-Column content area -->
+          <div class="grid-2" style="align-items: start;">
+            <!-- Left Side: My Courses List with progress bars -->
+            <div class="card" style="padding:1.5rem;">
+              <div style="display:flex; justify-content:between; align-items:center; margin-bottom:1.5rem;">
+                <h3 style="font-size:1.15rem; margin:0;">My Courses</h3>
+                <a href="#" onclick="document.querySelector('[data-tab=student-courses]').click();" style="font-size:0.8rem; color:var(--primary-color); font-weight:600; margin-left:auto;">View All</a>
+              </div>
+              
+              <div style="display:flex; flex-direction:column; gap:1.5rem;" id="student-progress-courses-list">
+                <!-- course progress rows populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Right Side: Live Class schedule and announcements -->
+            <div style="display:flex; flex-direction:column; gap:1.5rem;">
+              <!-- Live class banner -->
+              <div class="card" style="padding:1.5rem; border:1px solid rgba(79,70,229,0.2); background:rgba(79,70,229,0.02);">
+                <h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--primary-color); letter-spacing:0.5px; margin-bottom:0.5rem;">Upcoming Live Class</h4>
+                <h3 style="font-size:1.2rem; margin-bottom:0.25rem;" id="live-lecture-heading">Research Methods</h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.5rem;">Today, 6:00 PM</p>
+                <a href="#" id="live-lecture-link" target="_blank" class="btn btn-primary" style="width:100%; border-radius:30px;"><i data-lucide="video" style="width:18px;"></i> Join Live Class</a>
+              </div>
+
+              <!-- Announcements lists -->
+              <div class="card" style="padding:1.5rem;">
+                <h3 style="font-size:1.1rem; margin-bottom:1.25rem;">Recent Announcements</h3>
+                <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:1rem;" id="dashboard-announcements-list">
+                  <!-- Loaded dynamically -->
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- TAB CONTENT: Enrolled Courses -->
+        <!-- TAB CONTENT: My Courses List -->
         <div id="student-courses-tab" class="dashboard-tab-content" style="display:none;">
           <div class="grid-2" id="student-courses-grid">
             <!-- Loaded by JS -->
           </div>
         </div>
 
-        <!-- TAB CONTENT: Fee Management -->
-        <div id="student-fees-tab" class="dashboard-tab-content" style="display:none;">
-          <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
-            <h3 style="margin-bottom:1rem;">Invoices & Payments</h3>
+        <!-- TAB CONTENT: Attendance logs -->
+        <div id="student-attendance-tab" class="dashboard-tab-content" style="display:none;">
+          <div class="card" style="padding:1.5rem; margin-bottom:2rem;">
+            <h3 style="margin-bottom:1rem;">Attendance History</h3>
             <div class="table-container">
               <table>
                 <thead>
                   <tr>
-                    <th>Invoice / Course</th>
-                    <th>Due Date</th>
+                    <th>Date</th>
+                    <th>Course</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="student-attendance-tbody">
+                  <!-- Loaded by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Fees & Payments (Web) -->
+        <div id="student-fees-tab" class="dashboard-tab-content" style="display:none;">
+          <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
+            <h3 style="margin-bottom:1.25rem;">Payment History</h3>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
                     <th>Amount</th>
                     <th>Status</th>
                     <th>Action / Receipt</th>
@@ -624,10 +615,20 @@
                 </tbody>
               </table>
             </div>
+
+            <!-- Secured Payments Brand Logo Grid -->
+            <div class="brands-row">
+              <span>Secure Payments Powered by</span>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg" alt="Razorpay" style="height:20px;">
+              <span style="font-family:var(--font-heading); font-weight:700; color:#5c6bc0; font-size:1rem; opacity:0.6;">UPI</span>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+              <span style="font-weight:600; opacity:0.5; font-size:0.8rem;">NET BANKING</span>
+            </div>
           </div>
         </div>
 
-        <!-- TAB CONTENT: Live & Recorded -->
+        <!-- TAB CONTENT: Study Materials -->
         <div id="student-classroom-tab" class="dashboard-tab-content" style="display:none;">
           <h3 style="margin-bottom:1.5rem;">Live Broadcast Sessions</h3>
           <div class="grid-2" id="student-live-grid" style="margin-bottom:3rem;">
@@ -644,30 +645,30 @@
 
     <!-- Payments Modal -->
     <div class="modal-overlay" id="checkout-modal">
-      <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-box" style="max-width: 450px;">
         <i data-lucide="x" class="modal-close" id="checkout-modal-close"></i>
         <h3>Secure Checkout</h3>
-        <p style="margin-bottom:1.5rem; font-size:0.9rem;">Psychology Sphere Tuition Clearing Portal</p>
+        <p style="margin-bottom:1.5rem; font-size:0.95rem;">Psychology Sphere Tuition Fee Clearance</p>
         
-        <div style="background:rgba(255,255,255,0.02); padding:1rem; border-radius:var(--radius-sm); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);">
+        <div style="background:#f8fafc; padding:1rem; border-radius:var(--radius-sm); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);">
           <span style="font-weight:600;" id="checkout-course-title">Course Tuition</span>
-          <span style="font-weight:700; color:var(--primary-color); font-size:1.25rem;" id="checkout-amount">$0</span>
+          <span style="font-weight:700; color:var(--primary-color); font-size:1.25rem;" id="checkout-amount">₹ 2,500</span>
         </div>
 
         <form id="payment-gate-form">
           <input type="hidden" id="checkout-fee-id">
           <div class="form-group">
             <label>Payment Method</label>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
               <label class="card" style="padding:1rem; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:0.5rem; border-color:var(--primary-color);">
                 <input type="radio" name="pay-method" value="Card" checked style="display:none;">
                 <i data-lucide="credit-card"></i>
-                <span style="font-size:0.85rem; font-weight:600;">Credit / Debit Card</span>
+                <span style="font-size:0.8rem; font-weight:600;">Credit / Debit Card</span>
               </label>
               <label class="card" style="padding:1rem; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
                 <input type="radio" name="pay-method" value="UPI" style="display:none;">
                 <i data-lucide="smartphone"></i>
-                <span style="font-size:0.85rem; font-weight:600;">UPI / Net Banking</span>
+                <span style="font-size:0.8rem; font-weight:600;">UPI QR Code</span>
               </label>
             </div>
           </div>
@@ -675,12 +676,12 @@
           <div id="card-payment-fields">
             <div class="form-group">
               <label for="card-num">Card Number</label>
-              <input type="text" id="card-num" class="form-control" placeholder="4111 2222 3333 4444" pattern="\d{16}" title="Must be a 16-digit card number">
+              <input type="text" id="card-num" class="form-control" placeholder="4111 2222 3333 4444" pattern="\d{16}">
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
               <div class="form-group">
                 <label for="card-expiry">Expiry Date</label>
-                <input type="text" id="card-expiry" class="form-control" placeholder="MM/YY" pattern="\d{2}/\d{2}">
+                <input type="text" id="card-expiry" class="form-control" placeholder="MM/YY">
               </div>
               <div class="form-group">
                 <label for="card-cvv">CVV</label>
@@ -689,19 +690,14 @@
             </div>
           </div>
 
-          <div id="upi-payment-fields" style="display:none; text-align:center; padding:1rem; background:rgba(255,255,255,0.01); border:1px dashed var(--border-color); border-radius:var(--radius-sm); margin-bottom:1.5rem;">
-            <p style="font-size:0.85rem; margin-bottom:1rem;">Scan QR code with any UPI app (GPay, PhonePe, Paytm)</p>
-            <div style="width:140px; height:140px; background:white; margin:0 auto; padding:0.5rem; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;">
-              <!-- Mock QR code -->
-              <i data-lucide="qr-code" style="width:120px; height:120px; color:black;"></i>
-            </div>
-            <div class="form-group" style="margin-top:1rem; text-align:left;">
-              <label for="upi-id">Or Enter UPI ID</label>
-              <input type="text" id="upi-id" class="form-control" placeholder="username@upi">
+          <div id="upi-payment-fields" style="display:none; text-align:center; padding:1rem; background:#f8fafc; border:1px dashed var(--border-color); border-radius:var(--radius-sm); margin-bottom:1.5rem;">
+            <p style="font-size:0.8rem; margin-bottom:1rem; color:var(--text-secondary);">Scan QR code with GPay, PhonePe, or Paytm</p>
+            <div style="width:120px; height:120px; background:white; margin:0 auto; padding:0.5rem; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color);">
+              <i data-lucide="qr-code" style="width:100px; height:100px; color:black;"></i>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Authorize Payment</button>
+          <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; margin-top:1rem;">Pay Now</button>
         </form>
       </div>
     </div>
@@ -715,7 +711,7 @@
         <div class="sidebar-brand">
           <a href="#home" class="logo">
             <i data-lucide="brain"></i>
-            <span style="font-size:1.15rem;">Psychology Sphere</span>
+            <span style="font-size:1.15rem; color:white;">Psychology Sphere</span>
           </a>
         </div>
         <ul class="sidebar-menu">
@@ -738,7 +734,7 @@
             <i data-lucide="menu" class="db-menu-toggle" id="faculty-menu-toggle"></i>
             <h2 id="faculty-section-title">Class Schedules</h2>
           </div>
-          <button class="btn btn-primary btn-sm" id="btn-schedule-class"><i data-lucide="plus"></i> Schedule Class</button>
+          <button class="btn btn-primary btn-sm" id="btn-schedule-class" style="border-radius:20px;"><i data-lucide="plus"></i> Schedule Class</button>
         </div>
 
         <!-- TAB CONTENT: Class Schedule -->
@@ -778,7 +774,7 @@
                 <label for="att-date-select">Registry Date</label>
                 <input type="date" id="att-date-select" class="form-control" required>
               </div>
-              <button class="btn btn-secondary" id="btn-load-attendance-list" style="height:40px;">Load Class List</button>
+              <button class="btn btn-secondary" id="btn-load-attendance-list" style="height:42px;">Load Class List</button>
             </div>
 
             <div class="table-container" id="attendance-table-wrapper" style="display:none;">
@@ -797,7 +793,7 @@
                 </tbody>
               </table>
               <div style="padding:1.5rem; text-align:right;">
-                <button class="btn btn-primary" id="btn-save-attendance-record">Save Logs to Cloud</button>
+                <button class="btn btn-primary" id="btn-save-attendance-record" style="border-radius:20px;">Save Logs to Cloud</button>
               </div>
             </div>
           </div>
@@ -831,7 +827,7 @@
             <label for="sc-link">Zoom/Meet link</label>
             <input type="url" id="sc-link" class="form-control" required placeholder="https://zoom.us/j/...">
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Broadcast Lecture</button>
+          <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; margin-top:1rem;">Broadcast Lecture</button>
         </form>
       </div>
     </div>
@@ -845,15 +841,15 @@
         <div class="sidebar-brand">
           <a href="#home" class="logo">
             <i data-lucide="brain"></i>
-            <span style="font-size:1.15rem;">Psychology Sphere</span>
+            <span style="font-size:1.15rem; color:white;">Psychology Sphere</span>
           </a>
         </div>
         <ul class="sidebar-menu">
           <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="admin-analytics"><i data-lucide="bar-chart-2"></i> Analytics Desk</a></li>
           <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-courses"><i data-lucide="book-open"></i> Manage Courses</a></li>
           <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-users"><i data-lucide="users"></i> Student & Faculty</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-notices"><i data-lucide="megaphone"></i> Notice Broadcaster</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-logs"><i data-lucide="file-text"></i> Security Audit Logs</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-notices"><i data-lucide="megaphone"></i> Notices</a></li>
+          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-logs"><i data-lucide="file-text"></i> Audit Logs</a></li>
         </ul>
         <div class="sidebar-user">
           <div class="user-avatar">A</div>
@@ -872,7 +868,7 @@
             <h2 id="admin-section-title">Analytics Desk</h2>
           </div>
           <div style="display:flex; gap:1rem;">
-            <button class="btn btn-secondary btn-sm" id="btn-admin-export"><i data-lucide="download"></i> Backup Store</button>
+            <button class="btn btn-secondary btn-sm" id="btn-admin-export" style="border-radius:20px;"><i data-lucide="download"></i> Backup Store</button>
           </div>
         </div>
 
@@ -881,38 +877,38 @@
           <div class="metrics-grid">
             <div class="metric-card">
               <div class="metric-info">
-                <h3>Total Gross Revenue</h3>
-                <div class="metric-value" id="admin-rev-metric">$0</div>
+                <h3>Total Collections</h3>
+                <div class="metric-value" id="admin-rev-metric" style="color:var(--accent-emerald);">$0</div>
               </div>
-              <div class="metric-icon icon-emerald"><i data-lucide="dollar-sign"></i></div>
+              <div class="metric-icon" style="background:#ecfdf5; color:var(--accent-emerald);"><i data-lucide="dollar-sign"></i></div>
             </div>
             <div class="metric-card">
               <div class="metric-info">
-                <h3>Registered Students</h3>
-                <div class="metric-value" id="admin-students-metric">0</div>
+                <h3>Students</h3>
+                <div class="metric-value" id="admin-students-metric" style="color:var(--primary-color);">0</div>
               </div>
-              <div class="metric-icon icon-purple"><i data-lucide="users"></i></div>
+              <div class="metric-icon" style="background:#eef2ff; color:var(--primary-color);"><i data-lucide="users"></i></div>
             </div>
             <div class="metric-card">
               <div class="metric-info">
-                <h3>Total Active Enrollments</h3>
-                <div class="metric-value" id="admin-enrolls-metric">0</div>
+                <h3>Enrollments</h3>
+                <div class="metric-value" id="admin-enrolls-metric" style="color:var(--secondary-color);">0</div>
               </div>
-              <div class="metric-icon icon-pink"><i data-lucide="graduation-cap"></i></div>
+              <div class="metric-icon" style="background:#fdf2f8; color:var(--secondary-color);"><i data-lucide="graduation-cap"></i></div>
             </div>
             <div class="metric-card">
               <div class="metric-info">
-                <h3>Attendance Average</h3>
-                <div class="metric-value" id="admin-attendance-metric">0%</div>
+                <h3>Attendance Avg</h3>
+                <div class="metric-value" id="admin-attendance-metric" style="color:var(--accent-cyan);">0%</div>
               </div>
-              <div class="metric-icon icon-cyan"><i data-lucide="check-square"></i></div>
+              <div class="metric-icon" style="background:#f0f9ff; color:var(--accent-cyan);"><i data-lucide="check-square"></i></div>
             </div>
           </div>
 
           <!-- Revenue Stats chart mockup -->
           <div class="grid-2" style="margin-bottom:2.5rem;">
             <div class="card">
-              <h3 style="margin-bottom:1.5rem;">Monthly Collections</h3>
+              <h3 style="margin-bottom:1.5rem; font-size:1.15rem;">Monthly Collections</h3>
               <div style="display:flex; align-items:flex-end; justify-content:space-between; height:180px; padding-top:1rem; border-bottom:1px solid var(--border-color);">
                 <div style="width:12%; height:40%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
                 <div style="width:12%; height:55%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
@@ -924,8 +920,8 @@
               </div>
             </div>
             <div class="card">
-              <h3 style="margin-bottom:1.5rem;">Course wise enrollment split</h3>
-              <div style="display:flex; flex-direction:column; gap:1rem;" id="admin-course-split-bars">
+              <h3 style="margin-bottom:1.5rem; font-size:1.15rem;">Course wise enrollment split</h3>
+              <div style="display:flex; flex-direction:column; gap:1.25rem;" id="admin-course-split-bars">
                 <!-- Populated dynamically -->
               </div>
             </div>
@@ -935,7 +931,7 @@
         <!-- TAB CONTENT: Manage Courses -->
         <div id="admin-courses-tab" class="dashboard-tab-content" style="display:none;">
           <div style="text-align:right; margin-bottom:1.5rem;">
-            <button class="btn btn-primary" id="btn-admin-add-course"><i data-lucide="plus"></i> Add Course</button>
+            <button class="btn btn-primary" id="btn-admin-add-course" style="border-radius:20px;"><i data-lucide="plus"></i> Add Course</button>
           </div>
           <div class="card" style="padding:1.5rem;">
             <div class="table-container">
@@ -962,7 +958,7 @@
           <div class="grid-2">
             <!-- Student Table -->
             <div class="card" style="padding:1.5rem;">
-              <h3 style="margin-bottom:1rem;">Student Records</h3>
+              <h3 style="margin-bottom:1rem; font-size:1.15rem;">Student Records</h3>
               <div class="table-container">
                 <table>
                   <thead>
@@ -981,7 +977,7 @@
             
             <!-- Faculty Table -->
             <div class="card" style="padding:1.5rem;">
-              <h3 style="margin-bottom:1rem;">Faculty Registry</h3>
+              <h3 style="margin-bottom:1rem; font-size:1.15rem;">Faculty Registry</h3>
               <div class="table-container">
                 <table>
                   <thead>
@@ -1004,7 +1000,7 @@
         <div id="admin-notices-tab" class="dashboard-tab-content" style="display:none;">
           <div class="grid-2" style="align-items: flex-start;">
             <div class="card">
-              <h3 style="margin-bottom:1.5rem;">Compose Announcement</h3>
+              <h3 style="margin-bottom:1.5rem; font-size:1.15rem;">Compose Announcement</h3>
               <form id="admin-notice-form">
                 <div class="form-group">
                   <label for="nt-title">Title / Headline</label>
@@ -1022,12 +1018,12 @@
                   <label for="nt-content">Content / Body Text</label>
                   <textarea id="nt-content" class="form-control" rows="5" required placeholder="Type notice parameters here..."></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width:100%;">Broadcast Announcement</button>
+                <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px;">Broadcast Announcement</button>
               </form>
             </div>
 
             <div class="card">
-              <h3 style="margin-bottom:1.5rem;">Notice Board Feed</h3>
+              <h3 style="margin-bottom:1.5rem; font-size:1.15rem;">Notice Board Feed</h3>
               <div id="admin-notices-list" style="display:flex; flex-direction:column; gap:1rem;">
                 <!-- Populated dynamically -->
               </div>
@@ -1038,7 +1034,7 @@
         <!-- TAB CONTENT: Audit logs -->
         <div id="admin-logs-tab" class="dashboard-tab-content" style="display:none;">
           <div class="card" style="padding:1.5rem;">
-            <h3 style="margin-bottom:1rem;">Operation Security Audit Logs</h3>
+            <h3 style="margin-bottom:1rem; font-size:1.15rem;">Operation Security Audit Logs</h3>
             <div class="table-container">
               <table>
                 <thead>
@@ -1089,7 +1085,7 @@
               <!-- Loaded dynamically -->
             </select>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem;">Create Course Record</button>
+          <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; margin-top:1rem;">Create Course Record</button>
         </form>
       </div>
     </div>
@@ -1101,6 +1097,79 @@
   <script>
     // Self-initializing views registry on load
     document.addEventListener('DOMContentLoaded', () => {
+      // ----------------- MOBILE SIMULATOR TOGGLER -----------------
+      const btnViewDesktop = document.getElementById('btn-view-desktop');
+      const btnViewMobile = document.getElementById('btn-view-mobile');
+      const simContainer = document.getElementById('mobile-simulator-container');
+      const appMount = document.getElementById('app-mount');
+      const mainHeader = document.getElementById('main-header');
+      const mainFooter = document.getElementById('main-footer');
+
+      function setViewMode(isMobile) {
+        if (isMobile) {
+          btnViewDesktop.classList.remove('active');
+          btnViewMobile.classList.add('active');
+          document.body.classList.add('mobile-mode');
+          simContainer.style.display = 'flex';
+          
+          // Move current active view inside phone
+          Router.handleRoute();
+        } else {
+          btnViewMobile.classList.remove('active');
+          btnViewDesktop.classList.add('active');
+          document.body.classList.remove('mobile-mode');
+          simContainer.style.display = 'none';
+          
+          // Move current active view back to main app mount
+          Router.handleRoute();
+        }
+        lucide.createIcons();
+      }
+
+      if (btnViewDesktop && btnViewMobile) {
+        btnViewDesktop.addEventListener('click', () => setViewMode(false));
+        btnViewMobile.addEventListener('click', () => setViewMode(true));
+      }
+
+      // Mobile Bottom navigation clicks
+      document.querySelectorAll('.mobile-nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+          const route = item.getAttribute('data-route');
+          window.location.hash = route;
+        });
+      });
+
+      // Synchronize mobile bottom nav state with active route
+      window.addEventListener('hashchange', () => {
+        const hash = window.location.hash || '#home';
+        document.querySelectorAll('.mobile-nav-item').forEach(i => {
+          i.classList.remove('active');
+          if (i.getAttribute('data-route') === hash) {
+            i.classList.add('active');
+          }
+        });
+        
+        // Link specific classroom and profile items if logged in
+        const user = AuthService.getCurrentUser();
+        const navClassroom = document.getElementById('mobile-nav-classroom');
+        const navProfile = document.getElementById('mobile-nav-profile');
+        if (user) {
+          if (navClassroom) {
+            navClassroom.setAttribute('data-route', `#${user.role}`);
+            if (hash === `#${user.role}`) navClassroom.classList.add('active');
+          }
+          if (navProfile) {
+            navProfile.setAttribute('data-route', `#${user.role}`);
+            if (hash === `#${user.role}`) navProfile.classList.add('active');
+          }
+        } else {
+          if (navClassroom) navClassroom.setAttribute('data-route', '#login');
+          if (navProfile) navProfile.setAttribute('data-route', '#login');
+        }
+      });
+
       // Mobile header toggle
       const menuToggle = document.getElementById('menu-toggle');
       const navLinks = document.getElementById('nav-links');
@@ -1131,7 +1200,6 @@
           guests.forEach(el => el.style.display = 'none');
           auths.forEach(el => el.style.display = 'block');
           
-          // Role-specific nav links
           document.querySelectorAll('.student-only').forEach(el => el.style.display = (user.role === 'student' ? 'block' : 'none'));
           document.querySelectorAll('.faculty-only').forEach(el => el.style.display = (user.role === 'faculty' ? 'block' : 'none'));
           document.querySelectorAll('.admin-only').forEach(el => el.style.display = (user.role === 'admin' ? 'block' : 'none'));
@@ -1153,79 +1221,103 @@
         const temp = document.getElementById('home-view').content.cloneNode(true);
         mount.innerHTML = '';
         mount.appendChild(temp);
+
+        // Load 4 course teaser cards
+        const courses = await DatabaseService.getCourses();
+        const grid = document.getElementById('home-courses-grid');
+        if (grid) {
+          grid.innerHTML = courses.slice(0, 4).map(c => `
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; height:100%; padding:1.25rem;">
+              <div>
+                <div style="background:#f1f5f9; height:120px; border-radius:var(--radius-sm); margin-bottom:1rem; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); overflow:hidden;">
+                  <i data-lucide="book-open" style="width:40px; height:40px; color:var(--primary-color); opacity:0.4;"></i>
+                </div>
+                <h4 style="font-size:1.1rem; margin-bottom:0.25rem;">${c.title}</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.75rem;">Duration: ${c.duration}</p>
+                <p style="font-size:0.8rem; line-height:1.4; color:var(--text-secondary); margin-bottom:1rem;">${c.description.substring(0, 80)}...</p>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:0.75rem; margin-top:auto;">
+                <span style="font-weight:700; color:var(--primary-color); font-size:1.05rem;">$${c.fees}</span>
+                <a href="#courses" class="btn btn-secondary btn-sm" style="padding:0.35rem 0.75rem; font-size:0.75rem;">View</a>
+              </div>
+            </div>
+          `).join('');
+          lucide.createIcons();
+        }
       });
 
-      // -- 2. ABOUT VIEW --
+      // -- 2. ABOUT VIEW (FACULTY) --
       Router.register('#about', async (mount) => {
         updateHeaderNav();
         const temp = document.getElementById('about-view').content.cloneNode(true);
         mount.innerHTML = '';
         mount.appendChild(temp);
 
-        // Fetch faculty list
+        // Load Faculty Profiles
         const mentors = await DatabaseService.getProfilesByRole('faculty');
         const facultyGrid = document.getElementById('about-faculty-grid');
         if (facultyGrid) {
           facultyGrid.innerHTML = mentors.map(m => `
-            <div class="card text-center" style="padding: 2rem;">
-              <div class="user-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1.5rem; border:2px solid var(--border-color-active);">${m.full_name.charAt(0)}</div>
-              <h3>${m.full_name}</h3>
-              <p class="subtitle" style="margin-bottom:1rem; font-size:0.8rem;">Faculty Consultant</p>
-              <p style="font-size:0.9rem;">Expert in Counseling & Cognitive Behavioral Studies. Over 10 years of mentoring clinical graduates.</p>
-              <div style="display:flex; justify-content:center; gap:0.75rem; margin-top:1.5rem; color:var(--text-muted);">
-                <i data-lucide="mail" style="width:18px; cursor:pointer;" title="${m.email}"></i>
-                <i data-lucide="phone" style="width:18px; cursor:pointer;" title="${m.phone || 'N/A'}"></i>
+            <div class="card text-center" style="padding: 1.75rem;">
+              <div class="user-avatar" style="width: 70px; height: 70px; font-size: 1.85rem; margin: 0 auto 1.25rem; border:2px solid var(--border-color-active);">${m.full_name.charAt(0)}</div>
+              <h3 style="font-size:1.2rem; margin-bottom:0.25rem;">${m.full_name}</h3>
+              <p class="subtitle" style="margin-bottom:0.75rem; font-size:0.75rem; font-weight:700;">Ph.D. / Senior Lecturer</p>
+              <p style="font-size:0.825rem; color:var(--text-secondary); line-height:1.4;">Specialization: Clinical Counseling. 10+ Years of coaching entrance aspirants.</p>
+              <div style="display:flex; justify-content:center; gap:1rem; margin-top:1.25rem; color:var(--text-muted);">
+                <i data-lucide="linkedin" style="width:16px; cursor:pointer;"></i>
+                <i data-lucide="mail" style="width:16px; cursor:pointer;" title="${m.email}"></i>
               </div>
             </div>
           `).join('');
+          lucide.createIcons();
         }
       });
 
-      // -- 3. COURSES VIEW --
+      // -- 3. COURSES VIEW (Horizontal catalog row layout) --
       Router.register('#courses', async (mount) => {
         updateHeaderNav();
         const temp = document.getElementById('courses-view').content.cloneNode(true);
         mount.innerHTML = '';
         mount.appendChild(temp);
 
-        const coursesListGrid = document.getElementById('courses-list-grid');
-        const searchInput = document.getElementById('course-search-input');
-        const durationFilter = document.getElementById('course-duration-filter');
-        const feeFilter = document.getElementById('course-fee-filter');
-
+        const rowsContainer = document.getElementById('courses-list-rows');
         let allCourses = await DatabaseService.getCourses();
 
-        function renderFilteredCourses() {
-          const query = searchInput.value.toLowerCase();
-          const duration = durationFilter.value;
-          const feeLimit = feeFilter.value;
+        function renderRows(category = 'all') {
+          const filtered = category === 'all' 
+            ? allCourses 
+            : allCourses.filter(c => c.title.includes(category) || c.description.includes(category));
 
-          const filtered = allCourses.filter(c => {
-            const matchesQuery = c.title.toLowerCase().includes(query) || c.description.toLowerCase().includes(query);
-            const matchesDuration = duration === 'all' || c.duration === duration;
-            const matchesFee = feeLimit === 'all' || c.fees <= parseFloat(feeLimit);
-            return matchesQuery && matchesDuration && matchesFee;
-          });
-
-          if (coursesListGrid) {
+          if (rowsContainer) {
             if (filtered.length === 0) {
-              coursesListGrid.innerHTML = `<div style="grid-column: 1/-1;" class="text-center section"><p>No courses match your search criteria.</p></div>`;
+              rowsContainer.innerHTML = `<div class="card text-center section"><p>No courses found under this category.</p></div>`;
               return;
             }
 
-            coursesListGrid.innerHTML = filtered.map(c => `
-              <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
-                <div>
-                  <span class="badge badge-primary" style="margin-bottom:1rem;">${c.duration}</span>
-                  <h3 style="margin-bottom:0.75rem; font-size:1.35rem;">${c.title}</h3>
-                  <p style="font-size:0.9rem; margin-bottom:1.5rem;">${c.description}</p>
+            rowsContainer.innerHTML = filtered.map(c => `
+              <div class="course-horizontal-card">
+                <!-- Course Left Image -->
+                <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); width:100%; height:110px; display:flex; align-items:center; justify-content:center; background:#f8fafc;">
+                  <i data-lucide="book-open" style="width:36px; height:36px; color:var(--primary-color); opacity:0.35;"></i>
                 </div>
-                <div>
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-top:1rem; border-top:1px solid var(--border-color);">
-                    <span style="font-size:1.25rem; font-weight:700; color:var(--text-primary);">$${c.fees}</span>
-                    <span style="font-size:0.8rem; color:var(--text-muted);">Assigned: ${c.faculty_name || 'Sarah Jenkins'}</span>
+                
+                <!-- Course Details Info -->
+                <div class="course-horizontal-info">
+                  <h3>${c.title}</h3>
+                  <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4;">${c.description}</p>
+                  <div class="course-horizontal-meta">
+                    <span><i data-lucide="clock" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> ${c.duration}</span>
+                    <span><i data-lucide="tv" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> Live + Recorded</span>
                   </div>
-                  <button class="btn btn-secondary btn-sm btn-view-details" data-id="${c.id}" style="width:100%;">Detailed Syllabus</button>
+                </div>
+
+                <!-- Course Action / Fees -->
+                <div class="course-horizontal-action">
+                  <div style="margin-bottom:1rem; text-align:right;">
+                    <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Tuition Fee</div>
+                    <div style="font-size:1.35rem; font-weight:800; color:var(--primary-color);">$${c.fees}</div>
+                  </div>
+                  <button class="btn btn-primary btn-sm btn-view-details" data-id="${c.id}" style="border-radius:20px; padding:0.45rem 1rem;">View Details</button>
                 </div>
               </div>
             `).join('');
@@ -1239,24 +1331,24 @@
                   const modal = document.getElementById('course-detail-modal');
                   const modalContent = document.getElementById('course-modal-content');
                   modalContent.innerHTML = `
-                    <span class="badge badge-primary" style="margin-bottom:1rem;">Syllabus Overview</span>
-                    <h2 style="margin-bottom:1rem;">${course.title}</h2>
-                    <p style="margin-bottom:1.5rem; font-size:1.05rem;">${course.description}</p>
+                    <span class="badge badge-primary" style="margin-bottom:0.75rem;">Syllabus Overview</span>
+                    <h2 style="margin-bottom:0.5rem; font-size:1.5rem;">${course.title}</h2>
+                    <p style="margin-bottom:1.5rem; font-size:0.95rem; color:var(--text-secondary);">${course.description}</p>
                     
                     <h4 style="margin-bottom:0.5rem; color:var(--primary-color);">Curriculum Modules</h4>
                     <ul style="list-style:none; padding:0; margin-bottom:2rem; display:flex; flex-direction:column; gap:0.5rem;">
-                      <li style="display:flex; gap:0.5rem; font-size:0.95rem;"><i data-lucide="check" style="width:18px; color:var(--accent-emerald);"></i> Module 1: Foundations & Historical Timeline</li>
-                      <li style="display:flex; gap:0.5rem; font-size:0.95rem;"><i data-lucide="check" style="width:18px; color:var(--accent-emerald);"></i> Module 2: Research Design & Experimental Methods</li>
-                      <li style="display:flex; gap:0.5rem; font-size:0.95rem;"><i data-lucide="check" style="width:18px; color:var(--accent-emerald);"></i> Module 3: Clinical Case Histories & Assessments</li>
-                      <li style="display:flex; gap:0.5rem; font-size:0.95rem;"><i data-lucide="check" style="width:18px; color:var(--accent-emerald);"></i> Module 4: Board Exam Mock Tests & Reviews</li>
+                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 1: Foundations & Historical Outline</li>
+                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 2: Research Design & Experimental Methods</li>
+                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 3: Clinical Case Histories & Assessments</li>
+                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 4: Mock Entrance Exams & Practice Papers</li>
                     </ul>
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1.25rem;">
                       <div>
-                        <div style="font-size:0.8rem; color:var(--text-muted);">Total Fees</div>
-                        <div style="font-size:1.5rem; font-weight:800; color:var(--text-primary);">$${course.fees}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">Total Fees</div>
+                        <div style="font-size:1.35rem; font-weight:800; color:var(--text-primary);">$${course.fees}</div>
                       </div>
-                      <a href="#signup" onclick="document.getElementById('course-detail-modal').classList.remove('active');" class="btn btn-primary">Enroll Program</a>
+                      <a href="#signup" onclick="document.getElementById('course-detail-modal').classList.remove('active');" class="btn btn-primary" style="border-radius:20px; padding:0.5rem 1.25rem; font-size:0.85rem;">Enroll Program</a>
                     </div>
                   `;
                   modal.classList.add('active');
@@ -1264,17 +1356,23 @@
                 }
               });
             });
+            lucide.createIcons();
           }
         }
 
-        if (searchInput) searchInput.addEventListener('input', renderFilteredCourses);
-        if (durationFilter) durationFilter.addEventListener('change', renderFilteredCourses);
-        if (feeFilter) feeFilter.addEventListener('change', renderFilteredCourses);
+        // Render first view
+        renderRows('all');
 
-        // First render
-        renderFilteredCourses();
+        // Sidebar category click handler
+        document.querySelectorAll('.category-item').forEach(item => {
+          item.addEventListener('click', () => {
+            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            renderRows(item.getAttribute('data-category'));
+          });
+        });
 
-        // Bind modal close
+        // Close modal
         const modalClose = document.getElementById('course-modal-close');
         if (modalClose) {
           modalClose.addEventListener('click', () => {
@@ -1371,7 +1469,7 @@
         }
       });
 
-      // -- 7. STUDENT DASHBOARD VIEW --
+      // -- 7. STUDENT DASHBOARD VIEW (Web Layout matching mockup) --
       Router.register('#student', async (mount) => {
         updateHeaderNav();
         const user = AuthService.getCurrentUser();
@@ -1379,7 +1477,7 @@
         mount.innerHTML = '';
         mount.appendChild(temp);
 
-        // Sidebar display details
+        // Populate header / avatar details
         document.getElementById('student-display-name').textContent = user.full_name;
         document.getElementById('student-avatar-initials').textContent = user.full_name.charAt(0);
 
@@ -1394,113 +1492,121 @@
           document.addEventListener('click', () => sidebar.classList.remove('active'));
         }
 
-        // Fetch Dashboard Data
+        // Fetch student specific data
         const data = await DatabaseService.getStudentDashboardData(user.id);
         const notices = await DatabaseService.getNotices('student');
 
-        // Render Notices
-        const noticesContainer = document.getElementById('student-notices-container');
-        if (noticesContainer) {
-          noticesContainer.innerHTML = notices.map(n => `
-            <div class="card" style="padding: 1.25rem; border-left: 4px solid var(--primary-color); display:flex; gap:1rem; align-items:flex-start; margin-bottom: 0.75rem;">
-              <i data-lucide="megaphone" style="color:var(--primary-color); flex-shrink:0;"></i>
-              <div>
-                <h4 style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">${n.title}</h4>
-                <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">${n.content}</p>
+        // 1. Metric Counts & Average
+        const presents = data.attendance.filter(a => a.status === 'present').length;
+        const totalAtt = data.attendance.length;
+        const attRate = totalAtt > 0 ? Math.round((presents / totalAtt) * 100) : 85; // default fallback
+        
+        document.getElementById('student-course-count').textContent = data.enrolledCourses.length;
+        document.getElementById('student-attendance-percent').textContent = `${attRate}%`;
+        
+        const unpaidFees = data.fees.filter(f => f.status === 'pending');
+        const totalPending = unpaidFees.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        document.getElementById('student-pending-fees').textContent = `₹ ${totalPending > 0 ? totalPending : '0'}`;
+
+        // Set Next class header
+        if (data.liveClasses.length > 0) {
+          document.getElementById('student-next-class-title').textContent = data.liveClasses[0].title;
+          document.getElementById('live-lecture-heading').textContent = data.liveClasses[0].title;
+          document.getElementById('live-lecture-link').setAttribute('href', data.liveClasses[0].meeting_link);
+        }
+
+        // 2. Render Left Column Progress Bars (exactly matches mockup)
+        const progressContainer = document.getElementById('student-progress-courses-list');
+        if (progressContainer) {
+          const mockProgresses = [78, 60, 40]; // values from user image
+          progressContainer.innerHTML = data.enrolledCourses.map((c, idx) => {
+            const progressVal = mockProgresses[idx % mockProgresses.length];
+            return `
+              <div class="progress-container">
+                <div class="progress-header">
+                  <span>${c.title}</span><strong>${progressVal}%</strong>
+                </div>
+                <div style="display:flex; align-items:center; gap:1rem;">
+                  <div class="progress-bar-bg" style="flex-grow:1;">
+                    <div class="progress-bar-fill" style="width:${progressVal}%;"></div>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" style="padding:0.25rem 0.75rem; font-size:0.75rem; border-radius:4px;">Continue</button>
+                </div>
               </div>
-            </div>
+            `;
+          }).join('');
+        }
+
+        // 3. Render Announcements feed
+        const announcementsList = document.getElementById('dashboard-announcements-list');
+        if (announcementsList) {
+          announcementsList.innerHTML = notices.map(n => `
+            <li style="border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+              <h4 style="font-size:0.9rem; margin-bottom:0.15rem; color:var(--text-primary); font-weight:600;">${n.title}</h4>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">${n.content}</p>
+            </li>
           `).join('');
         }
 
-        // Attendance Metric
-        const studentAttendanceMetric = document.getElementById('student-attendance-percent');
-        if (studentAttendanceMetric) {
-          const presents = data.attendance.filter(a => a.status === 'present').length;
-          const totalAtt = data.attendance.length;
-          const attRate = totalAtt > 0 ? Math.round((presents / totalAtt) * 100) : 100;
-          studentAttendanceMetric.textContent = `${attRate}%`;
-          if (attRate < 75) {
-            studentAttendanceMetric.style.color = 'var(--accent-rose)';
-          } else {
-            studentAttendanceMetric.style.color = 'var(--accent-emerald)';
-          }
-        }
-
-        // Course count
-        document.getElementById('student-course-count').textContent = data.enrolledCourses.length;
-
-        // Pending invoices metric
-        const pendingFees = data.fees.filter(f => f.status === 'pending');
-        const totalPending = pendingFees.reduce((sum, item) => sum + parseFloat(item.amount), 0);
-        document.getElementById('student-pending-fees').textContent = `$${totalPending}`;
-
-        // Render Today's Scheduled Lectures (under Overview Tab)
-        const todayClassesDiv = document.getElementById('student-today-classes');
-        if (todayClassesDiv) {
-          if (data.liveClasses.length === 0) {
-            todayClassesDiv.innerHTML = `<div class="card text-center" style="padding:1.5rem;"><p style="margin:0;">No lectures scheduled for today.</p></div>`;
-          } else {
-            todayClassesDiv.innerHTML = data.liveClasses.map(l => {
-              const diffMs = new Date(l.scheduled_at) - Date.now();
-              const isLive = diffMs <= 30 * 60 * 1000 && diffMs >= -2 * 60 * 60 * 1000; // Live if within range
-              const stateBadge = isLive ? `<span class="badge badge-success">LIVE NOW</span>` : `<span class="badge badge-warning">Starts Soon</span>`;
-              return `
-                <div class="card" style="padding:1.5rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-color:${isLive ? 'var(--accent-emerald)' : 'var(--border-color)'};">
-                  <div>
-                    <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem;">
-                      ${stateBadge}
-                      <span style="font-size:0.8rem; color:var(--text-muted);">${new Date(l.scheduled_at).toLocaleString()}</span>
-                    </div>
-                    <h4 style="font-size:1.1rem; margin:0;">${l.title}</h4>
-                  </div>
-                  <a href="${l.meeting_link}" target="_blank" class="btn ${isLive ? 'btn-primary' : 'btn-secondary'} btn-sm"><i data-lucide="video"></i> Launch Class</a>
-                </div>
-              `;
-            }).join('');
-          }
-        }
-
-        // Render Enrolled Courses Tab
+        // 4. Render My Courses grid tab
         const coursesGrid = document.getElementById('student-courses-grid');
         if (coursesGrid) {
           coursesGrid.innerHTML = data.enrolledCourses.map(c => `
             <div class="card">
-              <span class="badge badge-primary" style="margin-bottom:1rem;">Active Program</span>
-              <h3 style="margin-bottom:0.5rem;">${c.title}</h3>
-              <p style="font-size:0.9rem; margin-bottom:1rem;">Duration: ${c.duration} | Tuition: $${c.fees}</p>
-              <div style="background:rgba(255,255,255,0.01); padding:0.75rem; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-size:0.85rem; color:var(--text-secondary);">
+              <span class="badge badge-primary" style="margin-bottom:0.75rem;">Active Program</span>
+              <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">${c.title}</h3>
+              <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Duration: ${c.duration} | Fees: $${c.fees}</p>
+              <div style="background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:var(--radius-sm); font-size:0.8rem; color:var(--text-secondary);">
                 <strong>Assigned Instructor:</strong> Dr. Sarah Jenkins (admissions@psysphere.edu)
               </div>
             </div>
           `).join('');
         }
 
-        // Render Fees Tab Table
+        // 5. Render Attendance Tab list
+        const attendanceTbody = document.getElementById('student-attendance-tbody');
+        if (attendanceTbody) {
+          attendanceTbody.innerHTML = data.attendance.map(a => {
+            const courseTitle = data.enrolledCourses.find(c => c.id === a.course_id)?.title || "General Lecture";
+            const badgeClass = a.status === 'present' ? 'badge-success' : (a.status === 'absent' ? 'badge-danger' : 'badge-warning');
+            return `
+              <tr>
+                <td>${a.date}</td>
+                <td style="font-weight:600;">${courseTitle}</td>
+                <td><span class="badge ${badgeClass}">${a.status}</span></td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        // 6. Render Fees & Payments Tab Table (exactly matching table header from mockup)
         const feesTbody = document.getElementById('student-fees-tbody');
         function renderFeesTable() {
           if (feesTbody) {
             feesTbody.innerHTML = data.fees.map(f => {
-              const courseTitle = data.enrolledCourses.find(c => c.id === f.course_id)?.title || "General Fee Invoice";
-              const actionBtn = f.status === 'pending' 
-                ? `<button class="btn btn-primary btn-sm btn-pay-fee" data-id="${f.id}" data-amount="${f.amount}" data-title="${courseTitle}">Pay Invoice</button>`
-                : `<div style="font-size:0.8rem; color:var(--text-muted); font-family:monospace;">Receipt: ${f.receipt_no}</div>`;
+              const courseTitle = data.enrolledCourses.find(c => c.id === f.course_id)?.title || "Course Tuition Invoice";
+              const dateVal = f.paid_at ? new Date(f.paid_at).toLocaleDateString() : 'N/A';
               
-              const statusBadge = f.status === 'paid' 
-                ? `<span class="badge badge-success">Cleared</span>`
-                : `<span class="badge badge-danger">Unpaid</span>`;
+              const statusBadge = f.status === 'paid'
+                ? `<span class="badge badge-success" style="padding:0.2rem 0.6rem;">Paid</span>`
+                : `<span class="badge badge-danger" style="padding:0.2rem 0.6rem;">Pending</span>`;
+              
+              const actionBtn = f.status === 'pending'
+                ? `<button class="btn btn-primary btn-sm btn-pay-fee" data-id="${f.id}" data-amount="${f.amount}" data-title="${courseTitle}" style="border-radius:20px; padding:0.3rem 0.8rem; font-size:0.75rem;">Pay Now</button>`
+                : `<a href="#" class="btn btn-secondary btn-sm" style="border-radius:20px; padding:0.3rem 0.8rem; font-size:0.75rem;"><i data-lucide="download" style="width:12px; height:12px; display:inline-block; vertical-align:middle;"></i> Download</a>`;
               
               return `
                 <tr>
+                  <td>${dateVal}</td>
                   <td style="font-weight:600;">${courseTitle}</td>
-                  <td>${f.due_date}</td>
-                  <td><strong>$${f.amount}</strong></td>
+                  <td><strong>₹ ${f.amount}</strong></td>
                   <td>${statusBadge}</td>
                   <td>${actionBtn}</td>
                 </tr>
               `;
             }).join('');
 
-            // Bind Pay Invoice buttons
+            // Bind checkout pay actions
             document.querySelectorAll('.btn-pay-fee').forEach(btn => {
               btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
@@ -1508,21 +1614,22 @@
                 const title = btn.getAttribute('data-title');
                 
                 document.getElementById('checkout-fee-id').value = id;
-                document.getElementById('checkout-amount').textContent = `$${amt}`;
+                document.getElementById('checkout-amount').textContent = `₹ ${amt}`;
                 document.getElementById('checkout-course-title').textContent = title;
                 
                 document.getElementById('checkout-modal').classList.add('active');
               });
             });
+            lucide.createIcons();
           }
         }
         renderFeesTable();
 
-        // Toggle checkout radio fields
-        const payMethods = document.querySelectorAll('input[name="pay-method"]');
-        payMethods.forEach(rad => {
+        // Payment gate selectors toggling
+        const payRadios = document.querySelectorAll('input[name="pay-method"]');
+        payRadios.forEach(rad => {
           rad.parentElement.addEventListener('click', () => {
-            payMethods.forEach(r => r.parentElement.style.borderColor = 'var(--border-color)');
+            payRadios.forEach(r => r.parentElement.style.borderColor = 'var(--border-color)');
             rad.checked = true;
             rad.parentElement.style.borderColor = 'var(--primary-color)';
             
@@ -1536,10 +1643,10 @@
           });
         });
 
-        // Checkout form submit
-        const paymentGateForm = document.getElementById('payment-gate-form');
-        if (paymentGateForm) {
-          paymentGateForm.addEventListener('submit', async (e) => {
+        // Checkout submit simulation
+        const checkoutForm = document.getElementById('payment-gate-form');
+        if (checkoutForm) {
+          checkoutForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const feeId = document.getElementById('checkout-fee-id').value;
             const method = document.querySelector('input[name="pay-method"]:checked').value;
@@ -1548,16 +1655,16 @@
               await DatabaseService.payFee(feeId, method);
               Toast.show("Tuition invoice cleared successfully! Receipt generated.", "success");
               document.getElementById('checkout-modal').classList.remove('active');
-              paymentGateForm.reset();
+              checkoutForm.reset();
               
-              // Reload tab data
+              // Reload
               const freshData = await DatabaseService.getStudentDashboardData(user.id);
               data.fees = freshData.fees;
               
               // Re-update metrics
               const pending = data.fees.filter(f => f.status === 'pending');
               const sum = pending.reduce((s, i) => s + parseFloat(i.amount), 0);
-              document.getElementById('student-pending-fees').textContent = `$${sum}`;
+              document.getElementById('student-pending-fees').textContent = `₹ ${sum}`;
               
               renderFeesTable();
             } catch (err) {
@@ -1574,18 +1681,18 @@
           });
         }
 
-        // Render Live/Recorded classroom tab
+        // Render classroom live / recorded
         const liveGrid = document.getElementById('student-live-grid');
         if (liveGrid) {
           if (data.liveClasses.length === 0) {
-            liveGrid.innerHTML = `<div style="grid-column: 1/-1;" class="card text-center"><p style="margin:0;">No live classes broadcasted currently.</p></div>`;
+            liveGrid.innerHTML = `<div style="grid-column: 1/-1;" class="card text-center"><p style="margin:0;">No live classes currently scheduled.</p></div>`;
           } else {
             liveGrid.innerHTML = data.liveClasses.map(l => `
-              <div class="card" style="padding:1.5rem;">
-                <span class="badge badge-primary" style="margin-bottom:0.75rem;">Scheduled Interactive Lecture</span>
-                <h4 style="margin-bottom:0.5rem; font-size:1.15rem;">${l.title}</h4>
-                <p style="font-size:0.85rem; margin-bottom:1.5rem;"><i data-lucide="clock" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> ${new Date(l.scheduled_at).toLocaleString()}</p>
-                <a href="${l.meeting_link}" target="_blank" class="btn btn-outline btn-sm"><i data-lucide="video"></i> Launch Zoom Room</a>
+              <div class="card" style="padding:1.25rem;">
+                <span class="badge badge-primary" style="margin-bottom:0.5rem;">Live Broadcast</span>
+                <h4 style="margin-bottom:0.25rem; font-size:1.1rem;">${l.title}</h4>
+                <p style="font-size:0.8rem; margin-bottom:1rem;"><i data-lucide="clock" style="width:12px; display:inline-block; vertical-align:middle;"></i> ${new Date(l.scheduled_at).toLocaleString()}</p>
+                <a href="${l.meeting_link}" target="_blank" class="btn btn-outline btn-sm" style="border-radius:20px; font-size:0.75rem;"><i data-lucide="video" style="width:14px;"></i> Join Zoom</a>
               </div>
             `).join('');
           }
@@ -1594,28 +1701,27 @@
         const recordedGrid = document.getElementById('student-recorded-grid');
         if (recordedGrid) {
           if (data.recorded.length === 0) {
-            recordedGrid.innerHTML = `<div style="grid-column: 1/-1;" class="card text-center"><p style="margin:0;">No recordings uploaded yet.</p></div>`;
+            recordedGrid.innerHTML = `<div style="grid-column: 1/-1;" class="card text-center"><p style="margin:0;">No playbacks uploaded.</p></div>`;
           } else {
             recordedGrid.innerHTML = data.recorded.map(r => `
               <div class="card" style="padding:1rem;">
-                <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); margin-bottom:1rem;">
+                <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); margin-bottom:0.75rem;">
                   <video controls style="width: 100%; display:block;">
                     <source src="${r.video_url}" type="video/mp4">
                   </video>
                 </div>
-                <h4 style="font-size:0.95rem; margin-bottom:0.25rem;">${r.title}</h4>
-                <p style="font-size:0.8rem; margin:0;">Recorded Session Playback</p>
+                <h4 style="font-size:0.9rem; margin-bottom:0.25rem;">${r.title}</h4>
+                <p style="font-size:0.75rem; margin:0; color:var(--text-muted);">Recorded Playback</p>
               </div>
             `).join('');
           }
         }
 
-        // Tab selection listener
+        // Tab selection clickers
         document.querySelectorAll('#dashboard-sidebar .sidebar-link').forEach(link => {
           link.addEventListener('click', (e) => {
             e.preventDefault();
             
-            // Tab active states
             document.querySelectorAll('#dashboard-sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
             link.classList.add('active');
             
@@ -1629,6 +1735,7 @@
             lucide.createIcons();
           });
         });
+        lucide.createIcons();
       });
 
       // -- 8. FACULTY DASHBOARD VIEW --
@@ -1675,7 +1782,7 @@
         }
         renderSchedule();
 
-        // Populate course dropdown selectors (in Schedule Class Modal & Attendance registry)
+        // Populate course dropdown selectors
         const courseSelect = document.getElementById('att-course-select');
         const scheduleCourseSelect = document.getElementById('sc-course-id');
         
@@ -1710,7 +1817,6 @@
               return;
             }
 
-            // Load student list enrolled in selected course
             const enrollments = data.enrollments.filter(e => e.course_id === parseInt(courseId));
             loadedStudents = enrollments.map(e => data.students.find(s => s.id === e.student_id)).filter(Boolean);
 
@@ -1721,7 +1827,6 @@
             }
 
             attTbody.innerHTML = loadedStudents.map(s => {
-              // Check if attendance already logged for today
               const existingRecord = data.attendance.find(a => a.student_id === s.id && a.course_id === parseInt(courseId) && a.date === date);
               const presentChecked = (!existingRecord || existingRecord.status === 'present') ? 'checked' : '';
               const absentChecked = (existingRecord && existingRecord.status === 'absent') ? 'checked' : '';
@@ -1759,7 +1864,6 @@
               }
               Toast.show("Attendance registries synced successfully!", "success");
               
-              // Refresh state data
               const freshData = await DatabaseService.getFacultyDashboardData(user.id);
               data.attendance = freshData.attendance;
             } catch (err) {
@@ -1786,11 +1890,10 @@
             
             try {
               const newC = await DatabaseService.scheduleLiveClass(courseId, title, time, link);
-              Toast.show("Lecture Broadcasted & Scheduled!", "success");
+              Toast.show("Lecture Scheduled!", "success");
               modal.classList.remove('active');
               scheduleForm.reset();
               
-              // Refresh layout
               const freshData = await DatabaseService.getFacultyDashboardData(user.id);
               data.liveClasses = freshData.liveClasses;
               renderSchedule();
@@ -1848,13 +1951,13 @@
 
         // 1. Populate general metrics
         const totalPaidAmt = data.fees.filter(f => f.status === 'paid').reduce((s, i) => s + parseFloat(i.amount), 0);
-        document.getElementById('admin-rev-metric').textContent = `$${totalPaidAmt}`;
+        document.getElementById('admin-rev-metric').textContent = `₹ ${totalPaidAmt}`;
         document.getElementById('admin-students-metric').textContent = data.students.length;
         document.getElementById('admin-enrolls-metric').textContent = data.enrollments.length;
         
         const presents = data.attendance.filter(a => a.status === 'present').length;
         const totalAtt = data.attendance.length;
-        document.getElementById('admin-attendance-metric').textContent = totalAtt > 0 ? `${Math.round((presents / totalAtt) * 100)}%` : '100%';
+        document.getElementById('admin-attendance-metric').textContent = totalAtt > 0 ? `${Math.round((presents / totalAtt) * 100)}%` : '85%';
 
         // 2. Load bar charts split
         const splitBarDiv = document.getElementById('admin-course-split-bars');
@@ -1867,7 +1970,7 @@
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
                   <span>${c.title}</span><strong>${count} Enrolled</strong>
                 </div>
-                <div style="width:100%; height:8px; background:rgba(255,255,255,0.03); border-radius:10px; overflow:hidden;">
+                <div style="width:100%; height:8px; background:rgba(0,0,0,0.03); border-radius:10px; overflow:hidden;">
                   <div style="width:${pct}%; height:100%; background:var(--primary-gradient);"></div>
                 </div>
               </div>
@@ -1899,7 +2002,6 @@
                   await DatabaseService.deleteCourse(courseId);
                   Toast.show("Course deleted successfully.", "success");
                   
-                  // Reload
                   const freshData = await DatabaseService.getAdminDashboardData();
                   data.courses = freshData.courses;
                   renderCoursesList();
@@ -1940,7 +2042,6 @@
               courseModal.classList.remove('active');
               courseForm.reset();
 
-              // Reload
               const freshData = await DatabaseService.getAdminDashboardData();
               data.courses = freshData.courses;
               renderCoursesList();
@@ -1985,7 +2086,7 @@
           const notices = await DatabaseService.getNotices('admin');
           if (noticesListDiv) {
             noticesListDiv.innerHTML = notices.map(n => `
-              <div style="background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:1rem; border-radius:var(--radius-sm);">
+              <div style="background:#f8fafc; border:1px solid var(--border-color); padding:1rem; border-radius:var(--radius-sm);">
                 <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
                   <span style="font-weight:600; font-size:0.95rem;">${n.title}</span>
                   <span class="badge badge-primary">${n.target_role.toUpperCase()}</span>
@@ -2063,7 +2164,54 @@
         });
       });
 
-      // ---------------- INITIALIZE ROUTER ----------------
+      // ----------------- OVERRIDE ROUTE HANDLE FOR SIMULATOR -----------------
+      // This routes view renders into whichever mount target is currently active
+      const originalHandleRoute = Router.handleRoute.bind(Router);
+      Router.handleRoute = async function() {
+        const isMobileMode = document.body.classList.contains('mobile-mode');
+        const activeMount = isMobileMode 
+          ? document.getElementById('phone-app-mount') 
+          : document.getElementById('app-mount');
+        
+        const hash = window.location.hash || '#home';
+        
+        // Call normal route checks
+        const user = AuthService.getCurrentUser();
+        const isDashboard = hash.startsWith('#student') || hash.startsWith('#faculty') || hash.startsWith('#admin');
+        
+        if (isDashboard && !user) {
+          Toast.show("Please login to access this portal.", "error");
+          window.location.hash = '#login';
+          return;
+        }
+        if (user && (hash.startsWith('#student') && user.role !== 'student')) { window.location.hash = `#${user.role}`; return; }
+        if (user && (hash.startsWith('#faculty') && user.role !== 'faculty')) { window.location.hash = `#${user.role}`; return; }
+        if (user && (hash.startsWith('#admin') && user.role !== 'admin')) { window.location.hash = `#${user.role}`; return; }
+        if (user && (hash === '#login' || hash === '#signup')) { window.location.hash = `#${user.role}`; return; }
+        
+        // Close menus
+        const navLinks = document.getElementById('nav-links');
+        if (navLinks) navLinks.classList.remove('active');
+        
+        const renderFn = this.routes[hash] || this.routes['#home'];
+        
+        if (activeMount) {
+          activeMount.style.opacity = '0';
+          setTimeout(async () => {
+            try {
+              await renderFn(activeMount);
+              activeMount.style.opacity = '1';
+              lucide.createIcons();
+            } catch (err) {
+              console.error(err);
+              activeMount.innerHTML = `<div class="text-center section"><h3>Error Loading</h3><p>${err.message}</p></div>`;
+              activeMount.style.opacity = '1';
+            }
+          }, 150);
+        }
+      };
+
+      // Initialize Router
       Router.init();
     });
   </script>
