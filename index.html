@@ -13,17 +13,7 @@
 </head>
 <body>
 
-  <!-- Top View Switcher Control Bar -->
-  <div class="view-switcher-bar" id="view-switcher-bar">
-    <button class="switcher-btn active" id="btn-view-desktop">
-      <i data-lucide="monitor" style="width:16px;"></i> Desktop Web View
-    </button>
-    <button class="switcher-btn" id="btn-view-mobile">
-      <i data-lucide="smartphone" style="width:16px;"></i> Mobile App Simulator
-    </button>
-  </div>
-
-  <!-- Global Header (Public Desktop Navigation) -->
+  <!-- Global Header (Public Navigation) -->
   <header id="main-header">
     <div class="container header-container">
       <a href="#home" class="logo">
@@ -39,8 +29,8 @@
           <li class="auth-only student-only" style="display:none;"><a href="#student">Student Portal</a></li>
           <li class="auth-only faculty-only" style="display:none;"><a href="#faculty">Faculty Portal</a></li>
           <li class="auth-only admin-only" style="display:none;"><a href="#admin">Admin Dashboard</a></li>
-          <li class="guest-only"><a href="#login" class="btn btn-primary btn-sm" style="color:white;">Login</a></li>
-          <li class="auth-only" style="display:none;"><button id="logout-btn" class="btn btn-outline btn-sm">Logout</button></li>
+          <li class="guest-only"><a href="#login" class="btn btn-primary btn-sm" style="color:white; border-radius:20px;">Login</a></li>
+          <li class="auth-only" style="display:none;"><button id="logout-btn" class="btn btn-outline btn-sm" style="border-radius:20px;">Logout</button></li>
         </ul>
       </nav>
       <div class="menu-toggle" id="menu-toggle">
@@ -49,12 +39,12 @@
     </div>
   </header>
 
-  <!-- SPA Target Mounting Container (Desktop) -->
+  <!-- SPA Target Mounting Container -->
   <main id="app-mount">
     <!-- Dynamic views will mount here -->
   </main>
 
-  <!-- Global Footer (Desktop) -->
+  <!-- Global Footer -->
   <footer id="main-footer">
     <div class="container">
       <div class="footer-grid">
@@ -110,108 +100,71 @@
     </div>
   </footer>
 
-  <!-- ==================== MOBILE DEVICE FRAME SIMULATOR ==================== -->
-  <div id="mobile-simulator-container" class="mobile-simulator-container" style="display: none;">
-    <div class="phone-frame">
-      <div class="phone-notch"></div>
-      <div class="phone-status-bar">
-        <span>9:41</span>
-        <div style="display:flex; gap:0.25rem; align-items:center;">
-          <i data-lucide="signal" style="width:12px; height:12px;"></i>
-          <i data-lucide="wifi" style="width:12px; height:12px;"></i>
-          <i data-lucide="battery" style="width:14px; height:14px;"></i>
-        </div>
-      </div>
-      <div class="phone-screen" id="phone-app-mount">
-        <!-- Active view mounts here when in mobile mode -->
-      </div>
-      <!-- Mobile Bottom Navigation Bar -->
-      <div class="mobile-nav-bar">
-        <div class="mobile-nav-item active" data-route="#home">
-          <i data-lucide="home"></i>
-          <span>Home</span>
-        </div>
-        <div class="mobile-nav-item" data-route="#courses">
-          <i data-lucide="book-open"></i>
-          <span>Courses</span>
-        </div>
-        <div class="mobile-nav-item" id="mobile-nav-classroom" data-route="#login">
-          <i data-lucide="video"></i>
-          <span>Live Class</span>
-        </div>
-        <div class="mobile-nav-item" id="mobile-nav-profile" data-route="#login">
-          <i data-lucide="user"></i>
-          <span>Profile</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
 
   <!-- ==================== VIEW TEMPLATES ==================== -->
 
   <!-- 1. Home View Template -->
   <template id="home-view">
-    <section class="section hero-section" style="padding: 60px 0;">
+    <section class="section hero-section" style="padding: 70px 0; background: linear-gradient(180deg, rgba(79,70,229,0.02) 0%, rgba(255,255,255,0) 100%);">
       <div class="container grid-2" style="align-items: center;">
         <div class="hero-text">
-          <h1 style="margin: 0 0 1.25rem 0; line-height:1.15; color:#0f172a; font-size:3rem;">
+          <span class="subtitle">Trusted Coaching Institute</span>
+          <h1 style="margin: 0.5rem 0 1.25rem 0; line-height:1.15; color:#0f172a; font-size:3.5rem;">
             Empowering Minds.<br>Building Futures.
           </h1>
-          <p style="font-size: 1.1rem; margin-bottom: 2.25rem; color:var(--text-secondary); max-width:500px;">
-            India's trusted institute for psychology education and competitive exam preparation.
+          <p style="font-size: 1.15rem; margin-bottom: 2.5rem; color:var(--text-secondary); max-width:540px; line-height:1.7;">
+            India's trusted institute for psychology education and competitive exam preparation. Choose from standard classroom curriculums led by experienced mentors.
           </p>
-          <div style="display:flex; gap:1rem;">
-            <a href="#courses" class="btn btn-primary">Explore Courses</a>
-            <a href="#signup" class="btn btn-secondary">Enroll Now</a>
+          <div style="display:flex; gap:1.25rem;">
+            <a href="#courses" class="btn btn-primary" style="border-radius:24px;">Explore Courses <i data-lucide="arrow-right" style="width:18px;"></i></a>
+            <a href="#signup" class="btn btn-secondary" style="border-radius:24px;">Enroll Now</a>
           </div>
         </div>
-        <div class="hero-image-container" style="position:relative;">
-          <!-- Circular graphical outline shell -->
-          <div style="width:340px; height:340px; border-radius:50%; background:var(--primary-gradient); padding:10px; display:flex; align-items:center; justify-content:center; box-shadow:0 15px 35px rgba(79,70,229,0.25);">
-            <img src="images/hero.png" alt="Psychology Graphic" style="width:100%; height:100%; object-fit:cover; border-radius:50%; border:4px solid white;">
+        <div class="hero-image-offset">
+          <div class="hero-circle-mask">
+            <img src="images/hero_student.png" alt="Smiling Psychology Student">
           </div>
         </div>
       </div>
     </section>
 
     <!-- Public Features Row (Expert Faculty, Live Classes, Study Materials, Proven Results) -->
-    <section class="section" style="padding: 20px 0 60px;">
+    <section class="section" style="padding: 30px 0 70px;">
       <div class="container">
         <div class="grid-4">
-          <div class="card text-center" style="padding: 1.5rem 1.25rem;">
-            <div class="metric-icon icon-purple" style="margin:0 auto 1rem;"><i data-lucide="users"></i></div>
-            <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">Expert Faculty</h4>
-            <p style="font-size:0.8rem; margin:0;">Learn from industry experts</p>
+          <div class="card text-center" style="padding: 2.25rem 1.5rem; border-radius:var(--radius-md);">
+            <div class="metric-icon icon-purple" style="margin:0 auto 1.25rem; background:#f5f3ff; color:var(--primary-color); width:50px; height:50px;"><i data-lucide="users"></i></div>
+            <h4 style="font-size:1.1rem; margin-bottom:0.4rem; font-weight:700;">Expert Faculty</h4>
+            <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">Learn from industry experts</p>
           </div>
-          <div class="card text-center" style="padding: 1.5rem 1.25rem;">
-            <div class="metric-icon icon-pink" style="margin:0 auto 1rem;"><i data-lucide="video"></i></div>
-            <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">Live Classes</h4>
-            <p style="font-size:0.8rem; margin:0;">Interactive & engaging sessions</p>
+          <div class="card text-center" style="padding: 2.25rem 1.5rem; border-radius:var(--radius-md);">
+            <div class="metric-icon icon-pink" style="margin:0 auto 1.25rem; background:#fdf2f8; color:var(--secondary-color); width:50px; height:50px;"><i data-lucide="video"></i></div>
+            <h4 style="font-size:1.1rem; margin-bottom:0.4rem; font-weight:700;">Live Classes</h4>
+            <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">Interactive & engaging sessions</p>
           </div>
-          <div class="card text-center" style="padding: 1.5rem 1.25rem;">
-            <div class="metric-icon icon-cyan" style="margin:0 auto 1rem;"><i data-lucide="book-open"></i></div>
-            <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">Study Materials</h4>
-            <p style="font-size:0.8rem; margin:0;">Well structured & exam focused</p>
+          <div class="card text-center" style="padding: 2.25rem 1.5rem; border-radius:var(--radius-md);">
+            <div class="metric-icon icon-cyan" style="margin:0 auto 1.25rem; background:#f0f9ff; color:var(--accent-cyan); width:50px; height:50px;"><i data-lucide="book-open"></i></div>
+            <h4 style="font-size:1.1rem; margin-bottom:0.4rem; font-weight:700;">Study Materials</h4>
+            <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">Well structured & exam focused</p>
           </div>
-          <div class="card text-center" style="padding: 1.5rem 1.25rem;">
-            <div class="metric-icon icon-emerald" style="margin:0 auto 1rem;"><i data-lucide="award"></i></div>
-            <h4 style="font-size:1.05rem; margin-bottom:0.25rem;">Proven Results</h4>
-            <p style="font-size:0.8rem; margin:0;">Thousands of success stories</p>
+          <div class="card text-center" style="padding: 2.25rem 1.5rem; border-radius:var(--radius-md);">
+            <div class="metric-icon icon-emerald" style="margin:0 auto 1.25rem; background:#ecfdf5; color:var(--accent-emerald); width:50px; height:50px;"><i data-lucide="award"></i></div>
+            <h4 style="font-size:1.1rem; margin-bottom:0.4rem; font-weight:700;">Proven Results</h4>
+            <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">Thousands of success stories</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Top Courses Section -->
-    <section class="section" style="border-top: 1px solid var(--border-color); background:#fafbfd;">
+    <section class="section" style="border-top: 1px solid var(--border-color); background:#f9fafc;">
       <div class="container">
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:30px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
           <div>
-            <span class="subtitle">Curriculum</span>
-            <h2 style="margin:0; font-size:1.85rem;">Our Top Courses</h2>
+            <span class="subtitle">Academic Curriculums</span>
+            <h2 style="margin:0; font-size:2rem;">Our Top Courses</h2>
           </div>
-          <a href="#courses" style="color:var(--primary-color); font-weight:600; font-size:0.95rem; display:flex; align-items:center; gap:0.25rem;">View All <i data-lucide="chevron-right" style="width:16px;"></i></a>
+          <a href="#courses" style="color:var(--primary-color); font-weight:700; font-size:0.95rem; display:flex; align-items:center; gap:0.25rem;">View All <i data-lucide="chevron-right" style="width:16px;"></i></a>
         </div>
         
         <div class="grid-4" id="home-courses-grid">
@@ -225,15 +178,15 @@
   <template id="courses-view">
     <section class="section">
       <div class="container">
-        <div style="margin-bottom: 2rem;">
-          <h2 style="font-size:2rem; margin-bottom:0.25rem;">Courses Offered</h2>
-          <p style="font-size:0.9rem; color:var(--text-muted);">Home &gt; Courses</p>
+        <div style="margin-bottom: 2.5rem;">
+          <h2 style="font-size:2.25rem; margin-bottom:0.25rem; font-weight:800;">Courses Offered</h2>
+          <p style="font-size:0.9rem; color:var(--text-muted); font-weight:500;">Home &gt; Courses</p>
         </div>
 
         <div class="courses-page-layout">
           <!-- Left categories filter list -->
           <aside class="courses-sidebar">
-            <h4 style="font-size:1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">Categories</h4>
+            <h4 style="font-size:1.1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem; font-weight:700;">Categories</h4>
             <ul class="category-list">
               <li class="category-item active" data-category="all">All Courses</li>
               <li class="category-item" data-category="UGC NET">UGC NET</li>
@@ -321,9 +274,9 @@
         </div>
 
         <!-- Public Inquiry Form -->
-        <div class="card">
+        <div class="card" style="box-shadow:var(--shadow-lg);">
           <span class="subtitle">Enrollment Desk</span>
-          <h3 style="margin-bottom: 1.5rem;">Admission Inquiry</h3>
+          <h3 style="margin-bottom: 1.5rem; font-size:1.35rem;">Admission Inquiry</h3>
           <form id="public-inquiry-form">
             <div class="form-group">
               <label for="inq-name">Full Name</label>
@@ -343,7 +296,7 @@
                 <!-- Populated dynamically -->
               </select>
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Inquiry</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius:30px;">Submit Inquiry</button>
           </form>
         </div>
 
@@ -361,7 +314,7 @@
               <i data-lucide="brain"></i>
               <span>Psychology Sphere</span>
             </a>
-            <h3 style="margin-top:1.5rem;">Welcome Back!</h3>
+            <h3 style="margin-top:1.5rem; font-size:1.5rem;">Welcome Back!</h3>
             <p>Login to continue</p>
           </div>
           
@@ -377,7 +330,7 @@
             <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem; border-radius:30px;">Login</button>
           </form>
 
-          <!-- Quick access credentials (highly useful for review!) -->
+          <!-- Quick access credentials -->
           <div style="margin-top:2rem; padding:1rem; background:#f8fafc; border:1px solid var(--border-color); border-radius:var(--radius-sm);">
             <h5 style="margin-bottom:0.75rem; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary);">Quick Test Accounts:</h5>
             <div style="display:flex; flex-direction:column; gap:0.5rem;">
@@ -411,7 +364,7 @@
               <i data-lucide="brain"></i>
               <span>Psychology Sphere</span>
             </a>
-            <h3 style="margin-top:1.5rem;">Create Account</h3>
+            <h3 style="margin-top:1.5rem; font-size:1.5rem;">Create Account</h3>
             <p>Enroll in classes and set up your portal</p>
           </div>
 
@@ -453,7 +406,7 @@
   <!-- 7. Student Dashboard View Template -->
   <template id="student-view">
     <div class="dashboard-layout">
-      <!-- Sidebar (Midnight Indigo) -->
+      <!-- Sidebar -->
       <aside class="sidebar" id="dashboard-sidebar">
         <div class="sidebar-brand">
           <a href="#home" class="logo">
@@ -496,7 +449,7 @@
 
         <!-- TAB CONTENT: Overview -->
         <div id="student-overview-tab" class="dashboard-tab-content">
-          <!-- Summary Metrics Cards (exactly matching mockup structure) -->
+          <!-- Summary Metrics Cards -->
           <div class="metrics-grid">
             <div class="metric-card">
               <div class="metric-info">
@@ -595,7 +548,7 @@
           </div>
         </div>
 
-        <!-- TAB CONTENT: Fees & Payments (Web) -->
+        <!-- TAB CONTENT: Fees & Payments -->
         <div id="student-fees-tab" class="dashboard-tab-content" style="display:none;">
           <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
             <h3 style="margin-bottom:1.25rem;">Payment History</h3>
@@ -1095,81 +1048,7 @@
   <script src="app.js"></script>
   <!-- Mount views implementation -->
   <script>
-    // Self-initializing views registry on load
     document.addEventListener('DOMContentLoaded', () => {
-      // ----------------- MOBILE SIMULATOR TOGGLER -----------------
-      const btnViewDesktop = document.getElementById('btn-view-desktop');
-      const btnViewMobile = document.getElementById('btn-view-mobile');
-      const simContainer = document.getElementById('mobile-simulator-container');
-      const appMount = document.getElementById('app-mount');
-      const mainHeader = document.getElementById('main-header');
-      const mainFooter = document.getElementById('main-footer');
-
-      function setViewMode(isMobile) {
-        if (isMobile) {
-          btnViewDesktop.classList.remove('active');
-          btnViewMobile.classList.add('active');
-          document.body.classList.add('mobile-mode');
-          simContainer.style.display = 'flex';
-          
-          // Move current active view inside phone
-          Router.handleRoute();
-        } else {
-          btnViewMobile.classList.remove('active');
-          btnViewDesktop.classList.add('active');
-          document.body.classList.remove('mobile-mode');
-          simContainer.style.display = 'none';
-          
-          // Move current active view back to main app mount
-          Router.handleRoute();
-        }
-        lucide.createIcons();
-      }
-
-      if (btnViewDesktop && btnViewMobile) {
-        btnViewDesktop.addEventListener('click', () => setViewMode(false));
-        btnViewMobile.addEventListener('click', () => setViewMode(true));
-      }
-
-      // Mobile Bottom navigation clicks
-      document.querySelectorAll('.mobile-nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-          document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
-          item.classList.add('active');
-          const route = item.getAttribute('data-route');
-          window.location.hash = route;
-        });
-      });
-
-      // Synchronize mobile bottom nav state with active route
-      window.addEventListener('hashchange', () => {
-        const hash = window.location.hash || '#home';
-        document.querySelectorAll('.mobile-nav-item').forEach(i => {
-          i.classList.remove('active');
-          if (i.getAttribute('data-route') === hash) {
-            i.classList.add('active');
-          }
-        });
-        
-        // Link specific classroom and profile items if logged in
-        const user = AuthService.getCurrentUser();
-        const navClassroom = document.getElementById('mobile-nav-classroom');
-        const navProfile = document.getElementById('mobile-nav-profile');
-        if (user) {
-          if (navClassroom) {
-            navClassroom.setAttribute('data-route', `#${user.role}`);
-            if (hash === `#${user.role}`) navClassroom.classList.add('active');
-          }
-          if (navProfile) {
-            navProfile.setAttribute('data-route', `#${user.role}`);
-            if (hash === `#${user.role}`) navProfile.classList.add('active');
-          }
-        } else {
-          if (navClassroom) navClassroom.setAttribute('data-route', '#login');
-          if (navProfile) navProfile.setAttribute('data-route', '#login');
-        }
-      });
-
       // Mobile header toggle
       const menuToggle = document.getElementById('menu-toggle');
       const navLinks = document.getElementById('nav-links');
@@ -1222,23 +1101,23 @@
         mount.innerHTML = '';
         mount.appendChild(temp);
 
-        // Load 4 course teaser cards
+        // Load 4 course teaser cards with illustration image
         const courses = await DatabaseService.getCourses();
         const grid = document.getElementById('home-courses-grid');
         if (grid) {
           grid.innerHTML = courses.slice(0, 4).map(c => `
             <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; height:100%; padding:1.25rem;">
               <div>
-                <div style="background:#f1f5f9; height:120px; border-radius:var(--radius-sm); margin-bottom:1rem; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); overflow:hidden;">
-                  <i data-lucide="book-open" style="width:40px; height:40px; color:var(--primary-color); opacity:0.4;"></i>
+                <div style="background:#f1f5f9; height:130px; border-radius:var(--radius-sm); margin-bottom:1rem; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); overflow:hidden;">
+                  <img src="images/courses_illustration.png" alt="Course Abstract Art" style="width:100%; height:100%; object-fit:cover;">
                 </div>
-                <h4 style="font-size:1.1rem; margin-bottom:0.25rem;">${c.title}</h4>
-                <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.75rem;">Duration: ${c.duration}</p>
-                <p style="font-size:0.8rem; line-height:1.4; color:var(--text-secondary); margin-bottom:1rem;">${c.description.substring(0, 80)}...</p>
+                <h4 style="font-size:1.1rem; margin-bottom:0.25rem; font-weight:700;">${c.title}</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.75rem; font-weight:600;">Duration: ${c.duration}</p>
+                <p style="font-size:0.8rem; line-height:1.5; color:var(--text-secondary); margin-bottom:1rem;">${c.description.substring(0, 80)}...</p>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:0.75rem; margin-top:auto;">
-                <span style="font-weight:700; color:var(--primary-color); font-size:1.05rem;">$${c.fees}</span>
-                <a href="#courses" class="btn btn-secondary btn-sm" style="padding:0.35rem 0.75rem; font-size:0.75rem;">View</a>
+                <span style="font-weight:800; color:var(--primary-color); font-size:1.15rem;">₹ ${c.fees}</span>
+                <a href="#courses" class="btn btn-secondary btn-sm" style="padding:0.4rem 0.85rem; font-size:0.75rem; border-radius:20px;">View</a>
               </div>
             </div>
           `).join('');
@@ -1273,7 +1152,7 @@
         }
       });
 
-      // -- 3. COURSES VIEW (Horizontal catalog row layout) --
+      // -- 3. COURSES VIEW (Horizontal row layout with illustration image) --
       Router.register('#courses', async (mount) => {
         updateHeaderNav();
         const temp = document.getElementById('courses-view').content.cloneNode(true);
@@ -1297,27 +1176,27 @@
             rowsContainer.innerHTML = filtered.map(c => `
               <div class="course-horizontal-card">
                 <!-- Course Left Image -->
-                <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); width:100%; height:110px; display:flex; align-items:center; justify-content:center; background:#f8fafc;">
-                  <i data-lucide="book-open" style="width:36px; height:36px; color:var(--primary-color); opacity:0.35;"></i>
+                <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); width:100%; height:120px; display:flex; align-items:center; justify-content:center; background:#f8fafc;">
+                  <img src="images/courses_illustration.png" alt="Course Conceptual Banner" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 
                 <!-- Course Details Info -->
                 <div class="course-horizontal-info">
-                  <h3>${c.title}</h3>
-                  <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4;">${c.description}</p>
+                  <h3 style="font-weight:700;">${c.title}</h3>
+                  <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">${c.description}</p>
                   <div class="course-horizontal-meta">
-                    <span><i data-lucide="clock" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> ${c.duration}</span>
-                    <span><i data-lucide="tv" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> Live + Recorded</span>
+                    <span style="font-weight:600;"><i data-lucide="clock" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> ${c.duration}</span>
+                    <span style="font-weight:600;"><i data-lucide="tv" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> Live + Recorded</span>
                   </div>
                 </div>
 
                 <!-- Course Action / Fees -->
                 <div class="course-horizontal-action">
                   <div style="margin-bottom:1rem; text-align:right;">
-                    <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Tuition Fee</div>
-                    <div style="font-size:1.35rem; font-weight:800; color:var(--primary-color);">$${c.fees}</div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Tuition Fee</div>
+                    <div style="font-size:1.45rem; font-weight:800; color:var(--primary-color);">₹ ${c.fees}</div>
                   </div>
-                  <button class="btn btn-primary btn-sm btn-view-details" data-id="${c.id}" style="border-radius:20px; padding:0.45rem 1rem;">View Details</button>
+                  <button class="btn btn-primary btn-sm btn-view-details" data-id="${c.id}" style="border-radius:20px; padding:0.45rem 1.15rem;">View Details</button>
                 </div>
               </div>
             `).join('');
@@ -1332,12 +1211,12 @@
                   const modalContent = document.getElementById('course-modal-content');
                   modalContent.innerHTML = `
                     <span class="badge badge-primary" style="margin-bottom:0.75rem;">Syllabus Overview</span>
-                    <h2 style="margin-bottom:0.5rem; font-size:1.5rem;">${course.title}</h2>
-                    <p style="margin-bottom:1.5rem; font-size:0.95rem; color:var(--text-secondary);">${course.description}</p>
+                    <h2 style="margin-bottom:0.5rem; font-size:1.5rem; font-weight:800;">${course.title}</h2>
+                    <p style="margin-bottom:1.5rem; font-size:0.95rem; color:var(--text-secondary); line-height:1.5;">${course.description}</p>
                     
-                    <h4 style="margin-bottom:0.5rem; color:var(--primary-color);">Curriculum Modules</h4>
+                    <h4 style="margin-bottom:0.5rem; color:var(--primary-color); font-weight:700;">Curriculum Modules</h4>
                     <ul style="list-style:none; padding:0; margin-bottom:2rem; display:flex; flex-direction:column; gap:0.5rem;">
-                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 1: Foundations & Historical Outline</li>
+                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 1: Foundations & Historical Timeline</li>
                       <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 2: Research Design & Experimental Methods</li>
                       <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 3: Clinical Case Histories & Assessments</li>
                       <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 4: Mock Entrance Exams & Practice Papers</li>
@@ -1345,8 +1224,8 @@
 
                     <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1.25rem;">
                       <div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">Total Fees</div>
-                        <div style="font-size:1.35rem; font-weight:800; color:var(--text-primary);">$${course.fees}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">Total Fees</div>
+                        <div style="font-size:1.45rem; font-weight:800; color:var(--text-primary);">₹ ${course.fees}</div>
                       </div>
                       <a href="#signup" onclick="document.getElementById('course-detail-modal').classList.remove('active');" class="btn btn-primary" style="border-radius:20px; padding:0.5rem 1.25rem; font-size:0.85rem;">Enroll Program</a>
                     </div>
@@ -1360,7 +1239,6 @@
           }
         }
 
-        // Render first view
         renderRows('all');
 
         // Sidebar category click handler
@@ -1469,7 +1347,7 @@
         }
       });
 
-      // -- 7. STUDENT DASHBOARD VIEW (Web Layout matching mockup) --
+      // -- 7. STUDENT DASHBOARD VIEW --
       Router.register('#student', async (mount) => {
         updateHeaderNav();
         const user = AuthService.getCurrentUser();
@@ -1477,7 +1355,6 @@
         mount.innerHTML = '';
         mount.appendChild(temp);
 
-        // Populate header / avatar details
         document.getElementById('student-display-name').textContent = user.full_name;
         document.getElementById('student-avatar-initials').textContent = user.full_name.charAt(0);
 
@@ -1492,21 +1369,20 @@
           document.addEventListener('click', () => sidebar.classList.remove('active'));
         }
 
-        // Fetch student specific data
         const data = await DatabaseService.getStudentDashboardData(user.id);
         const notices = await DatabaseService.getNotices('student');
 
         // 1. Metric Counts & Average
         const presents = data.attendance.filter(a => a.status === 'present').length;
         const totalAtt = data.attendance.length;
-        const attRate = totalAtt > 0 ? Math.round((presents / totalAtt) * 100) : 85; // default fallback
+        const attRate = totalAtt > 0 ? Math.round((presents / totalAtt) * 100) : 85;
         
         document.getElementById('student-course-count').textContent = data.enrolledCourses.length;
         document.getElementById('student-attendance-percent').textContent = `${attRate}%`;
         
         const unpaidFees = data.fees.filter(f => f.status === 'pending');
         const totalPending = unpaidFees.reduce((sum, item) => sum + parseFloat(item.amount), 0);
-        document.getElementById('student-pending-fees').textContent = `₹ ${totalPending > 0 ? totalPending : '0'}`;
+        document.getElementById('student-pending-fees').textContent = `₹ ${totalPending}`;
 
         // Set Next class header
         if (data.liveClasses.length > 0) {
@@ -1515,10 +1391,10 @@
           document.getElementById('live-lecture-link').setAttribute('href', data.liveClasses[0].meeting_link);
         }
 
-        // 2. Render Left Column Progress Bars (exactly matches mockup)
+        // 2. Render Left Column Progress Bars
         const progressContainer = document.getElementById('student-progress-courses-list');
         if (progressContainer) {
-          const mockProgresses = [78, 60, 40]; // values from user image
+          const mockProgresses = [78, 60, 40];
           progressContainer.innerHTML = data.enrolledCourses.map((c, idx) => {
             const progressVal = mockProgresses[idx % mockProgresses.length];
             return `
@@ -1555,7 +1431,7 @@
             <div class="card">
               <span class="badge badge-primary" style="margin-bottom:0.75rem;">Active Program</span>
               <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">${c.title}</h3>
-              <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Duration: ${c.duration} | Fees: $${c.fees}</p>
+              <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Duration: ${c.duration} | Fees: ₹ ${c.fees}</p>
               <div style="background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:var(--radius-sm); font-size:0.8rem; color:var(--text-secondary);">
                 <strong>Assigned Instructor:</strong> Dr. Sarah Jenkins (admissions@psysphere.edu)
               </div>
@@ -1579,7 +1455,7 @@
           }).join('');
         }
 
-        // 6. Render Fees & Payments Tab Table (exactly matching table header from mockup)
+        // 6. Render Fees & Payments Tab Table
         const feesTbody = document.getElementById('student-fees-tbody');
         function renderFeesTable() {
           if (feesTbody) {
@@ -1606,7 +1482,6 @@
               `;
             }).join('');
 
-            // Bind checkout pay actions
             document.querySelectorAll('.btn-pay-fee').forEach(btn => {
               btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
@@ -1625,7 +1500,6 @@
         }
         renderFeesTable();
 
-        // Payment gate selectors toggling
         const payRadios = document.querySelectorAll('input[name="pay-method"]');
         payRadios.forEach(rad => {
           rad.parentElement.addEventListener('click', () => {
@@ -1643,7 +1517,6 @@
           });
         });
 
-        // Checkout submit simulation
         const checkoutForm = document.getElementById('payment-gate-form');
         if (checkoutForm) {
           checkoutForm.addEventListener('submit', async (e) => {
@@ -1657,11 +1530,9 @@
               document.getElementById('checkout-modal').classList.remove('active');
               checkoutForm.reset();
               
-              // Reload
               const freshData = await DatabaseService.getStudentDashboardData(user.id);
               data.fees = freshData.fees;
               
-              // Re-update metrics
               const pending = data.fees.filter(f => f.status === 'pending');
               const sum = pending.reduce((s, i) => s + parseFloat(i.amount), 0);
               document.getElementById('student-pending-fees').textContent = `₹ ${sum}`;
@@ -1673,7 +1544,6 @@
           });
         }
 
-        // Close checkout modal
         const checkoutClose = document.getElementById('checkout-modal-close');
         if (checkoutClose) {
           checkoutClose.addEventListener('click', () => {
@@ -1681,7 +1551,6 @@
           });
         }
 
-        // Render classroom live / recorded
         const liveGrid = document.getElementById('student-live-grid');
         if (liveGrid) {
           if (data.liveClasses.length === 0) {
@@ -1749,7 +1618,6 @@
         document.getElementById('faculty-display-name').textContent = user.full_name;
         document.getElementById('faculty-avatar-initials').textContent = user.full_name.charAt(0);
 
-        // Sidebar mobile toggler
         const sidebar = document.getElementById('faculty-sidebar');
         const dbToggle = document.getElementById('faculty-menu-toggle');
         if (dbToggle && sidebar) {
@@ -1762,7 +1630,6 @@
 
         const data = await DatabaseService.getFacultyDashboardData(user.id);
 
-        // Render schedule table
         const classesTbody = document.getElementById('faculty-classes-tbody');
         function renderSchedule() {
           if (classesTbody) {
@@ -1782,7 +1649,6 @@
         }
         renderSchedule();
 
-        // Populate course dropdown selectors
         const courseSelect = document.getElementById('att-course-select');
         const scheduleCourseSelect = document.getElementById('sc-course-id');
         
@@ -1794,13 +1660,11 @@
           scheduleCourseSelect.innerHTML = data.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
         }
 
-        // Date selection defaults to today
         const attDateInput = document.getElementById('att-date-select');
         if (attDateInput) {
           attDateInput.value = new Date().toISOString().split('T')[0];
         }
 
-        // Attendance student loading
         const btnLoadAtt = document.getElementById('btn-load-attendance-list');
         const attTableWrapper = document.getElementById('attendance-table-wrapper');
         const attTbody = document.getElementById('faculty-attendance-tbody');
@@ -1848,7 +1712,6 @@
           });
         }
 
-        // Save Attendance
         const btnSaveAtt = document.getElementById('btn-save-attendance-record');
         if (btnSaveAtt) {
           btnSaveAtt.addEventListener('click', async () => {
@@ -1872,7 +1735,6 @@
           });
         }
 
-        // Schedule class handlers
         const btnShowSchedule = document.getElementById('btn-schedule-class');
         const modal = document.getElementById('schedule-class-modal');
         const scheduleForm = document.getElementById('schedule-class-form');
@@ -1908,7 +1770,6 @@
           modalClose.addEventListener('click', () => modal.classList.remove('active'));
         }
 
-        // Tab selection listeners
         document.querySelectorAll('#faculty-sidebar .sidebar-link').forEach(link => {
           link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1936,7 +1797,6 @@
         mount.innerHTML = '';
         mount.appendChild(temp);
 
-        // Sidebar mobile toggler
         const sidebar = document.getElementById('admin-sidebar');
         const dbToggle = document.getElementById('admin-menu-toggle');
         if (dbToggle && sidebar) {
@@ -1949,7 +1809,6 @@
 
         const data = await DatabaseService.getAdminDashboardData();
 
-        // 1. Populate general metrics
         const totalPaidAmt = data.fees.filter(f => f.status === 'paid').reduce((s, i) => s + parseFloat(i.amount), 0);
         document.getElementById('admin-rev-metric').textContent = `₹ ${totalPaidAmt}`;
         document.getElementById('admin-students-metric').textContent = data.students.length;
@@ -1959,7 +1818,6 @@
         const totalAtt = data.attendance.length;
         document.getElementById('admin-attendance-metric').textContent = totalAtt > 0 ? `${Math.round((presents / totalAtt) * 100)}%` : '85%';
 
-        // 2. Load bar charts split
         const splitBarDiv = document.getElementById('admin-course-split-bars');
         if (splitBarDiv) {
           splitBarDiv.innerHTML = data.courses.map(c => {
@@ -1978,7 +1836,6 @@
           }).join('');
         }
 
-        // 3. Render courses list CRUD
         const coursesTbody = document.getElementById('admin-courses-tbody');
         function renderCoursesList() {
           if (coursesTbody) {
@@ -1994,7 +1851,6 @@
               </tr>
             `).join('');
 
-            // Bind delete button
             document.querySelectorAll('.btn-delete-course').forEach(btn => {
               btn.addEventListener('click', async () => {
                 const courseId = btn.getAttribute('data-id');
@@ -2013,13 +1869,11 @@
         }
         renderCoursesList();
 
-        // Populate instructors dropdown in modal
         const facultySelect = document.getElementById('ac-faculty');
         if (facultySelect) {
           facultySelect.innerHTML = data.faculty.map(f => `<option value="${f.id}">${f.full_name}</option>`).join('');
         }
 
-        // Course Modal bindings
         const showAddCourse = document.getElementById('btn-admin-add-course');
         const courseModal = document.getElementById('admin-add-course-modal');
         const courseForm = document.getElementById('admin-add-course-form');
@@ -2055,7 +1909,6 @@
           courseModalClose.addEventListener('click', () => courseModal.classList.remove('active'));
         }
 
-        // 4. Render students/faculty tables
         const studentsTbody = document.getElementById('admin-students-tbody');
         if (studentsTbody) {
           studentsTbody.innerHTML = data.students.map(s => `
@@ -2078,7 +1931,6 @@
           `).join('');
         }
 
-        // 5. Compose announcements notice form
         const noticeForm = document.getElementById('admin-notice-form');
         const noticesListDiv = document.getElementById('admin-notices-list');
         
@@ -2116,7 +1968,6 @@
           });
         }
 
-        // 6. Security Logs listing
         const logsTbody = document.getElementById('admin-logs-tbody');
         if (logsTbody) {
           logsTbody.innerHTML = data.logs.map(l => `
@@ -2129,7 +1980,6 @@
           `).join('');
         }
 
-        // 7. Backup database export trigger
         const btnExport = document.getElementById('btn-admin-export');
         if (btnExport) {
           btnExport.addEventListener('click', () => {
@@ -2144,7 +1994,6 @@
           });
         }
 
-        // Tab selection listeners
         document.querySelectorAll('#admin-sidebar .sidebar-link').forEach(link => {
           link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -2164,54 +2013,6 @@
         });
       });
 
-      // ----------------- OVERRIDE ROUTE HANDLE FOR SIMULATOR -----------------
-      // This routes view renders into whichever mount target is currently active
-      const originalHandleRoute = Router.handleRoute.bind(Router);
-      Router.handleRoute = async function() {
-        const isMobileMode = document.body.classList.contains('mobile-mode');
-        const activeMount = isMobileMode 
-          ? document.getElementById('phone-app-mount') 
-          : document.getElementById('app-mount');
-        
-        const hash = window.location.hash || '#home';
-        
-        // Call normal route checks
-        const user = AuthService.getCurrentUser();
-        const isDashboard = hash.startsWith('#student') || hash.startsWith('#faculty') || hash.startsWith('#admin');
-        
-        if (isDashboard && !user) {
-          Toast.show("Please login to access this portal.", "error");
-          window.location.hash = '#login';
-          return;
-        }
-        if (user && (hash.startsWith('#student') && user.role !== 'student')) { window.location.hash = `#${user.role}`; return; }
-        if (user && (hash.startsWith('#faculty') && user.role !== 'faculty')) { window.location.hash = `#${user.role}`; return; }
-        if (user && (hash.startsWith('#admin') && user.role !== 'admin')) { window.location.hash = `#${user.role}`; return; }
-        if (user && (hash === '#login' || hash === '#signup')) { window.location.hash = `#${user.role}`; return; }
-        
-        // Close menus
-        const navLinks = document.getElementById('nav-links');
-        if (navLinks) navLinks.classList.remove('active');
-        
-        const renderFn = this.routes[hash] || this.routes['#home'];
-        
-        if (activeMount) {
-          activeMount.style.opacity = '0';
-          setTimeout(async () => {
-            try {
-              await renderFn(activeMount);
-              activeMount.style.opacity = '1';
-              lucide.createIcons();
-            } catch (err) {
-              console.error(err);
-              activeMount.innerHTML = `<div class="text-center section"><h3>Error Loading</h3><p>${err.message}</p></div>`;
-              activeMount.style.opacity = '1';
-            }
-          }, 150);
-        }
-      };
-
-      // Initialize Router
       Router.init();
     });
   </script>
