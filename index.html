@@ -1105,6 +1105,9 @@
         let courses = [];
         try {
           courses = await DatabaseService.getCourses();
+          if (!courses || courses.length === 0) {
+            courses = mockDB.courses;
+          }
         } catch (err) {
           console.warn("Supabase fetch failed, using mock courses fallback:", err);
           courses = mockDB.courses;
@@ -1142,6 +1145,9 @@
         let mentors = [];
         try {
           mentors = await DatabaseService.getProfilesByRole('faculty');
+          if (!mentors || mentors.length === 0) {
+            mentors = mockDB.profiles.filter(p => p.role === 'faculty');
+          }
         } catch (err) {
           console.warn("Supabase fetch failed, using mock mentors fallback:", err);
           mentors = mockDB.profiles.filter(p => p.role === 'faculty');
@@ -1175,6 +1181,9 @@
         let allCourses = [];
         try {
           allCourses = await DatabaseService.getCourses();
+          if (!allCourses || allCourses.length === 0) {
+            allCourses = mockDB.courses;
+          }
         } catch (err) {
           console.warn("Supabase fetch failed, using mock courses fallback:", err);
           allCourses = mockDB.courses;
