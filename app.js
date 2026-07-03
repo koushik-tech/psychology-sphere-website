@@ -60,6 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginClose) loginClose.addEventListener("click", closeLoginModal);
   footerLoginTriggers.forEach(trigger => trigger.addEventListener("click", openLoginModal));
 
+  // Automatically open login modal if requested in query parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("openLogin") === "true") {
+    openLoginModal();
+  }
+
   // Quick Login Pre-population and Submit Trigger
   document.querySelectorAll(".btn-quick-login").forEach(btn => {
     btn.addEventListener("click", () => {
