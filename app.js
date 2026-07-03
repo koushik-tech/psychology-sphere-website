@@ -3,8 +3,8 @@
 // 1. Supabase Configuration Block
 // Input your Supabase credentials here to connect to your live database.
 const SUPABASE_CONFIG = {
-  url: "", // e.g. "https://your-project.supabase.co"
-  anonKey: "" // e.g. "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  url: "https://ghldkcokjlxugsgqqhxn.supabase.co", // e.g. "https://your-project.supabase.co"
+  anonKey: "sb_publishable_gXiAe-KDUTIumozOJHa-tg_M2waJ56L" // e.g. "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 };
 
 let supabase = null;
@@ -27,49 +27,40 @@ if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
 // 2. In-Memory Mock Database (Stateful, satisfies 'No localStorage/sessionStorage' for SPA)
 const mockDB = {
   profiles: [
-    { id: "s1", full_name: "Ananya Verma", email: "student@test.com", role: "student", phone: "+91 98765 43210" },
-    { id: "f1", full_name: "Dr. Neha Sharma", email: "faculty@test.com", role: "faculty", phone: "+91 98765 43211" },
-    { id: "a1", full_name: "Admin Coordinator", email: "admin@test.com", role: "admin", phone: "+91 98765 43212" }
+    { id: "s1", full_name: "John Doe", email: "student@test.com", role: "student", phone: "+1 555 0199" },
+    { id: "f1", full_name: "Dr. Sarah Jenkins", email: "faculty@test.com", role: "faculty", phone: "+1 555 0188" },
+    { id: "a1", full_name: "Admin Coordinator", email: "admin@test.com", role: "admin", phone: "+1 555 0177" }
   ],
   courses: [
-    { id: 1, title: "UGC NET Psychology", description: "Comprehensive course covering all units of UGC NET Psychology syllabus.", duration: "6 Months", fees: 8999, faculty_id: "f1" },
-    { id: 2, title: "MA Psychology", description: "In-depth program for postgraduate aspirants.", duration: "2 Years", fees: 24000, faculty_id: "f1" },
-    { id: 3, title: "CUET PG Psychology", description: "Targeted preparation for CUET PG Psychology entrance exam.", duration: "4 Months", fees: 6999, faculty_id: "f1" },
-    { id: 4, title: "TISSNET Psychology", description: "Specialized coaching for TISSNET Psychology aspirants.", duration: "3 Months", fees: 7499, faculty_id: "f1" }
+    { id: 1, title: "UGC NET Psychology", description: "Complete preparation for UGC NET entrance exam with comprehensive syllabus coverage.", duration: "6 Months", fees: 8999, faculty_id: "f1", image_url: "images/course_ugc_net.png" },
+    { id: 2, title: "MA Psychology", description: "In-depth learning for future leaders. Advanced counseling theories and practices.", duration: "2 Years", fees: 24000, faculty_id: "f1", image_url: "images/course_ma.png" },
+    { id: 3, title: "CUET PG Psychology", description: "Crack CUET PG with confidence. Specialized mock tests and concepts.", duration: "3 Months", fees: 6999, faculty_id: "f1", image_url: "images/course_cuet.png" },
+    { id: 4, title: "TISSNET Psychology", description: "Specialized coaching for TISSNET entrance. Structured curriculum and guidance.", duration: "3 Months", fees: 7499, faculty_id: "f1", image_url: "images/course_tissnet.png" }
   ],
   enrollments: [
-    { id: 1, student_id: "s1", course_id: 2, status: "active", enrolled_at: "2026-03-01T10:00:00Z" },
-    { id: 2, student_id: "s1", course_id: 1, status: "active", enrolled_at: "2026-03-02T10:00:00Z" },
-    { id: 3, student_id: "s1", course_id: 3, status: "active", enrolled_at: "2026-03-03T10:00:00Z" }
+    { id: 1, student_id: "s1", course_id: 1, status: "active", enrolled_at: "2026-06-01T10:00:00Z" }
   ],
   fees: [
-    { id: 1, student_id: "s1", course_id: 2, amount: 10000, status: "paid", due_date: "2026-03-10", paid_at: "2026-03-10T11:00:00Z", payment_method: "UPI", receipt_no: "REC-100234" },
-    { id: 2, student_id: "s1", course_id: 2, amount: 9000, status: "paid", due_date: "2026-06-10", paid_at: "2026-06-10T14:30:00Z", payment_method: "Card", receipt_no: "REC-100456" },
-    { id: 3, student_id: "s1", course_id: 2, amount: 2500, status: "pending", due_date: "2026-07-15", paid_at: null, payment_method: null, receipt_no: null },
-    { id: 4, student_id: "s1", course_id: 2, amount: 2500, status: "pending", due_date: "2026-08-15", paid_at: null, payment_method: null, receipt_no: null }
+    { id: 1, student_id: "s1", course_id: 1, amount: 8999, status: "pending", due_date: "2026-07-15", paid_at: null, payment_method: null, receipt_no: null }
   ],
   attendance: [
-    { id: 1, student_id: "s1", course_id: 2, date: "2026-06-22", status: "present", marked_by: "f1" },
-    { id: 2, student_id: "s1", course_id: 2, date: "2026-06-23", status: "present", marked_by: "f1" },
-    { id: 3, student_id: "s1", course_id: 2, date: "2026-06-24", status: "present", marked_by: "f1" },
-    { id: 4, student_id: "s1", course_id: 2, date: "2026-06-25", status: "present", marked_by: "f1" },
-    { id: 5, student_id: "s1", course_id: 2, date: "2026-06-26", status: "present", marked_by: "f1" },
-    { id: 6, student_id: "s1", course_id: 2, date: "2026-06-27", status: "absent", marked_by: "f1" }
+    { id: 1, student_id: "s1", course_id: 1, date: "2026-06-25", status: "present", marked_by: "f1" },
+    { id: 2, student_id: "s1", course_id: 1, date: "2026-06-26", status: "present", marked_by: "f1" },
+    { id: 3, student_id: "s1", course_id: 1, date: "2026-06-29", status: "absent", marked_by: "f1" }
   ],
   live_classes: [
-    { id: 1, course_id: 2, title: "Research Methods", scheduled_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), meeting_link: "https://zoom.us/mock-meeting-ps", status: "scheduled" },
-    { id: 2, course_id: 1, title: "Statistics in Psychology", scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), meeting_link: "https://zoom.us/mock-meeting-ps2", status: "scheduled" }
+    { id: 1, course_id: 1, title: "Introduction to Cognitive Behavior Therapy (CBT)", scheduled_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(), meeting_link: "https://zoom.us/mock-meeting-ps", status: "scheduled" },
+    { id: 2, course_id: 2, title: "Diagnostic Criteria & DSM-5 Assessment", scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), meeting_link: "https://zoom.us/mock-meeting-ps2", status: "scheduled" }
   ],
   recorded_sessions: [
-    { id: 1, course_id: 2, title: "History and Origins of Psychology", description: "Timeline review of psychology.", video_url: "https://www.w3schools.com/html/mov_bbb.mp4" }
+    { id: 1, course_id: 1, title: "History and Origins of Psychology", description: "A detailed timeline of clinical psychology from Freud to Modern Cognitive Science.", video_url: "https://www.w3schools.com/html/mov_bbb.mp4" }
   ],
   notices: [
-    { id: 1, title: "Mock Test on Sunday", content: "25 May 2024", target_role: "student", created_at: "2026-06-30T09:00:00Z" },
-    { id: 2, title: "New Study Material Uploaded", content: "22 May 2024", target_role: "student", created_at: "2026-06-29T10:00:00Z" },
-    { id: 3, title: "Class Schedule for Next Week", content: "20 May 2024", target_role: "student", created_at: "2026-06-28T11:00:00Z" }
+    { id: 1, title: "Upcoming Live Demo Class", content: "Join us for a free masterclass on Child Psychology this Sunday at 11:00 AM.", target_role: "all", created_at: "2026-06-30T09:00:00Z" },
+    { id: 2, title: "Term Fee Notice", content: "Please clear pending fees before the 15th of this month to avoid portal interruptions.", target_role: "student", created_at: "2026-06-29T10:00:00Z" }
   ],
   audit_logs: [
-    { id: 1, user_id: "a1", action: "System Initialized", details: "Memory store populated with mockup seed elements", created_at: "2026-06-30T18:00:00Z" }
+    { id: 1, user_id: "a1", action: "System Initialized", details: "Memory store populated with seed elements", created_at: "2026-06-30T18:00:00Z" }
   ]
 };
 
@@ -104,7 +95,7 @@ const AuthService = {
       // Auto enroll in Course 1 for demo purposes if student
       if (role === 'student') {
         mockDB.enrollments.push({ id: mockDB.enrollments.length + 1, student_id: newId, course_id: 1, status: "active", enrolled_at: new Date().toISOString() });
-        mockDB.fees.push({ id: mockDB.fees.length + 1, student_id: newId, course_id: 1, amount: 8999, status: "pending", due_date: new Date(Date.now() + 14*24*60*60*1000).toISOString().split('T')[0] });
+        mockDB.fees.push({ id: mockDB.fees.length + 1, student_id: newId, course_id: 1, amount: 499, status: "pending", due_date: new Date(Date.now() + 14*24*60*60*1000).toISOString().split('T')[0] });
       }
       
       currentUser = newProfile;
@@ -140,23 +131,12 @@ const AuthService = {
       addAuditLog(profile.id, "User Login", `Authenticated user: ${profile.full_name}`);
       return profile;
     } else {
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        const { data: profile, error: pError } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-        if (pError) throw pError;
-        currentUser = profile;
-        return profile;
-      } catch (err) {
-        console.warn("Supabase auth failed, trying mock database fallback for demo credentials...", err);
-        const profile = mockDB.profiles.find(p => p.email === email);
-        if (profile) {
-          currentUser = profile;
-          addAuditLog(profile.id, "User Login (Fallback)", `Authenticated demo user: ${profile.full_name}`);
-          return profile;
-        }
-        throw err;
-      }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      const { data: profile, error: pError } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+      if (pError) throw pError;
+      currentUser = profile;
+      return profile;
     }
   },
 

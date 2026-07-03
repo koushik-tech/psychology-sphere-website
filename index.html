@@ -25,11 +25,14 @@
           <li><a href="#home" class="active">Home</a></li>
           <li><a href="#courses">Courses</a></li>
           <li><a href="#about">Faculty</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#home">Success Stories</a></li>
+          <li><a href="#courses">Live Classes</a></li>
+          <li><a href="#contact">Resources</a></li>
+          <li><a href="#about">About Us</a></li>
           <li class="auth-only student-only" style="display:none;"><a href="#student">Student Portal</a></li>
           <li class="auth-only faculty-only" style="display:none;"><a href="#faculty">Faculty Portal</a></li>
           <li class="auth-only admin-only" style="display:none;"><a href="#admin">Admin Dashboard</a></li>
-          <li class="guest-only"><a href="#login" class="btn btn-primary btn-sm" style="color:white; border-radius:20px;">Login</a></li>
+          <li class="guest-only"><a href="#login" class="btn btn-primary btn-sm" style="color:white; border-radius:20px; background-color:#3b20a6;">Login</a></li>
           <li class="auth-only" style="display:none;"><button id="logout-btn" class="btn btn-outline btn-sm" style="border-radius:20px;">Logout</button></li>
         </ul>
       </nav>
@@ -105,52 +108,59 @@
 
   <!-- 1. Home View Template -->
   <template id="home-view">
-    <section class="section hero-section" style="padding: 70px 0; background: linear-gradient(180deg, rgba(79,70,229,0.02) 0%, rgba(255,255,255,0) 100%);">
-      <div class="container grid-2" style="align-items: center;">
+    <section class="section hero-section" style="padding: 90px 0; background: radial-gradient(circle at 80% 50%, rgba(245,243,255,0.4) 0%, rgba(255,255,255,1) 100%); overflow: hidden;">
+      <div class="container hero-layout-grid">
         <div class="hero-text">
-          <span class="subtitle">Trusted Coaching Institute</span>
-          <h1 style="margin: 0.5rem 0 1.25rem 0; line-height:1.15; color:#0f172a; font-size:3.5rem;">
+          <h1 class="hero-title-main">
             Empowering Minds.<br>Building Futures.
           </h1>
-          <p style="font-size: 1.15rem; margin-bottom: 2.5rem; color:var(--text-secondary); max-width:540px; line-height:1.7;">
-            India's trusted institute for psychology education and competitive exam preparation. Choose from standard classroom curriculums led by experienced mentors.
+          <p class="hero-subtext-main">
+            India's trusted institute for psychology education and competitive exam preparation.
           </p>
           <div style="display:flex; gap:1.25rem;">
-            <a href="#courses" class="btn btn-primary" style="border-radius:24px;">Explore Courses <i data-lucide="arrow-right" style="width:18px;"></i></a>
-            <a href="#signup" class="btn btn-secondary" style="border-radius:24px;">Enroll Now</a>
+            <a href="#courses" class="btn btn-hero-primary">Explore Courses</a>
+            <a href="#signup" class="btn btn-hero-outline">Enroll Now</a>
           </div>
         </div>
-        <div class="hero-image-offset">
-          <div class="hero-circle-mask">
-            <img src="images/hero_student.png" alt="Smiling Psychology Student">
-          </div>
+        <div class="hero-illustration-wrapper">
+          <div class="hero-circle-purple-light"></div>
+          <div class="hero-circle-purple-solid"></div>
+          <img src="images/student_cutout.png" alt="Smiling Psychology Student" class="hero-student-cutout-img">
         </div>
       </div>
     </section>
 
     <!-- Public Features Row (Expert Faculty, Live Classes, Study Materials, Proven Results) -->
-    <section class="section" style="padding: 30px 0 70px;">
+    <section class="section" style="padding: 40px 0 80px; background: #ffffff;">
       <div class="container">
         <div class="grid-4">
-          <div class="card text-center" style="padding: 2.25rem 1.5rem; border-radius:var(--radius-md);">
-            <div class="metric-icon icon-purple" style="margin:0 auto 1.25rem; background:#f5f3ff; color:var(--primary-color); width:50px; height:50px;"><i data-lucide="users"></i></div>
-            <h4 style="font-size:1.1rem; margin-bottom:0.4rem; font-weight:700;">Expert Faculty</h4>
-            <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">Learn from industry experts</p>
+          <div class="feature-card-premium">
+            <div class="feature-icon-bg-circle feature-icon-purple-theme">
+              <i data-lucide="atom"></i>
+            </div>
+            <h4 class="feature-card-title">Expert Faculty</h4>
+            <p class="feature-card-description">Learn from industry experts</p>
           </div>
-          <div class="card text-center" style="padding: 2.25rem 1.5rem; border-radius:var(--radius-md);">
-            <div class="metric-icon icon-pink" style="margin:0 auto 1.25rem; background:#fdf2f8; color:var(--secondary-color); width:50px; height:50px;"><i data-lucide="video"></i></div>
-            <h4 style="font-size:1.1rem; margin-bottom:0.4rem; font-weight:700;">Live Classes</h4>
-            <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">Interactive & engaging sessions</p>
+          <div class="feature-card-premium">
+            <div class="feature-icon-bg-circle feature-icon-blue-theme">
+              <i data-lucide="monitor"></i>
+            </div>
+            <h4 class="feature-card-title">Live Classes</h4>
+            <p class="feature-card-description">Interactive & engaging sessions</p>
           </div>
-          <div class="card text-center" style="padding: 2.25rem 1.5rem; border-radius:var(--radius-md);">
-            <div class="metric-icon icon-cyan" style="margin:0 auto 1.25rem; background:#f0f9ff; color:var(--accent-cyan); width:50px; height:50px;"><i data-lucide="book-open"></i></div>
-            <h4 style="font-size:1.1rem; margin-bottom:0.4rem; font-weight:700;">Study Materials</h4>
-            <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">Well structured & exam focused</p>
+          <div class="feature-card-premium">
+            <div class="feature-icon-bg-circle feature-icon-purple-theme">
+              <i data-lucide="file-text"></i>
+            </div>
+            <h4 class="feature-card-title">Study Materials</h4>
+            <p class="feature-card-description">Well structured & exam focused</p>
           </div>
-          <div class="card text-center" style="padding: 2.25rem 1.5rem; border-radius:var(--radius-md);">
-            <div class="metric-icon icon-emerald" style="margin:0 auto 1.25rem; background:#ecfdf5; color:var(--accent-emerald); width:50px; height:50px;"><i data-lucide="award"></i></div>
-            <h4 style="font-size:1.1rem; margin-bottom:0.4rem; font-weight:700;">Proven Results</h4>
-            <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">Thousands of success stories</p>
+          <div class="feature-card-premium">
+            <div class="feature-icon-bg-circle feature-icon-blue-theme">
+              <i data-lucide="award"></i>
+            </div>
+            <h4 class="feature-card-title">Proven Results</h4>
+            <p class="feature-card-description">Thousands of success stories</p>
           </div>
         </div>
       </div>
@@ -1115,18 +1125,17 @@
         const grid = document.getElementById('home-courses-grid');
         if (grid) {
           grid.innerHTML = courses.slice(0, 4).map(c => `
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; height:100%; padding:1.25rem;">
-              <div>
-                <div style="background:#f1f5f9; height:130px; border-radius:var(--radius-sm); margin-bottom:1rem; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); overflow:hidden;">
-                  <img src="images/courses_illustration.png" alt="Course Abstract Art" style="width:100%; height:100%; object-fit:cover;">
-                </div>
-                <h4 style="font-size:1.1rem; margin-bottom:0.25rem; font-weight:700;">${c.title}</h4>
-                <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.75rem; font-weight:600;">Duration: ${c.duration}</p>
-                <p style="font-size:0.8rem; line-height:1.5; color:var(--text-secondary); margin-bottom:1rem;">${c.description.substring(0, 80)}...</p>
+            <div class="course-card-premium">
+              <div class="course-card-image-box">
+                <img src="${c.image_url || 'images/courses_illustration.png'}" alt="${c.title}">
               </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:0.75rem; margin-top:auto;">
-                <span style="font-weight:800; color:var(--primary-color); font-size:1.15rem;">₹ ${c.fees}</span>
-                <a href="#courses" class="btn btn-secondary btn-sm" style="padding:0.4rem 0.85rem; font-size:0.75rem; border-radius:20px;">View</a>
+              <div class="course-card-body-content">
+                <h4>${c.title}</h4>
+                <p class="description-text">${c.description.substring(0, 80)}...</p>
+                <div class="course-card-footer-box">
+                  <span class="course-card-duration-text">Duration: <strong>${c.duration}</strong></span>
+                  <span class="course-card-price-value">₹ ${c.fees.toLocaleString('en-IN')}</span>
+                </div>
               </div>
             </div>
           `).join('');
@@ -1204,7 +1213,7 @@
               <div class="course-horizontal-card">
                 <!-- Course Left Image -->
                 <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); width:100%; height:120px; display:flex; align-items:center; justify-content:center; background:#f8fafc;">
-                  <img src="images/courses_illustration.png" alt="Course Conceptual Banner" style="width:100%; height:100%; object-fit:cover;">
+                  <img src="${c.image_url || 'images/courses_illustration.png'}" alt="Course Conceptual Banner" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 
                 <!-- Course Details Info -->
