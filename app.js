@@ -3,8 +3,8 @@
 // 1. Supabase Configuration Block
 // Input your Supabase credentials here to connect to your live database.
 const SUPABASE_CONFIG = {
-  url: "https://ghldkcokjlxugsgqqhxn.supabase.co", // e.g. "https://your-project.supabase.co"
-  anonKey: "sb_publishable_gXiAe-KDUTIumozOJHa-tg_M2waJ56L" // e.g. "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  url: "", // e.g. "https://your-project.supabase.co"
+  anonKey: "" // e.g. "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 };
 
 let supabase = null;
