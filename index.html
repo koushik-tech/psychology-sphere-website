@@ -1230,7 +1230,7 @@
                 <div class="course-horizontal-action">
                   <div style="margin-bottom:1rem; text-align:right;">
                     <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Tuition Fee</div>
-                    <div style="font-size:1.45rem; font-weight:800; color:var(--primary-color);">₹ ${c.fees}</div>
+                    <div style="font-size:1.45rem; font-weight:800; color:var(--primary-color);">₹ ${(Number(c.fees) || 0).toLocaleString('en-IN')}</div>
                   </div>
                   <button class="btn btn-primary btn-sm btn-view-details" data-id="${c.id}" style="border-radius:20px; padding:0.45rem 1.15rem;">View Details</button>
                 </div>
@@ -1261,7 +1261,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1.25rem;">
                       <div>
                         <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">Total Fees</div>
-                        <div style="font-size:1.45rem; font-weight:800; color:var(--text-primary);">₹ ${course.fees}</div>
+                        <div style="font-size:1.45rem; font-weight:800; color:var(--text-primary);">₹ ${(Number(course.fees) || 0).toLocaleString('en-IN')}</div>
                       </div>
                       <a href="#signup" onclick="document.getElementById('course-detail-modal').classList.remove('active');" class="btn btn-primary" style="border-radius:20px; padding:0.5rem 1.25rem; font-size:0.85rem;">Enroll Program</a>
                     </div>

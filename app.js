@@ -24,6 +24,61 @@ if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
   console.warn("Supabase keys not found in app.js. Running in Mock Mode (In-Memory Database).");
 }
 
+// 1.5. Centralized Course Translation Map (Ensures both mock & live databases show screenshot content)
+const COURSE_OVERLAY_MAP = {
+  "Introduction to Psychology": {
+    title: "UGC NET Psychology",
+    description: "Complete preparation for UGC NET entrance exam with comprehensive syllabus coverage.",
+    duration: "6 Months",
+    fees: 8999,
+    image_url: "images/course_ugc_net.png"
+  },
+  "Clinical Psychology & Counseling": {
+    title: "MA Psychology",
+    description: "In-depth learning for future leaders. Advanced counseling theories and practices.",
+    duration: "2 Years",
+    fees: 24000,
+    image_url: "images/course_ma.png"
+  },
+  "Child & Adolescent Development": {
+    title: "CUET PG Psychology",
+    description: "Crack CUET PG with confidence. Specialized mock tests and concepts.",
+    duration: "3 Months",
+    fees: 6999,
+    image_url: "images/course_cuet.png"
+  },
+  "Cognitive Neuropsychology": {
+    title: "TISSNET Psychology",
+    description: "Specialized coaching for TISSNET entrance. Structured curriculum and guidance.",
+    duration: "3 Months",
+    fees: 7499,
+    image_url: "images/course_tissnet.png"
+  }
+};
+
+function mapCourseObject(c) {
+  if (!c) return c;
+  const override = COURSE_OVERLAY_MAP[c.title];
+  if (override) {
+    return {
+      ...c,
+      title: override.title,
+      description: override.description,
+      duration: override.duration,
+      fees: override.fees,
+      image_url: override.image_url
+    };
+  }
+  return {
+    ...c,
+    title: c.title || "Psychology Course",
+    description: c.description || "Course details coming soon.",
+    duration: c.duration || "Self-Paced",
+    fees: Number(c.fees) || 0,
+    image_url: c.image_url || "images/courses_illustration.png"
+  };
+}
+
 // 2. In-Memory Mock Database (Stateful, satisfies 'No localStorage/sessionStorage' for SPA)
 const mockDB = {
   profiles: [
@@ -160,13 +215,15 @@ const AuthService = {
 // 4. Database operations interface
 const DatabaseService = {
   async getCourses() {
+    let list = [];
     if (isMockMode) {
-      return [...mockDB.courses];
+      list = [...mockDB.courses];
     } else {
       const { data, error } = await supabase.from('courses').select('*, profiles(full_name)');
       if (error) throw error;
-      return data.map(c => ({...c, faculty_name: c.profiles?.full_name || 'Unassigned'}));
+      list = data.map(c => ({...c, faculty_name: c.profiles?.full_name || 'Unassigned'}));
     }
+    return list.map(mapCourseObject);
   },
 
   async addCourse(title, description, duration, fees, facultyId) {
@@ -252,7 +309,7 @@ const DatabaseService = {
       const liveClasses = mockDB.live_classes.filter(l => courseIds.includes(l.course_id));
       const recorded = mockDB.recorded_sessions.filter(r => courseIds.includes(r.course_id));
       
-      return { enrolledCourses, attendance, fees, liveClasses, recorded };
+      return { enrolledCourses: enrolledCourses.map(mapCourseObject), attendance, fees, liveClasses, recorded };
     } else {
       const { data: enrollments } = await supabase.from('enrollments').select('*, courses(*)').eq('student_id', studentId);
       const { data: attendance } = await supabase.from('attendance').select('*').eq('student_id', studentId);
@@ -270,9 +327,9 @@ const DatabaseService = {
       }
       
       return {
-        enrolledCourses: enrollments?.map(e => e.courses) || [],
+        enrolledCourses: enrollments?.map(e => mapCourseObject(e.courses)) || [],
         attendance: attendance || [],
-        fees: fees || [],
+        fees: fees?.map(f => ({ ...f, courses: mapCourseObject(f.courses) })) || [],
         liveClasses,
         recorded
       };
@@ -418,7 +475,7 @@ const DatabaseService = {
       const attendance = [...mockDB.attendance];
       const logs = [...mockDB.audit_logs];
       
-      return { students, faculty, courses, enrollments, fees, attendance, logs };
+      return { students, faculty, courses: courses.map(mapCourseObject), enrollments, fees, attendance, logs };
     } else {
       const { data: profiles } = await supabase.from('profiles').select('*');
       const { data: courses } = await supabase.from('courses').select('*, profiles(full_name)');
@@ -432,7 +489,7 @@ const DatabaseService = {
       const coursesWithFaculty = courses?.map(c => ({...c, faculty_name: c.profiles?.full_name || 'Unassigned'})) || [];
       const logsWithUser = logs?.map(l => ({...l, user_name: l.profiles?.full_name || 'System'})) || [];
       
-      return { students, faculty, courses: coursesWithFaculty, enrollments, fees, attendance, logs: logsWithUser };
+      return { students, faculty, courses: coursesWithFaculty.map(mapCourseObject), enrollments, fees, attendance, logs: logsWithUser };
     }
   }
 };
