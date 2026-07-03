@@ -4,16 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Psychology Sphere | Premium Psychology Institute & Portal</title>
-  <meta name="description" content="Psychology Sphere is a leading competitive coaching institute providing advanced education and training in psychology and competitive exam preparation.">
+  <meta name="description" content="India's trusted institute for psychology education, competitive exam coaching, and academic tutoring.">
   <link rel="stylesheet" href="styles.css">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-  <!-- Global Header (Public Navigation) -->
+  <!-- Header Section (Navbar) -->
   <header id="main-header">
     <div class="container header-container">
       <a href="#home" class="logo">
@@ -24,16 +22,12 @@
         <ul class="nav-links" id="nav-links">
           <li><a href="#home" class="active">Home</a></li>
           <li><a href="#courses">Courses</a></li>
-          <li><a href="#about">Faculty</a></li>
-          <li><a href="#home">Success Stories</a></li>
-          <li><a href="#courses">Live Classes</a></li>
-          <li><a href="#contact">Resources</a></li>
-          <li><a href="#about">About Us</a></li>
-          <li class="auth-only student-only" style="display:none;"><a href="#student">Student Portal</a></li>
-          <li class="auth-only faculty-only" style="display:none;"><a href="#faculty">Faculty Portal</a></li>
-          <li class="auth-only admin-only" style="display:none;"><a href="#admin">Admin Dashboard</a></li>
-          <li class="guest-only"><a href="#login" class="btn btn-primary btn-sm" style="color:white; border-radius:20px; background-color:#3b20a6;">Login</a></li>
-          <li class="auth-only" style="display:none;"><button id="logout-btn" class="btn btn-outline btn-sm" style="border-radius:20px;">Logout</button></li>
+          <li><a href="#faculty">Faculty</a></li>
+          <li><a href="#success-stories">Success Stories</a></li>
+          <li><a href="#live-classes">Live Classes</a></li>
+          <li><a href="#resources">Resources</a></li>
+          <li><a href="#about-us">About Us</a></li>
+          <li><button class="btn btn-login-nav" id="btn-login-trigger">Login</button></li>
         </ul>
       </nav>
       <div class="menu-toggle" id="menu-toggle">
@@ -42,10 +36,353 @@
     </div>
   </header>
 
-  <!-- SPA Target Mounting Container -->
-  <main id="app-mount">
-    <!-- Dynamic views will mount here -->
-  </main>
+  <!-- Hero Section -->
+  <section class="section hero-section-rewrite" id="home">
+    <div class="container hero-layout-grid">
+      <div class="hero-text">
+        <h1 class="hero-title-main">
+          Empowering Minds.<br>Building Futures.
+        </h1>
+        <p class="hero-subtext-main">
+          India's trusted institute for psychology education and competitive exam preparation.
+        </p>
+        <div style="display:flex; gap:1.25rem;">
+          <a href="#courses" class="btn btn-hero-primary">Explore Courses</a>
+          <a href="#resources" class="btn btn-hero-outline">Enroll Now</a>
+        </div>
+      </div>
+      <div class="hero-illustration-wrapper">
+        <div class="hero-circle-purple-light"></div>
+        <div class="hero-circle-purple-solid"></div>
+        <img src="images/student_cutout.png" alt="Smiling Psychology Student" class="hero-student-cutout-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Row -->
+  <section class="section features-section-rewrite">
+    <div class="container">
+      <div class="grid-4">
+        <div class="feature-card-premium">
+          <div class="feature-icon-bg-circle feature-icon-purple-theme">
+            <i data-lucide="atom"></i>
+          </div>
+          <h4 class="feature-card-title">Expert Faculty</h4>
+          <p class="feature-card-description">Learn from industry experts</p>
+        </div>
+        <div class="feature-card-premium">
+          <div class="feature-icon-bg-circle feature-icon-blue-theme">
+            <i data-lucide="monitor"></i>
+          </div>
+          <h4 class="feature-card-title">Live Classes</h4>
+          <p class="feature-card-description">Interactive & engaging sessions</p>
+        </div>
+        <div class="feature-card-premium">
+          <div class="feature-icon-bg-circle feature-icon-purple-theme">
+            <i data-lucide="file-text"></i>
+          </div>
+          <h4 class="feature-card-title">Study Materials</h4>
+          <p class="feature-card-description">Well structured & exam focused</p>
+        </div>
+        <div class="feature-card-premium">
+          <div class="feature-icon-bg-circle feature-icon-blue-theme">
+            <i data-lucide="award"></i>
+          </div>
+          <h4 class="feature-card-title">Proven Results</h4>
+          <p class="feature-card-description">Thousands of success stories</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Courses Section -->
+  <section class="section courses-section-rewrite" id="courses">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
+        <div>
+          <span class="subtitle">Academic Curriculums</span>
+          <h2 style="margin:0; font-size:2.35rem; font-weight:800;">Our Top Courses</h2>
+        </div>
+        <a href="#courses" class="view-all-link">View All <i data-lucide="chevron-right" style="width:16px;"></i></a>
+      </div>
+      
+      <div class="grid-4" id="home-courses-grid">
+        <!-- Card 1: UGC NET -->
+        <div class="course-card-premium" data-course-id="1">
+          <div class="course-card-image-box">
+            <img src="images/course_ugc_net.png" alt="UGC NET Psychology">
+          </div>
+          <div class="course-card-body-content">
+            <h4>UGC NET Psychology</h4>
+            <p class="description-text">Complete preparation for UGC NET entrance exam with comprehensive syllabus coverage.</p>
+            <div class="course-card-footer-box">
+              <span class="course-card-duration-text">Duration: <strong>6 Months</strong></span>
+              <span class="course-card-price-value">₹ 8,999</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: MA Psychology -->
+        <div class="course-card-premium" data-course-id="2">
+          <div class="course-card-image-box">
+            <img src="images/course_ma.png" alt="MA Psychology">
+          </div>
+          <div class="course-card-body-content">
+            <h4>MA Psychology</h4>
+            <p class="description-text">In-depth learning for future leaders. Advanced counseling theories and practices.</p>
+            <div class="course-card-footer-box">
+              <span class="course-card-duration-text">Duration: <strong>2 Years</strong></span>
+              <span class="course-card-price-value">₹ 24,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: CUET PG -->
+        <div class="course-card-premium" data-course-id="3">
+          <div class="course-card-image-box">
+            <img src="images/course_cuet.png" alt="CUET PG Psychology">
+          </div>
+          <div class="course-card-body-content">
+            <h4>CUET PG Psychology</h4>
+            <p class="description-text">Crack CUET PG with confidence. Specialized mock tests and concepts.</p>
+            <div class="course-card-footer-box">
+              <span class="course-card-duration-text">Duration: <strong>3 Months</strong></span>
+              <span class="course-card-price-value">₹ 6,999</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: TISSNET -->
+        <div class="course-card-premium" data-course-id="4">
+          <div class="course-card-image-box">
+            <img src="images/course_tissnet.png" alt="TISSNET Psychology">
+          </div>
+          <div class="course-card-body-content">
+            <h4>TISSNET Psychology</h4>
+            <p class="description-text">Specialized coaching for TISSNET entrance. Structured curriculum and guidance.</p>
+            <div class="course-card-footer-box">
+              <span class="course-card-duration-text">Duration: <strong>3 Months</strong></span>
+              <span class="course-card-price-value">₹ 7,499</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faculty Section -->
+  <section class="section faculty-section-rewrite" id="faculty" style="background:#ffffff;">
+    <div class="container">
+      <div class="section-header text-center" style="margin-bottom:60px;">
+        <span class="subtitle">Academic Leadership</span>
+        <h2>Our Expert Faculty</h2>
+        <p>Learn from the best minds in psychology education.</p>
+      </div>
+
+      <div class="grid-3">
+        <!-- Faculty 1 -->
+        <div class="card text-center faculty-card-rewrite">
+          <div class="faculty-avatar-rewrite">SJ</div>
+          <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Dr. Sarah Jenkins</h3>
+          <p class="subtitle" style="font-size:0.75rem; font-weight:700; margin-bottom:1rem;">Ph.D. / Senior Lecturer</p>
+          <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">Specialization: Clinical Counseling. 10+ Years of coaching entrance aspirants.</p>
+          <div class="faculty-socials">
+            <a href="#"><i data-lucide="linkedin"></i></a>
+            <a href="#"><i data-lucide="mail"></i></a>
+          </div>
+        </div>
+
+        <!-- Faculty 2 -->
+        <div class="card text-center faculty-card-rewrite">
+          <div class="faculty-avatar-rewrite">RK</div>
+          <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Dr. Rajesh Kumar</h3>
+          <p class="subtitle" style="font-size:0.75rem; font-weight:700; margin-bottom:1rem;">Ph.D. / Cognitive Scientist</p>
+          <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">Specialization: Research Methods & Neuropsychology. Former DU professor.</p>
+          <div class="faculty-socials">
+            <a href="#"><i data-lucide="linkedin"></i></a>
+            <a href="#"><i data-lucide="mail"></i></a>
+          </div>
+        </div>
+
+        <!-- Faculty 3 -->
+        <div class="card text-center faculty-card-rewrite">
+          <div class="faculty-avatar-rewrite">AS</div>
+          <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Prof. Ananya Sen</h3>
+          <p class="subtitle" style="font-size:0.75rem; font-weight:700; margin-bottom:1rem;">M.Phil. / Senior Mentor</p>
+          <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">Specialization: Child Development & Counseling. 8+ Years teaching.</p>
+          <div class="faculty-socials">
+            <a href="#"><i data-lucide="linkedin"></i></a>
+            <a href="#"><i data-lucide="mail"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Success Stories Section -->
+  <section class="section success-stories-rewrite" id="success-stories" style="background:#f8fafc;">
+    <div class="container">
+      <div class="section-header text-center" style="margin-bottom:60px;">
+        <span class="subtitle">Achievements</span>
+        <h2>Success Stories</h2>
+        <p>Inspirational stories from students who achieved their dreams with us.</p>
+      </div>
+
+      <div class="grid-3">
+        <!-- Story 1 -->
+        <div class="card story-card-rewrite">
+          <div class="story-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+          <p class="story-quote">"Psychology Sphere provided excellent guidance and study materials. The mock tests were highly focused on actual UGC NET patterns, which made crack testing feel natural."</p>
+          <div class="story-student-details">
+            <div class="story-student-avatar">AS</div>
+            <div>
+              <h4 style="margin:0; font-size:0.95rem;">Aniket Sharma</h4>
+              <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">Rank 12, UGC NET 2025</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 2 -->
+        <div class="card story-card-rewrite">
+          <div class="story-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+          <p class="story-quote">"The mock tests and live lectures helped me build conceptual clarity. The teachers are always available to clear doubts and provide personalized counseling advice."</p>
+          <div class="story-student-details">
+            <div class="story-student-avatar">MP</div>
+            <div>
+              <h4 style="margin:0; font-size:0.95rem;">Meera Patel</h4>
+              <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">Selected DU MA Psychology 2025</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 3 -->
+        <div class="card story-card-rewrite">
+          <div class="story-rating"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+          <p class="story-quote">"Highly experienced faculty and personalized feedback. The study material is well-structured and exam-focused. Thank you Psychology Sphere!"</p>
+          <div class="story-student-details">
+            <div class="story-student-avatar">RJ</div>
+            <div>
+              <h4 style="margin:0; font-size:0.95rem;">Rohan Joshi</h4>
+              <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">Selected TISS 2025</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Classes Showcase Section -->
+  <section class="section live-classes-section-rewrite" id="live-classes" style="background:#ffffff;">
+    <div class="container grid-2" style="align-items: center; gap: 4rem;">
+      <div>
+        <span class="subtitle">Broadcast Center</span>
+        <h2 style="margin-bottom:1.5rem; font-size:2.35rem;">Interactive Live Classrooms</h2>
+        <p style="margin-bottom:1.5rem; line-height:1.7; color:var(--text-secondary);">
+          We conduct regular interactive sessions with live whiteboard explanations, screen shares, and group discussions. Students can clear their doubts instantly in real-time.
+        </p>
+        <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:1rem; margin-bottom:2rem;">
+          <li style="display:flex; align-items:center; gap:0.75rem; font-weight:600;"><i data-lucide="check-circle" style="color:var(--primary-color);"></i> Live Audio/Video Q&A</li>
+          <li style="display:flex; align-items:center; gap:0.75rem; font-weight:600;"><i data-lucide="check-circle" style="color:var(--primary-color);"></i> Daily Session Recordings Uploaded in 2 hrs</li>
+          <li style="display:flex; align-items:center; gap:0.75rem; font-weight:600;"><i data-lucide="check-circle" style="color:var(--primary-color);"></i> Interactive Chat and Polls</li>
+        </ul>
+        <button class="btn btn-hero-primary" id="btn-demo-trigger">Join Demo Session</button>
+      </div>
+
+      <div class="live-lecture-showcase-card">
+        <div class="live-card-badge"><span class="badge-live-pulse"></span> LIVE BROADCAST</div>
+        <div style="background:#090a16; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.1); padding:2rem; text-align:center; color:white; min-height:260px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+          <i data-lucide="video" style="width:60px; height:60px; color:#ef4444; margin-bottom:1rem; animation: pulse 2s infinite;"></i>
+          <h3 style="color:white; margin-bottom:0.5rem; font-size:1.35rem;">Introduction to CBT Techniques</h3>
+          <p style="color:#94a3b8; font-size:0.875rem; margin-bottom:1.5rem;">Instructor: Dr. Sarah Jenkins</p>
+          <a href="#" class="btn btn-primary btn-sm btn-join-meeting" style="border-radius:20px; padding:0.5rem 1.5rem;"><i data-lucide="tv"></i> Join Live Broadcast</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resources Section (FAQs & Inquiry Form) -->
+  <section class="section resources-section-rewrite" id="resources" style="background:#f8fafc;">
+    <div class="container grid-2" style="align-items: flex-start; gap: 4rem;">
+      <!-- FAQs -->
+      <div>
+        <span class="subtitle">Help Desk</span>
+        <h2 style="margin-bottom: 2rem;">Frequently Asked Questions</h2>
+        <div class="accordion">
+          <div class="accordion-item active">
+            <div class="accordion-header">
+              <h4>What are the eligibility criteria for the MA Psychology coaching?</h4>
+              <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+              <p>Eligible candidates must hold a Bachelor's degree (B.A./B.Sc.) in Psychology or behavioral sciences from an accredited university. Final year students can also apply conditionally.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <h4>Are classes live or pre-recorded?</h4>
+              <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+              <p>All core modules feature live classrooms with direct interactions. Recorded playbacks are uploaded to the Student Portal within 2 hours of session completion for revision.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <h4>Is study material included in the course fee?</h4>
+              <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+              <p>Yes, comprehensive, well-structured, exam-focused digital study material and printed booklets are provided as part of the enrollment fees.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inquiry Form -->
+      <div class="card inquiry-card-rewrite" style="box-shadow:var(--shadow-lg);">
+        <span class="subtitle">Enrollment Desk</span>
+        <h3 style="margin-bottom: 1.5rem; font-size:1.35rem;">Admission Inquiry</h3>
+        <form id="public-inquiry-form">
+          <div class="form-group">
+            <label for="inq-name">Full Name</label>
+            <input type="text" id="inq-name" class="form-control" required placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label for="inq-email">Email Address</label>
+            <input type="email" id="inq-email" class="form-control" required placeholder="e.g. john@example.com">
+          </div>
+          <div class="form-group">
+            <label for="inq-phone">Contact Number</label>
+            <input type="tel" id="inq-phone" class="form-control" placeholder="e.g. +91 98765-43210">
+          </div>
+          <div class="form-group">
+            <label for="inq-course">Course of Interest</label>
+            <select id="inq-course" class="form-control">
+              <option value="1">UGC NET Psychology</option>
+              <option value="2">MA Psychology</option>
+              <option value="3">CUET PG Psychology</option>
+              <option value="4">TISSNET Psychology</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; border-radius:30px; background-color:#3b20a6;">Submit Inquiry</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Us Section -->
+  <section class="section about-us-section-rewrite" id="about-us" style="background:#ffffff;">
+    <div class="container" style="max-width:800px; text-align:center;">
+      <span class="subtitle">Our Institution</span>
+      <h2 style="margin-bottom:1.5rem; font-size:2.35rem;">About Psychology Sphere</h2>
+      <p style="line-height:1.8; color:var(--text-secondary); margin-bottom:1.5rem; font-size:1.05rem;">
+        Psychology Sphere is India's leading competitive coaching portal and academic center dedicated to psychology entrance coaching. Founded with the mission to bridge the gap between academic theory and entrance exam patterns, we provide standard classroom curriculums led by highly qualified and experienced mentors.
+      </p>
+      <p style="line-height:1.8; color:var(--text-secondary); font-size:1.05rem;">
+        We emphasize rigorous practice papers, conceptual clarity sessions, mock examinations, and comprehensive student support to help candidates crack prestigious national level entrance examinations such as UGC NET, MA Psychology entries, CUET PG, and TISSNET.
+      </p>
+    </div>
+  </section>
 
   <!-- Global Footer -->
   <footer id="main-footer">
@@ -69,28 +406,28 @@
           <ul>
             <li><a href="#home">Home</a></li>
             <li><a href="#courses">Courses Offered</a></li>
-            <li><a href="#about">Faculty Details</a></li>
-            <li><a href="#contact">Inquiries</a></li>
+            <li><a href="#faculty">Faculty Details</a></li>
+            <li><a href="#resources">Inquiries</a></li>
           </ul>
         </div>
         <div class="footer-links">
           <h4>Portals</h4>
           <ul>
-            <li><a href="#login">Student Portal</a></li>
-            <li><a href="#login">Faculty Desk</a></li>
-            <li><a href="#login">Admin Office</a></li>
+            <li><a href="#login" class="footer-login-trigger">Student Portal</a></li>
+            <li><a href="#login" class="footer-login-trigger">Faculty Desk</a></li>
+            <li><a href="#login" class="footer-login-trigger">Admin Office</a></li>
           </ul>
         </div>
         <div class="footer-links">
           <h4>Contact Info</h4>
           <ul>
-            <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
+            <li style="color: #64748b; display:flex; gap:0.5rem; align-items:center;">
               <i data-lucide="map-pin" style="width:16px;"></i> 77 Cognitive Way, Science Park
             </li>
-            <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
+            <li style="color: #64748b; display:flex; gap:0.5rem; align-items:center;">
               <i data-lucide="phone" style="width:16px;"></i> +91 98765 43210
             </li>
-            <li style="color: var(--text-secondary); display:flex; gap:0.5rem; align-items:center;">
+            <li style="color: #64748b; display:flex; gap:0.5rem; align-items:center;">
               <i data-lucide="mail" style="width:16px;"></i> admissions@psysphere.edu
             </li>
           </ul>
@@ -103,2010 +440,50 @@
     </div>
   </footer>
 
+  <!-- ==================== INTERACTIVE MODALS ==================== -->
 
-  <!-- ==================== VIEW TEMPLATES ==================== -->
-
-  <!-- 1. Home View Template -->
-  <template id="home-view">
-    <section class="section hero-section" style="padding: 90px 0; background: radial-gradient(circle at 80% 50%, rgba(245,243,255,0.4) 0%, rgba(255,255,255,1) 100%); overflow: hidden;">
-      <div class="container hero-layout-grid">
-        <div class="hero-text">
-          <h1 class="hero-title-main">
-            Empowering Minds.<br>Building Futures.
-          </h1>
-          <p class="hero-subtext-main">
-            India's trusted institute for psychology education and competitive exam preparation.
-          </p>
-          <div style="display:flex; gap:1.25rem;">
-            <a href="#courses" class="btn btn-hero-primary">Explore Courses</a>
-            <a href="#signup" class="btn btn-hero-outline">Enroll Now</a>
-          </div>
-        </div>
-        <div class="hero-illustration-wrapper">
-          <div class="hero-circle-purple-light"></div>
-          <div class="hero-circle-purple-solid"></div>
-          <img src="images/student_cutout.png" alt="Smiling Psychology Student" class="hero-student-cutout-img">
-        </div>
+  <!-- 1. Login Modal -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-box" style="max-width: 440px;">
+      <i data-lucide="x" class="modal-close" id="login-modal-close"></i>
+      <div class="text-center" style="margin-bottom: 2rem;">
+        <a href="#home" class="logo" style="justify-content:center; margin-bottom:0.5rem;">
+          <i data-lucide="brain"></i>
+          <span style="color:#3b20a6;">Psychology Sphere</span>
+        </a>
+        <h3 style="margin-top:1.5rem; font-size:1.5rem;">Welcome Back!</h3>
+        <p>Login to continue</p>
       </div>
-    </section>
-
-    <!-- Public Features Row (Expert Faculty, Live Classes, Study Materials, Proven Results) -->
-    <section class="section" style="padding: 40px 0 80px; background: #ffffff;">
-      <div class="container">
-        <div class="grid-4">
-          <div class="feature-card-premium">
-            <div class="feature-icon-bg-circle feature-icon-purple-theme">
-              <i data-lucide="atom"></i>
-            </div>
-            <h4 class="feature-card-title">Expert Faculty</h4>
-            <p class="feature-card-description">Learn from industry experts</p>
-          </div>
-          <div class="feature-card-premium">
-            <div class="feature-icon-bg-circle feature-icon-blue-theme">
-              <i data-lucide="monitor"></i>
-            </div>
-            <h4 class="feature-card-title">Live Classes</h4>
-            <p class="feature-card-description">Interactive & engaging sessions</p>
-          </div>
-          <div class="feature-card-premium">
-            <div class="feature-icon-bg-circle feature-icon-purple-theme">
-              <i data-lucide="file-text"></i>
-            </div>
-            <h4 class="feature-card-title">Study Materials</h4>
-            <p class="feature-card-description">Well structured & exam focused</p>
-          </div>
-          <div class="feature-card-premium">
-            <div class="feature-icon-bg-circle feature-icon-blue-theme">
-              <i data-lucide="award"></i>
-            </div>
-            <h4 class="feature-card-title">Proven Results</h4>
-            <p class="feature-card-description">Thousands of success stories</p>
-          </div>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email or Mobile Number</label>
+          <input type="email" id="login-email" class="form-control" required placeholder="Enter your email or mobile">
         </div>
-      </div>
-    </section>
-
-    <!-- Top Courses Section -->
-    <section class="section" style="border-top: 1px solid var(--border-color); background:#f9fafc;">
-      <div class="container">
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
-          <div>
-            <span class="subtitle">Academic Curriculums</span>
-            <h2 style="margin:0; font-size:2rem;">Our Top Courses</h2>
-          </div>
-          <a href="#courses" style="color:var(--primary-color); font-weight:700; font-size:0.95rem; display:flex; align-items:center; gap:0.25rem;">View All <i data-lucide="chevron-right" style="width:16px;"></i></a>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" required placeholder="Enter your password">
         </div>
-        
-        <div class="grid-4" id="home-courses-grid">
-          <!-- Dynamically loaded courses -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <!-- 2. Courses View Template -->
-  <template id="courses-view">
-    <section class="section">
-      <div class="container">
-        <div style="margin-bottom: 2.5rem;">
-          <h2 style="font-size:2.25rem; margin-bottom:0.25rem; font-weight:800;">Courses Offered</h2>
-          <p style="font-size:0.9rem; color:var(--text-muted); font-weight:500;">Home &gt; Courses</p>
-        </div>
-
-        <div class="courses-page-layout">
-          <!-- Left categories filter list -->
-          <aside class="courses-sidebar">
-            <h4 style="font-size:1.1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem; font-weight:700;">Categories</h4>
-            <ul class="category-list">
-              <li class="category-item active" data-category="all">All Courses</li>
-              <li class="category-item" data-category="UGC NET">UGC NET</li>
-              <li class="category-item" data-category="MA Psychology">MA Psychology</li>
-              <li class="category-item" data-category="CUET PG">CUET PG</li>
-              <li class="category-item" data-category="TISSNET">TISSNET</li>
-            </ul>
-          </aside>
-
-          <!-- Right side horizontal course rows -->
-          <div id="courses-list-rows">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Dynamic Course details modal -->
-    <div class="modal-overlay" id="course-detail-modal">
-      <div class="modal-box">
-        <i data-lucide="x" class="modal-close" id="course-modal-close"></i>
-        <div id="course-modal-content">
-          <!-- Populated by JS -->
-        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem; border-radius:30px; background-color:#3b20a6;">Login</button>
+      </form>
+      
+      <div style="margin-top:2rem; padding:1rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; font-size:0.8rem; text-align:center; color:var(--text-secondary);">
+        Mock Mode Active. Input any email and password to log in.
       </div>
     </div>
-  </template>
+  </div>
 
-  <!-- 3. Faculty View Template -->
-  <template id="about-view">
-    <section class="section">
-      <div class="container">
-        <div class="section-header text-center" style="max-width: 600px; margin-bottom:60px;">
-          <span class="subtitle">Academic Leadership</span>
-          <h2>Our Expert Faculty</h2>
-          <p>Learn from the best minds in psychology education.</p>
-        </div>
-
-        <!-- Faculty Profiles in Grid -->
-        <div class="grid-3" id="about-faculty-grid">
-          <!-- Dynamically populated -->
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <!-- 4. Contact View Template -->
-  <template id="contact-view">
-    <section class="section">
-      <div class="container grid-2" style="align-items: flex-start; gap: 4rem;">
-        
-        <!-- FAQs Accordion -->
-        <div>
-          <span class="subtitle">Help Desk</span>
-          <h2 style="margin-bottom: 2rem;">Frequently Asked Questions</h2>
-          <div class="accordion">
-            <div class="accordion-item">
-              <div class="accordion-header">
-                <h4>What are the eligibility criteria for the Clinical track?</h4>
-                <i data-lucide="chevron-down" class="accordion-icon"></i>
-              </div>
-              <div class="accordion-content">
-                <p>Eligible applicants must hold a Bachelor's degree (B.A./B.Sc.) in Psychology or behavioral sciences from an accredited university. Final year students can also apply conditionally.</p>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <div class="accordion-header">
-                <h4>Are classes live or pre-recorded?</h4>
-                <i data-lucide="chevron-down" class="accordion-icon"></i>
-              </div>
-              <div class="accordion-content">
-                <p>All core modules feature live classrooms with direct interactions. Recorded playbacks are uploaded to the Student Portal within 2 hours of session completion for revision.</p>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <div class="accordion-header">
-                <h4>How does the installment billing work?</h4>
-                <i data-lucide="chevron-down" class="accordion-icon"></i>
-              </div>
-              <div class="accordion-content">
-                <p>You can pay your enrollment fee in full or split it into 3 equal monthly installments. Installment reminders and payment channels are available directly inside your dashboard.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Public Inquiry Form -->
-        <div class="card" style="box-shadow:var(--shadow-lg);">
-          <span class="subtitle">Enrollment Desk</span>
-          <h3 style="margin-bottom: 1.5rem; font-size:1.35rem;">Admission Inquiry</h3>
-          <form id="public-inquiry-form">
-            <div class="form-group">
-              <label for="inq-name">Full Name</label>
-              <input type="text" id="inq-name" class="form-control" required placeholder="e.g. John Doe">
-            </div>
-            <div class="form-group">
-              <label for="inq-email">Email Address</label>
-              <input type="email" id="inq-email" class="form-control" required placeholder="e.g. john@example.com">
-            </div>
-            <div class="form-group">
-              <label for="inq-phone">Contact Number</label>
-              <input type="tel" id="inq-phone" class="form-control" placeholder="e.g. +91 98765-43210">
-            </div>
-            <div class="form-group">
-              <label for="inq-course">Course of Interest</label>
-              <select id="inq-course" class="form-control">
-                <!-- Populated dynamically -->
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius:30px;">Submit Inquiry</button>
-          </form>
-        </div>
-
-      </div>
-    </section>
-  </template>
-
-  <!-- 5. Login View Template -->
-  <template id="login-view">
-    <section class="section" style="display:flex; align-items:center; min-height:70vh;">
-      <div class="container" style="max-width: 440px;">
-        <div class="card" style="border-radius: var(--radius-lg); box-shadow:var(--shadow-lg);">
-          <div class="text-center" style="margin-bottom: 2rem;">
-            <a href="#home" class="logo" style="justify-content:center; margin-bottom:0.5rem;">
-              <i data-lucide="brain"></i>
-              <span>Psychology Sphere</span>
-            </a>
-            <h3 style="margin-top:1.5rem; font-size:1.5rem;">Welcome Back!</h3>
-            <p>Login to continue</p>
-          </div>
-          
-          <form id="login-form">
-            <div class="form-group">
-              <label for="login-email">Email or Mobile Number</label>
-              <input type="email" id="login-email" class="form-control" required placeholder="Enter your email or mobile">
-            </div>
-            <div class="form-group">
-              <label for="login-password">Password</label>
-              <input type="password" id="login-password" class="form-control" required placeholder="Enter your password">
-            </div>
-            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem; border-radius:30px;">Login</button>
-          </form>
-
-          <!-- Quick access credentials -->
-          <div style="margin-top:2rem; padding:1rem; background:#f8fafc; border:1px solid var(--border-color); border-radius:var(--radius-sm);">
-            <h5 style="margin-bottom:0.75rem; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary);">Quick Test Accounts:</h5>
-            <div style="display:flex; flex-direction:column; gap:0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='student@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px;">
-                <span>Student Portal</span> <span>student@test.com</span>
-              </button>
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='faculty@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px;">
-                <span>Faculty Portal</span> <span>faculty@test.com</span>
-              </button>
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='admin@test.com'; document.getElementById('login-password').value='demo123';" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px;">
-                <span>Admin Portal</span> <span>admin@test.com</span>
-              </button>
-            </div>
-          </div>
-
-          <p class="text-center" style="margin-top:1.5rem; font-size:0.85rem;">
-            Don't have an account? <a href="#signup" style="color:var(--primary-color); font-weight:600;">Sign Up</a>
-          </p>
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <!-- 6. Signup View Template -->
-  <template id="signup-view">
-    <section class="section" style="display:flex; align-items:center; min-height:75vh;">
-      <div class="container" style="max-width: 480px;">
-        <div class="card" style="border-radius: var(--radius-lg); box-shadow:var(--shadow-lg);">
-          <div class="text-center" style="margin-bottom: 1.5rem;">
-            <a href="#home" class="logo" style="justify-content:center; margin-bottom:0.5rem;">
-              <i data-lucide="brain"></i>
-              <span>Psychology Sphere</span>
-            </a>
-            <h3 style="margin-top:1.5rem; font-size:1.5rem;">Create Account</h3>
-            <p>Enroll in classes and set up your portal</p>
-          </div>
-
-          <form id="signup-form">
-            <div class="form-group">
-              <label for="signup-name">Full Name</label>
-              <input type="text" id="signup-name" class="form-control" required placeholder="e.g. John Doe">
-            </div>
-            <div class="form-group">
-              <label for="signup-email">Email Address</label>
-              <input type="email" id="signup-email" class="form-control" required placeholder="name@domain.com">
-            </div>
-            <div class="form-group">
-              <label for="signup-phone">Contact Number</label>
-              <input type="tel" id="signup-phone" class="form-control" placeholder="+91 98765-43210">
-            </div>
-            <div class="form-group">
-              <label for="signup-password">Choose Password</label>
-              <input type="password" id="signup-password" class="form-control" required minlength="6" placeholder="At least 6 characters">
-            </div>
-            <div class="form-group">
-              <label for="signup-role">Register As</label>
-              <select id="signup-role" class="form-control">
-                <option value="student">Student</option>
-                <option value="faculty">Faculty / Trainer</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; margin-top:1rem;">Sign Up</button>
-          </form>
-
-          <p class="text-center" style="margin-top:1.5rem; font-size:0.85rem;">
-            Already registered? <a href="#login" style="color:var(--primary-color); font-weight:600;">Sign In</a>
-          </p>
-        </div>
-      </div>
-    </section>
-  </template>
-
-  <!-- 7. Student Dashboard View Template -->
-  <template id="student-view">
-    <div class="dashboard-layout">
-      <!-- Sidebar -->
-      <aside class="sidebar" id="dashboard-sidebar">
-        <div class="sidebar-brand">
-          <a href="#home" class="logo">
-            <i data-lucide="brain"></i>
-            <span style="font-size:1.15rem; color:white;">Psychology Sphere</span>
-          </a>
-        </div>
-        <ul class="sidebar-menu">
-          <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="student-overview"><i data-lucide="grid"></i> Dashboard</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-courses"><i data-lucide="book-open"></i> My Courses</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-attendance"><i data-lucide="calendar"></i> Attendance</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-fees"><i data-lucide="credit-card"></i> Fees & Payments</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="student-classroom"><i data-lucide="tv"></i> Study Materials</a></li>
-        </ul>
-        <div class="sidebar-user">
-          <div class="user-avatar" id="student-avatar-initials">S</div>
-          <div class="user-details">
-            <div class="user-name" id="student-display-name">Ananya Verma</div>
-            <div class="user-role">Student Portal</div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Dashboard Main Content -->
-      <div class="main-content">
-        <div class="dashboard-header">
-          <div style="display:flex; align-items:center;">
-            <i data-lucide="menu" class="db-menu-toggle" id="db-menu-toggle"></i>
-            <div style="text-align:left;">
-              <h2 id="student-section-title" style="margin:0; font-size:1.75rem;">Welcome back, Ananya 👋</h2>
-              <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.25rem;">Here's what's happening with your learning journey.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Student Notices/Announcements Section -->
-        <div id="student-notices-container" style="margin-bottom: 2rem;">
-          <!-- Notices loaded here -->
-        </div>
-
-        <!-- TAB CONTENT: Overview -->
-        <div id="student-overview-tab" class="dashboard-tab-content">
-          <!-- Summary Metrics Cards -->
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-info">
-                <h3>My Courses</h3>
-                <div class="metric-value" id="student-course-count" style="color:var(--primary-color);">3</div>
-                <div class="metric-sub">Active</div>
-              </div>
-              <div class="metric-icon" style="background:#eef2ff; color:var(--primary-color);"><i data-lucide="book-open"></i></div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-info">
-                <h3>Attendance</h3>
-                <div class="metric-value" id="student-attendance-percent" style="color:var(--accent-emerald);">85%</div>
-                <div class="metric-sub">This Month</div>
-              </div>
-              <div class="metric-icon" style="background:#ecfdf5; color:var(--accent-emerald);"><i data-lucide="check-square"></i></div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-info">
-                <h3>Fee Due</h3>
-                <div class="metric-value" id="student-pending-fees" style="color:var(--accent-amber);">₹ 2,500</div>
-                <div class="metric-sub">Pending</div>
-              </div>
-              <div class="metric-icon" style="background:#fffbeb; color:var(--accent-amber);"><i data-lucide="credit-card"></i></div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-info">
-                <h3>Upcoming Class</h3>
-                <div class="metric-value" style="font-size:1.1rem; font-weight:700; margin-top:0.5rem; color:var(--text-primary);">Today, 6:00 PM</div>
-                <div class="metric-sub" id="student-next-class-title">Research Methods</div>
-              </div>
-              <div class="metric-icon" style="background:#fff1f2; color:var(--accent-rose);"><i data-lucide="clock"></i></div>
-            </div>
-          </div>
-
-          <!-- Two-Column content area -->
-          <div class="grid-2" style="align-items: start;">
-            <!-- Left Side: My Courses List with progress bars -->
-            <div class="card" style="padding:1.5rem;">
-              <div style="display:flex; justify-content:between; align-items:center; margin-bottom:1.5rem;">
-                <h3 style="font-size:1.15rem; margin:0;">My Courses</h3>
-                <a href="#" onclick="document.querySelector('[data-tab=student-courses]').click();" style="font-size:0.8rem; color:var(--primary-color); font-weight:600; margin-left:auto;">View All</a>
-              </div>
-              
-              <div style="display:flex; flex-direction:column; gap:1.5rem;" id="student-progress-courses-list">
-                <!-- course progress rows populated dynamically -->
-              </div>
-            </div>
-
-            <!-- Right Side: Live Class schedule and announcements -->
-            <div style="display:flex; flex-direction:column; gap:1.5rem;">
-              <!-- Live class banner -->
-              <div class="card" style="padding:1.5rem; border:1px solid rgba(79,70,229,0.2); background:rgba(79,70,229,0.02);">
-                <h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--primary-color); letter-spacing:0.5px; margin-bottom:0.5rem;">Upcoming Live Class</h4>
-                <h3 style="font-size:1.2rem; margin-bottom:0.25rem;" id="live-lecture-heading">Research Methods</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.5rem;">Today, 6:00 PM</p>
-                <a href="#" id="live-lecture-link" target="_blank" class="btn btn-primary" style="width:100%; border-radius:30px;"><i data-lucide="video" style="width:18px;"></i> Join Live Class</a>
-              </div>
-
-              <!-- Announcements lists -->
-              <div class="card" style="padding:1.5rem;">
-                <h3 style="font-size:1.1rem; margin-bottom:1.25rem;">Recent Announcements</h3>
-                <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:1rem;" id="dashboard-announcements-list">
-                  <!-- Loaded dynamically -->
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: My Courses List -->
-        <div id="student-courses-tab" class="dashboard-tab-content" style="display:none;">
-          <div class="grid-2" id="student-courses-grid">
-            <!-- Loaded by JS -->
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Attendance logs -->
-        <div id="student-attendance-tab" class="dashboard-tab-content" style="display:none;">
-          <div class="card" style="padding:1.5rem; margin-bottom:2rem;">
-            <h3 style="margin-bottom:1rem;">Attendance History</h3>
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Course</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="student-attendance-tbody">
-                  <!-- Loaded by JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Fees & Payments -->
-        <div id="student-fees-tab" class="dashboard-tab-content" style="display:none;">
-          <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
-            <h3 style="margin-bottom:1.25rem;">Payment History</h3>
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Action / Receipt</th>
-                  </tr>
-                </thead>
-                <tbody id="student-fees-tbody">
-                  <!-- Loaded by JS -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Secured Payments Brand Logo Grid -->
-            <div class="brands-row">
-              <span>Secure Payments Powered by</span>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Razorpay_logo.svg" alt="Razorpay" style="height:20px;">
-              <span style="font-family:var(--font-heading); font-weight:700; color:#5c6bc0; font-size:1rem; opacity:0.6;">UPI</span>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-              <span style="font-weight:600; opacity:0.5; font-size:0.8rem;">NET BANKING</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Study Materials -->
-        <div id="student-classroom-tab" class="dashboard-tab-content" style="display:none;">
-          <h3 style="margin-bottom:1.5rem;">Live Broadcast Sessions</h3>
-          <div class="grid-2" id="student-live-grid" style="margin-bottom:3rem;">
-            <!-- Populated by JS -->
-          </div>
-
-          <h3 style="margin-bottom:1.5rem;">Recorded Classes Library</h3>
-          <div class="grid-3" id="student-recorded-grid">
-            <!-- Populated by JS -->
-          </div>
-        </div>
+  <!-- 2. Course Detail Modal -->
+  <div class="modal-overlay" id="course-detail-modal">
+    <div class="modal-box">
+      <i data-lucide="x" class="modal-close" id="course-modal-close"></i>
+      <div id="course-modal-content">
+        <!-- Populated by JS -->
       </div>
     </div>
+  </div>
 
-    <!-- Payments Modal -->
-    <div class="modal-overlay" id="checkout-modal">
-      <div class="modal-box" style="max-width: 450px;">
-        <i data-lucide="x" class="modal-close" id="checkout-modal-close"></i>
-        <h3>Secure Checkout</h3>
-        <p style="margin-bottom:1.5rem; font-size:0.95rem;">Psychology Sphere Tuition Fee Clearance</p>
-        
-        <div style="background:#f8fafc; padding:1rem; border-radius:var(--radius-sm); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);">
-          <span style="font-weight:600;" id="checkout-course-title">Course Tuition</span>
-          <span style="font-weight:700; color:var(--primary-color); font-size:1.25rem;" id="checkout-amount">₹ 2,500</span>
-        </div>
-
-        <form id="payment-gate-form">
-          <input type="hidden" id="checkout-fee-id">
-          <div class="form-group">
-            <label>Payment Method</label>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
-              <label class="card" style="padding:1rem; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:0.5rem; border-color:var(--primary-color);">
-                <input type="radio" name="pay-method" value="Card" checked style="display:none;">
-                <i data-lucide="credit-card"></i>
-                <span style="font-size:0.8rem; font-weight:600;">Credit / Debit Card</span>
-              </label>
-              <label class="card" style="padding:1rem; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
-                <input type="radio" name="pay-method" value="UPI" style="display:none;">
-                <i data-lucide="smartphone"></i>
-                <span style="font-size:0.8rem; font-weight:600;">UPI QR Code</span>
-              </label>
-            </div>
-          </div>
-
-          <div id="card-payment-fields">
-            <div class="form-group">
-              <label for="card-num">Card Number</label>
-              <input type="text" id="card-num" class="form-control" placeholder="4111 2222 3333 4444" pattern="\d{16}">
-            </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-              <div class="form-group">
-                <label for="card-expiry">Expiry Date</label>
-                <input type="text" id="card-expiry" class="form-control" placeholder="MM/YY">
-              </div>
-              <div class="form-group">
-                <label for="card-cvv">CVV</label>
-                <input type="password" id="card-cvv" class="form-control" placeholder="•••" pattern="\d{3}">
-              </div>
-            </div>
-          </div>
-
-          <div id="upi-payment-fields" style="display:none; text-align:center; padding:1rem; background:#f8fafc; border:1px dashed var(--border-color); border-radius:var(--radius-sm); margin-bottom:1.5rem;">
-            <p style="font-size:0.8rem; margin-bottom:1rem; color:var(--text-secondary);">Scan QR code with GPay, PhonePe, or Paytm</p>
-            <div style="width:120px; height:120px; background:white; margin:0 auto; padding:0.5rem; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color);">
-              <i data-lucide="qr-code" style="width:100px; height:100px; color:black;"></i>
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; margin-top:1rem;">Pay Now</button>
-        </form>
-      </div>
-    </div>
-  </template>
-
-  <!-- 8. Faculty Dashboard View Template -->
-  <template id="faculty-view">
-    <div class="dashboard-layout">
-      <!-- Sidebar -->
-      <aside class="sidebar" id="faculty-sidebar">
-        <div class="sidebar-brand">
-          <a href="#home" class="logo">
-            <i data-lucide="brain"></i>
-            <span style="font-size:1.15rem; color:white;">Psychology Sphere</span>
-          </a>
-        </div>
-        <ul class="sidebar-menu">
-          <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="faculty-classes"><i data-lucide="calendar"></i> Class Schedules</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="faculty-attendance"><i data-lucide="users"></i> Mark Attendance</a></li>
-        </ul>
-        <div class="sidebar-user">
-          <div class="user-avatar" id="faculty-avatar-initials">F</div>
-          <div class="user-details">
-            <div class="user-name" id="faculty-display-name">Faculty Name</div>
-            <div class="user-role">Faculty Desk</div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Main Panel -->
-      <div class="main-content">
-        <div class="dashboard-header">
-          <div style="display:flex; align-items:center;">
-            <i data-lucide="menu" class="db-menu-toggle" id="faculty-menu-toggle"></i>
-            <h2 id="faculty-section-title">Class Schedules</h2>
-          </div>
-          <button class="btn btn-primary btn-sm" id="btn-schedule-class" style="border-radius:20px;"><i data-lucide="plus"></i> Schedule Class</button>
-        </div>
-
-        <!-- TAB CONTENT: Class Schedule -->
-        <div id="faculty-classes-tab" class="dashboard-tab-content">
-          <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
-            <h3 style="margin-bottom:1.25rem;">Upcoming Broadcasts</h3>
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Class Title / Topic</th>
-                    <th>Scheduled Date & Time</th>
-                    <th>Meeting Link</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="faculty-classes-tbody">
-                  <!-- Loaded by JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Mark Attendance -->
-        <div id="faculty-attendance-tab" class="dashboard-tab-content" style="display:none;">
-          <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
-            <h3 style="margin-bottom:1.5rem;">Attendance Registry</h3>
-            <div class="grid-3" style="gap:1rem; margin-bottom:1.5rem; align-items:flex-end;">
-              <div class="form-group" style="margin-bottom:0;">
-                <label for="att-course-select">Select Program</label>
-                <select id="att-course-select" class="form-control">
-                  <!-- Loaded dynamically -->
-                </select>
-              </div>
-              <div class="form-group" style="margin-bottom:0;">
-                <label for="att-date-select">Registry Date</label>
-                <input type="date" id="att-date-select" class="form-control" required>
-              </div>
-              <button class="btn btn-secondary" id="btn-load-attendance-list" style="height:42px;">Load Class List</button>
-            </div>
-
-            <div class="table-container" id="attendance-table-wrapper" style="display:none;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Student Name</th>
-                    <th>Email Address</th>
-                    <th>Present</th>
-                    <th>Absent</th>
-                    <th>Late</th>
-                  </tr>
-                </thead>
-                <tbody id="faculty-attendance-tbody">
-                  <!-- Populated dynamically -->
-                </tbody>
-              </table>
-              <div style="padding:1.5rem; text-align:right;">
-                <button class="btn btn-primary" id="btn-save-attendance-record" style="border-radius:20px;">Save Logs to Cloud</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Schedule Class Modal -->
-    <div class="modal-overlay" id="schedule-class-modal">
-      <div class="modal-box">
-        <i data-lucide="x" class="modal-close" id="schedule-class-close"></i>
-        <h3>Schedule New Live Lecture</h3>
-        <p style="margin-bottom:1.5rem;">Stream directly to Student Portals</p>
-        
-        <form id="schedule-class-form">
-          <div class="form-group">
-            <label for="sc-course-id">Select Course</label>
-            <select id="sc-course-id" class="form-control" required>
-              <!-- Loaded dynamically -->
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="sc-title">Lecture Topic / Title</label>
-            <input type="text" id="sc-title" class="form-control" required placeholder="e.g. Cognitive Behavior Therapy (CBT)">
-          </div>
-          <div class="form-group">
-            <label for="sc-time">Scheduled Date & Time</label>
-            <input type="datetime-local" id="sc-time" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="sc-link">Zoom/Meet link</label>
-            <input type="url" id="sc-link" class="form-control" required placeholder="https://zoom.us/j/...">
-          </div>
-          <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; margin-top:1rem;">Broadcast Lecture</button>
-        </form>
-      </div>
-    </div>
-  </template>
-
-  <!-- 9. Admin Dashboard View Template -->
-  <template id="admin-view">
-    <div class="dashboard-layout">
-      <!-- Sidebar -->
-      <aside class="sidebar" id="admin-sidebar">
-        <div class="sidebar-brand">
-          <a href="#home" class="logo">
-            <i data-lucide="brain"></i>
-            <span style="font-size:1.15rem; color:white;">Psychology Sphere</span>
-          </a>
-        </div>
-        <ul class="sidebar-menu">
-          <li class="sidebar-item"><a href="#" class="sidebar-link active" data-tab="admin-analytics"><i data-lucide="bar-chart-2"></i> Analytics Desk</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-courses"><i data-lucide="book-open"></i> Manage Courses</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-users"><i data-lucide="users"></i> Student & Faculty</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-notices"><i data-lucide="megaphone"></i> Notices</a></li>
-          <li class="sidebar-item"><a href="#" class="sidebar-link" data-tab="admin-logs"><i data-lucide="file-text"></i> Audit Logs</a></li>
-        </ul>
-        <div class="sidebar-user">
-          <div class="user-avatar">A</div>
-          <div class="user-details">
-            <div class="user-name">Administrator</div>
-            <div class="user-role">Management Portal</div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Main Body -->
-      <div class="main-content">
-        <div class="dashboard-header">
-          <div style="display:flex; align-items:center;">
-            <i data-lucide="menu" class="db-menu-toggle" id="admin-menu-toggle"></i>
-            <h2 id="admin-section-title">Analytics Desk</h2>
-          </div>
-          <div style="display:flex; gap:1rem;">
-            <button class="btn btn-secondary btn-sm" id="btn-admin-export" style="border-radius:20px;"><i data-lucide="download"></i> Backup Store</button>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Analytics Desk -->
-        <div id="admin-analytics-tab" class="dashboard-tab-content">
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-info">
-                <h3>Total Collections</h3>
-                <div class="metric-value" id="admin-rev-metric" style="color:var(--accent-emerald);">$0</div>
-              </div>
-              <div class="metric-icon" style="background:#ecfdf5; color:var(--accent-emerald);"><i data-lucide="dollar-sign"></i></div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-info">
-                <h3>Students</h3>
-                <div class="metric-value" id="admin-students-metric" style="color:var(--primary-color);">0</div>
-              </div>
-              <div class="metric-icon" style="background:#eef2ff; color:var(--primary-color);"><i data-lucide="users"></i></div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-info">
-                <h3>Enrollments</h3>
-                <div class="metric-value" id="admin-enrolls-metric" style="color:var(--secondary-color);">0</div>
-              </div>
-              <div class="metric-icon" style="background:#fdf2f8; color:var(--secondary-color);"><i data-lucide="graduation-cap"></i></div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-info">
-                <h3>Attendance Avg</h3>
-                <div class="metric-value" id="admin-attendance-metric" style="color:var(--accent-cyan);">0%</div>
-              </div>
-              <div class="metric-icon" style="background:#f0f9ff; color:var(--accent-cyan);"><i data-lucide="check-square"></i></div>
-            </div>
-          </div>
-
-          <!-- Revenue Stats chart mockup -->
-          <div class="grid-2" style="margin-bottom:2.5rem;">
-            <div class="card">
-              <h3 style="margin-bottom:1.5rem; font-size:1.15rem;">Monthly Collections</h3>
-              <div style="display:flex; align-items:flex-end; justify-content:space-between; height:180px; padding-top:1rem; border-bottom:1px solid var(--border-color);">
-                <div style="width:12%; height:40%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
-                <div style="width:12%; height:55%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
-                <div style="width:12%; height:75%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
-                <div style="width:12%; height:90%; background:var(--primary-gradient); border-radius:var(--radius-sm); text-align:center;"></div>
-              </div>
-              <div style="display:flex; justify-content:space-between; margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
-                <span>March</span><span>April</span><span>May</span><span>June (Current)</span>
-              </div>
-            </div>
-            <div class="card">
-              <h3 style="margin-bottom:1.5rem; font-size:1.15rem;">Course wise enrollment split</h3>
-              <div style="display:flex; flex-direction:column; gap:1.25rem;" id="admin-course-split-bars">
-                <!-- Populated dynamically -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Manage Courses -->
-        <div id="admin-courses-tab" class="dashboard-tab-content" style="display:none;">
-          <div style="text-align:right; margin-bottom:1.5rem;">
-            <button class="btn btn-primary" id="btn-admin-add-course" style="border-radius:20px;"><i data-lucide="plus"></i> Add Course</button>
-          </div>
-          <div class="card" style="padding:1.5rem;">
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Course Code / Title</th>
-                    <th>Duration</th>
-                    <th>Fees</th>
-                    <th>Instructor Assigned</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="admin-courses-tbody">
-                  <!-- Loaded by JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Student & Faculty Registry -->
-        <div id="admin-users-tab" class="dashboard-tab-content" style="display:none;">
-          <div class="grid-2">
-            <!-- Student Table -->
-            <div class="card" style="padding:1.5rem;">
-              <h3 style="margin-bottom:1rem; font-size:1.15rem;">Student Records</h3>
-              <div class="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Phone</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admin-students-tbody">
-                    <!-- Populated by JS -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            
-            <!-- Faculty Table -->
-            <div class="card" style="padding:1.5rem;">
-              <h3 style="margin-bottom:1rem; font-size:1.15rem;">Faculty Registry</h3>
-              <div class="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Phone</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admin-faculty-tbody">
-                    <!-- Populated by JS -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Broadcast notices -->
-        <div id="admin-notices-tab" class="dashboard-tab-content" style="display:none;">
-          <div class="grid-2" style="align-items: flex-start;">
-            <div class="card">
-              <h3 style="margin-bottom:1.5rem; font-size:1.15rem;">Compose Announcement</h3>
-              <form id="admin-notice-form">
-                <div class="form-group">
-                  <label for="nt-title">Title / Headline</label>
-                  <input type="text" id="nt-title" class="form-control" required placeholder="e.g. Schedule Update or Fee Reminder">
-                </div>
-                <div class="form-group">
-                  <label for="nt-role">Target Audience</label>
-                  <select id="nt-role" class="form-control">
-                    <option value="all">Everyone (All users)</option>
-                    <option value="student">Students Only</option>
-                    <option value="faculty">Faculty Only</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="nt-content">Content / Body Text</label>
-                  <textarea id="nt-content" class="form-control" rows="5" required placeholder="Type notice parameters here..."></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px;">Broadcast Announcement</button>
-              </form>
-            </div>
-
-            <div class="card">
-              <h3 style="margin-bottom:1.5rem; font-size:1.15rem;">Notice Board Feed</h3>
-              <div id="admin-notices-list" style="display:flex; flex-direction:column; gap:1rem;">
-                <!-- Populated dynamically -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Audit logs -->
-        <div id="admin-logs-tab" class="dashboard-tab-content" style="display:none;">
-          <div class="card" style="padding:1.5rem;">
-            <h3 style="margin-bottom:1rem; font-size:1.15rem;">Operation Security Audit Logs</h3>
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Action</th>
-                    <th>User ID / Name</th>
-                    <th>Details</th>
-                    <th>Timestamp</th>
-                  </tr>
-                </thead>
-                <tbody id="admin-logs-tbody">
-                  <!-- Populated dynamically -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Admin Add Course Modal -->
-    <div class="modal-overlay" id="admin-add-course-modal">
-      <div class="modal-box">
-        <i data-lucide="x" class="modal-close" id="admin-add-course-close"></i>
-        <h3>Add New Academic Course</h3>
-        <p style="margin-bottom:1.5rem;">Insert details to populate program offerings</p>
-        
-        <form id="admin-add-course-form">
-          <div class="form-group">
-            <label for="ac-title">Course Title</label>
-            <input type="text" id="ac-title" class="form-control" required placeholder="e.g. Cognitive Neuropsychology">
-          </div>
-          <div class="form-group">
-            <label for="ac-desc">Description</label>
-            <textarea id="ac-desc" class="form-control" rows="3" placeholder="Syllabus details..."></textarea>
-          </div>
-          <div class="form-group">
-            <label for="ac-duration">Duration</label>
-            <input type="text" id="ac-duration" class="form-control" required placeholder="e.g. 4 Months">
-          </div>
-          <div class="form-group">
-            <label for="ac-fees">Tuition Fee ($)</label>
-            <input type="number" id="ac-fees" class="form-control" required placeholder="e.g. 599">
-          </div>
-          <div class="form-group">
-            <label for="ac-faculty">Assign Mentor</label>
-            <select id="ac-faculty" class="form-control">
-              <!-- Loaded dynamically -->
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; margin-top:1rem;">Create Course Record</button>
-        </form>
-      </div>
-    </div>
-  </template>
-
-  <!-- Mount bindings script file -->
+  <!-- Main JavaScript File -->
   <script src="app.js"></script>
-  <!-- Mount views implementation -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Mobile header toggle
-      const menuToggle = document.getElementById('menu-toggle');
-      const navLinks = document.getElementById('nav-links');
-      if (menuToggle && navLinks) {
-        menuToggle.addEventListener('click', () => {
-          navLinks.classList.toggle('active');
-        });
-      }
-
-      // Logout handler
-      const logoutBtn = document.getElementById('logout-btn');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-          await AuthService.logout();
-          updateHeaderNav();
-          Toast.show("Logout successful", "success");
-          window.location.hash = '#home';
-        });
-      }
-
-      // ----------------- Dynamic Nav Update Helper -----------------
-      function updateHeaderNav() {
-        const user = AuthService.getCurrentUser();
-        const guests = document.querySelectorAll('.guest-only');
-        const auths = document.querySelectorAll('.auth-only');
-        
-        if (user) {
-          guests.forEach(el => el.style.display = 'none');
-          auths.forEach(el => el.style.display = 'block');
-          
-          document.querySelectorAll('.student-only').forEach(el => el.style.display = (user.role === 'student' ? 'block' : 'none'));
-          document.querySelectorAll('.faculty-only').forEach(el => el.style.display = (user.role === 'faculty' ? 'block' : 'none'));
-          document.querySelectorAll('.admin-only').forEach(el => el.style.display = (user.role === 'admin' ? 'block' : 'none'));
-        } else {
-          guests.forEach(el => el.style.display = 'block');
-          auths.forEach(el => el.style.display = 'none');
-        }
-        lucide.createIcons();
-      }
-      window.updateHeaderNav = updateHeaderNav;
-
-      // ==========================================
-      // REGISTER ROUTE RENDERING BINDERS
-      // ==========================================
-
-      // -- 1. HOME VIEW --
-      Router.register('#home', async (mount) => {
-        updateHeaderNav();
-        const temp = document.getElementById('home-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        // Load 4 course teaser cards with illustration image
-        let courses = [];
-        try {
-          courses = await DatabaseService.getCourses();
-          if (!courses || courses.length === 0) {
-            courses = mockDB.courses;
-          }
-        } catch (err) {
-          console.warn("Supabase fetch failed, using mock courses fallback:", err);
-          courses = mockDB.courses;
-        }
-        const grid = document.getElementById('home-courses-grid');
-        if (grid) {
-          grid.innerHTML = courses.slice(0, 4).map(c => `
-            <div class="course-card-premium">
-              <div class="course-card-image-box">
-                <img src="${c.image_url || 'images/courses_illustration.png'}" alt="${c.title}">
-              </div>
-              <div class="course-card-body-content">
-                <h4>${c.title}</h4>
-                <p class="description-text">${c.description.substring(0, 80)}...</p>
-                <div class="course-card-footer-box">
-                  <span class="course-card-duration-text">Duration: <strong>${c.duration}</strong></span>
-                  <span class="course-card-price-value">₹ ${c.fees.toLocaleString('en-IN')}</span>
-                </div>
-              </div>
-            </div>
-          `).join('');
-          lucide.createIcons();
-        }
-      });
-
-      // -- 2. ABOUT VIEW (FACULTY) --
-      Router.register('#about', async (mount) => {
-        updateHeaderNav();
-        const temp = document.getElementById('about-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        // Load Faculty Profiles
-        let mentors = [];
-        try {
-          mentors = await DatabaseService.getProfilesByRole('faculty');
-          if (!mentors || mentors.length === 0) {
-            mentors = mockDB.profiles.filter(p => p.role === 'faculty');
-          }
-        } catch (err) {
-          console.warn("Supabase fetch failed, using mock mentors fallback:", err);
-          mentors = mockDB.profiles.filter(p => p.role === 'faculty');
-        }
-        const facultyGrid = document.getElementById('about-faculty-grid');
-        if (facultyGrid) {
-          facultyGrid.innerHTML = mentors.map(m => `
-            <div class="card text-center" style="padding: 1.75rem;">
-              <div class="user-avatar" style="width: 70px; height: 70px; font-size: 1.85rem; margin: 0 auto 1.25rem; border:2px solid var(--border-color-active);">${m.full_name.charAt(0)}</div>
-              <h3 style="font-size:1.2rem; margin-bottom:0.25rem;">${m.full_name}</h3>
-              <p class="subtitle" style="margin-bottom:0.75rem; font-size:0.75rem; font-weight:700;">Ph.D. / Senior Lecturer</p>
-              <p style="font-size:0.825rem; color:var(--text-secondary); line-height:1.4;">Specialization: Clinical Counseling. 10+ Years of coaching entrance aspirants.</p>
-              <div style="display:flex; justify-content:center; gap:1rem; margin-top:1.25rem; color:var(--text-muted);">
-                <i data-lucide="linkedin" style="width:16px; cursor:pointer;"></i>
-                <i data-lucide="mail" style="width:16px; cursor:pointer;" title="${m.email}"></i>
-              </div>
-            </div>
-          `).join('');
-          lucide.createIcons();
-        }
-      });
-
-      // -- 3. COURSES VIEW (Horizontal row layout with illustration image) --
-      Router.register('#courses', async (mount) => {
-        updateHeaderNav();
-        const temp = document.getElementById('courses-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        const rowsContainer = document.getElementById('courses-list-rows');
-        let allCourses = [];
-        try {
-          allCourses = await DatabaseService.getCourses();
-          if (!allCourses || allCourses.length === 0) {
-            allCourses = mockDB.courses;
-          }
-        } catch (err) {
-          console.warn("Supabase fetch failed, using mock courses fallback:", err);
-          allCourses = mockDB.courses;
-        }
-
-        function renderRows(category = 'all') {
-          const filtered = category === 'all' 
-            ? allCourses 
-            : allCourses.filter(c => c.title.includes(category) || c.description.includes(category));
-
-          if (rowsContainer) {
-            if (filtered.length === 0) {
-              rowsContainer.innerHTML = `<div class="card text-center section"><p>No courses found under this category.</p></div>`;
-              return;
-            }
-
-            rowsContainer.innerHTML = filtered.map(c => `
-              <div class="course-horizontal-card">
-                <!-- Course Left Image -->
-                <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); width:100%; height:120px; display:flex; align-items:center; justify-content:center; background:#f8fafc;">
-                  <img src="${c.image_url || 'images/courses_illustration.png'}" alt="Course Conceptual Banner" style="width:100%; height:100%; object-fit:cover;">
-                </div>
-                
-                <!-- Course Details Info -->
-                <div class="course-horizontal-info">
-                  <h3 style="font-weight:700;">${c.title}</h3>
-                  <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">${c.description}</p>
-                  <div class="course-horizontal-meta">
-                    <span style="font-weight:600;"><i data-lucide="clock" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> ${c.duration}</span>
-                    <span style="font-weight:600;"><i data-lucide="tv" style="width:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> Live + Recorded</span>
-                  </div>
-                </div>
-
-                <!-- Course Action / Fees -->
-                <div class="course-horizontal-action">
-                  <div style="margin-bottom:1rem; text-align:right;">
-                    <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Tuition Fee</div>
-                    <div style="font-size:1.45rem; font-weight:800; color:var(--primary-color);">₹ ${(Number(c.fees) || 0).toLocaleString('en-IN')}</div>
-                  </div>
-                  <button class="btn btn-primary btn-sm btn-view-details" data-id="${c.id}" style="border-radius:20px; padding:0.45rem 1.15rem;">View Details</button>
-                </div>
-              </div>
-            `).join('');
-
-            // Bind modal popups
-            document.querySelectorAll('.btn-view-details').forEach(btn => {
-              btn.addEventListener('click', () => {
-                const courseId = btn.getAttribute('data-id');
-                const course = allCourses.find(item => item.id == courseId);
-                if (course) {
-                  const modal = document.getElementById('course-detail-modal');
-                  const modalContent = document.getElementById('course-modal-content');
-                  modalContent.innerHTML = `
-                    <span class="badge badge-primary" style="margin-bottom:0.75rem;">Syllabus Overview</span>
-                    <h2 style="margin-bottom:0.5rem; font-size:1.5rem; font-weight:800;">${course.title}</h2>
-                    <p style="margin-bottom:1.5rem; font-size:0.95rem; color:var(--text-secondary); line-height:1.5;">${course.description}</p>
-                    
-                    <h4 style="margin-bottom:0.5rem; color:var(--primary-color); font-weight:700;">Curriculum Modules</h4>
-                    <ul style="list-style:none; padding:0; margin-bottom:2rem; display:flex; flex-direction:column; gap:0.5rem;">
-                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 1: Foundations & Historical Timeline</li>
-                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 2: Research Design & Experimental Methods</li>
-                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 3: Clinical Case Histories & Assessments</li>
-                      <li style="display:flex; gap:0.5rem; font-size:0.875rem;"><i data-lucide="check" style="width:16px; color:var(--accent-emerald);"></i> Module 4: Mock Entrance Exams & Practice Papers</li>
-                    </ul>
-
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1.25rem;">
-                      <div>
-                        <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">Total Fees</div>
-                        <div style="font-size:1.45rem; font-weight:800; color:var(--text-primary);">₹ ${(Number(course.fees) || 0).toLocaleString('en-IN')}</div>
-                      </div>
-                      <a href="#signup" onclick="document.getElementById('course-detail-modal').classList.remove('active');" class="btn btn-primary" style="border-radius:20px; padding:0.5rem 1.25rem; font-size:0.85rem;">Enroll Program</a>
-                    </div>
-                  `;
-                  modal.classList.add('active');
-                  lucide.createIcons();
-                }
-              });
-            });
-            lucide.createIcons();
-          }
-        }
-
-        renderRows('all');
-
-        // Sidebar category click handler
-        document.querySelectorAll('.category-item').forEach(item => {
-          item.addEventListener('click', () => {
-            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            renderRows(item.getAttribute('data-category'));
-          });
-        });
-
-        // Close modal
-        const modalClose = document.getElementById('course-modal-close');
-        if (modalClose) {
-          modalClose.addEventListener('click', () => {
-            document.getElementById('course-detail-modal').classList.remove('active');
-          });
-        }
-      });
-
-      // -- 4. CONTACT VIEW --
-      Router.register('#contact', async (mount) => {
-        updateHeaderNav();
-        const temp = document.getElementById('contact-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        // Bind Accordion headers
-        document.querySelectorAll('.accordion-header').forEach(header => {
-          header.addEventListener('click', () => {
-            const item = header.parentElement;
-            item.classList.toggle('active');
-          });
-        });
-
-        // Populate course dropdown in form
-        let courses = [];
-        try {
-          courses = await DatabaseService.getCourses();
-        } catch (err) {
-          console.warn("Supabase fetch failed, using mock courses fallback:", err);
-          courses = mockDB.courses;
-        }
-        const courseSelect = document.getElementById('inq-course');
-        if (courseSelect) {
-          courseSelect.innerHTML = courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
-        }
-
-        // Form submit
-        const inqForm = document.getElementById('public-inquiry-form');
-        if (inqForm) {
-          inqForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            Toast.show("Inquiry submitted successfully! Admissions desk will contact you soon.", "success");
-            inqForm.reset();
-          });
-        }
-      });
-
-      // -- 5. LOGIN VIEW --
-      Router.register('#login', async (mount) => {
-        updateHeaderNav();
-        const temp = document.getElementById('login-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        const loginForm = document.getElementById('login-form');
-        if (loginForm) {
-          loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-
-            try {
-              const profile = await AuthService.login(email, pass);
-              Toast.show(`Welcome back, ${profile.full_name}!`, "success");
-              updateHeaderNav();
-              window.location.hash = `#${profile.role}`;
-            } catch (err) {
-              Toast.show(err.message, "error");
-            }
-          });
-        }
-      });
-
-      // -- 6. SIGNUP VIEW --
-      Router.register('#signup', async (mount) => {
-        updateHeaderNav();
-        const temp = document.getElementById('signup-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        const signupForm = document.getElementById('signup-form');
-        if (signupForm) {
-          signupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const phone = document.getElementById('signup-phone').value;
-            const pass = document.getElementById('signup-password').value;
-            const role = document.getElementById('signup-role').value;
-
-            try {
-              const profile = await AuthService.signup(name, email, pass, phone, role);
-              Toast.show("Registration Successful! Portal activated.", "success");
-              updateHeaderNav();
-              window.location.hash = `#${profile.role}`;
-            } catch (err) {
-              Toast.show(err.message, "error");
-            }
-          });
-        }
-      });
-
-      // -- 7. STUDENT DASHBOARD VIEW --
-      Router.register('#student', async (mount) => {
-        updateHeaderNav();
-        const user = AuthService.getCurrentUser();
-        const temp = document.getElementById('student-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        document.getElementById('student-display-name').textContent = user.full_name;
-        document.getElementById('student-avatar-initials').textContent = user.full_name.charAt(0);
-
-        // Hamburger mobile toggle
-        const sidebar = document.getElementById('dashboard-sidebar');
-        const dbToggle = document.getElementById('db-menu-toggle');
-        if (dbToggle && sidebar) {
-          dbToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('active');
-          });
-          document.addEventListener('click', () => sidebar.classList.remove('active'));
-        }
-
-        let data = { enrolledCourses: [], attendance: [], fees: [], liveClasses: [], recorded: [] };
-        let notices = [];
-        try {
-          data = await DatabaseService.getStudentDashboardData(user.id);
-          notices = await DatabaseService.getNotices('student');
-        } catch (err) {
-          console.warn("Supabase fetch failed, falling back to student mock data:", err);
-          const enrolls = mockDB.enrollments.filter(e => e.student_id === user.id || e.student_id === 's1');
-          const enrolledCourses = enrolls.map(e => mockDB.courses.find(c => c.id === e.course_id)).filter(Boolean);
-          const attendance = mockDB.attendance.filter(a => a.student_id === user.id || a.student_id === 's1');
-          const fees = mockDB.fees.filter(f => f.student_id === user.id || f.student_id === 's1');
-          const courseIds = enrolledCourses.map(c => c.id);
-          const liveClasses = mockDB.live_classes.filter(l => courseIds.includes(l.course_id));
-          const recorded = mockDB.recorded_sessions.filter(r => courseIds.includes(r.course_id));
-          
-          data = { enrolledCourses, attendance, fees, liveClasses, recorded };
-          notices = mockDB.notices.filter(n => n.target_role === 'all' || n.target_role === 'student');
-        }
-
-        // 1. Metric Counts & Average
-        const presents = data.attendance.filter(a => a.status === 'present').length;
-        const totalAtt = data.attendance.length;
-        const attRate = totalAtt > 0 ? Math.round((presents / totalAtt) * 100) : 85;
-        
-        document.getElementById('student-course-count').textContent = data.enrolledCourses.length;
-        document.getElementById('student-attendance-percent').textContent = `${attRate}%`;
-        
-        const unpaidFees = data.fees.filter(f => f.status === 'pending');
-        const totalPending = unpaidFees.reduce((sum, item) => sum + parseFloat(item.amount), 0);
-        document.getElementById('student-pending-fees').textContent = `₹ ${totalPending}`;
-
-        // Set Next class header
-        if (data.liveClasses.length > 0) {
-          document.getElementById('student-next-class-title').textContent = data.liveClasses[0].title;
-          document.getElementById('live-lecture-heading').textContent = data.liveClasses[0].title;
-          document.getElementById('live-lecture-link').setAttribute('href', data.liveClasses[0].meeting_link);
-        }
-
-        // 2. Render Left Column Progress Bars
-        const progressContainer = document.getElementById('student-progress-courses-list');
-        if (progressContainer) {
-          const mockProgresses = [78, 60, 40];
-          progressContainer.innerHTML = data.enrolledCourses.map((c, idx) => {
-            const progressVal = mockProgresses[idx % mockProgresses.length];
-            return `
-              <div class="progress-container">
-                <div class="progress-header">
-                  <span>${c.title}</span><strong>${progressVal}%</strong>
-                </div>
-                <div style="display:flex; align-items:center; gap:1rem;">
-                  <div class="progress-bar-bg" style="flex-grow:1;">
-                    <div class="progress-bar-fill" style="width:${progressVal}%;"></div>
-                  </div>
-                  <button class="btn btn-secondary btn-sm" style="padding:0.25rem 0.75rem; font-size:0.75rem; border-radius:4px;">Continue</button>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-
-        // 3. Render Announcements feed
-        const announcementsList = document.getElementById('dashboard-announcements-list');
-        if (announcementsList) {
-          announcementsList.innerHTML = notices.map(n => `
-            <li style="border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
-              <h4 style="font-size:0.9rem; margin-bottom:0.15rem; color:var(--text-primary); font-weight:600;">${n.title}</h4>
-              <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">${n.content}</p>
-            </li>
-          `).join('');
-        }
-
-        // 4. Render My Courses grid tab
-        const coursesGrid = document.getElementById('student-courses-grid');
-        if (coursesGrid) {
-          coursesGrid.innerHTML = data.enrolledCourses.map(c => `
-            <div class="card">
-              <span class="badge badge-primary" style="margin-bottom:0.75rem;">Active Program</span>
-              <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">${c.title}</h3>
-              <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Duration: ${c.duration} | Fees: ₹ ${c.fees}</p>
-              <div style="background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:var(--radius-sm); font-size:0.8rem; color:var(--text-secondary);">
-                <strong>Assigned Instructor:</strong> Dr. Sarah Jenkins (admissions@psysphere.edu)
-              </div>
-            </div>
-          `).join('');
-        }
-
-        // 5. Render Attendance Tab list
-        const attendanceTbody = document.getElementById('student-attendance-tbody');
-        if (attendanceTbody) {
-          attendanceTbody.innerHTML = data.attendance.map(a => {
-            const courseTitle = data.enrolledCourses.find(c => c.id === a.course_id)?.title || "General Lecture";
-            const badgeClass = a.status === 'present' ? 'badge-success' : (a.status === 'absent' ? 'badge-danger' : 'badge-warning');
-            return `
-              <tr>
-                <td>${a.date}</td>
-                <td style="font-weight:600;">${courseTitle}</td>
-                <td><span class="badge ${badgeClass}">${a.status}</span></td>
-              </tr>
-            `;
-          }).join('');
-        }
-
-        // 6. Render Fees & Payments Tab Table
-        const feesTbody = document.getElementById('student-fees-tbody');
-        function renderFeesTable() {
-          if (feesTbody) {
-            feesTbody.innerHTML = data.fees.map(f => {
-              const courseTitle = data.enrolledCourses.find(c => c.id === f.course_id)?.title || "Course Tuition Invoice";
-              const dateVal = f.paid_at ? new Date(f.paid_at).toLocaleDateString() : 'N/A';
-              
-              const statusBadge = f.status === 'paid'
-                ? `<span class="badge badge-success" style="padding:0.2rem 0.6rem;">Paid</span>`
-                : `<span class="badge badge-danger" style="padding:0.2rem 0.6rem;">Pending</span>`;
-              
-              const actionBtn = f.status === 'pending'
-                ? `<button class="btn btn-primary btn-sm btn-pay-fee" data-id="${f.id}" data-amount="${f.amount}" data-title="${courseTitle}" style="border-radius:20px; padding:0.3rem 0.8rem; font-size:0.75rem;">Pay Now</button>`
-                : `<a href="#" class="btn btn-secondary btn-sm" style="border-radius:20px; padding:0.3rem 0.8rem; font-size:0.75rem;"><i data-lucide="download" style="width:12px; height:12px; display:inline-block; vertical-align:middle;"></i> Download</a>`;
-              
-              return `
-                <tr>
-                  <td>${dateVal}</td>
-                  <td style="font-weight:600;">${courseTitle}</td>
-                  <td><strong>₹ ${f.amount}</strong></td>
-                  <td>${statusBadge}</td>
-                  <td>${actionBtn}</td>
-                </tr>
-              `;
-            }).join('');
-
-            document.querySelectorAll('.btn-pay-fee').forEach(btn => {
-              btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const amt = btn.getAttribute('data-amount');
-                const title = btn.getAttribute('data-title');
-                
-                document.getElementById('checkout-fee-id').value = id;
-                document.getElementById('checkout-amount').textContent = `₹ ${amt}`;
-                document.getElementById('checkout-course-title').textContent = title;
-                
-                document.getElementById('checkout-modal').classList.add('active');
-              });
-            });
-            lucide.createIcons();
-          }
-        }
-        renderFeesTable();
-
-        const payRadios = document.querySelectorAll('input[name="pay-method"]');
-        payRadios.forEach(rad => {
-          rad.parentElement.addEventListener('click', () => {
-            payRadios.forEach(r => r.parentElement.style.borderColor = 'var(--border-color)');
-            rad.checked = true;
-            rad.parentElement.style.borderColor = 'var(--primary-color)';
-            
-            if (rad.value === 'UPI') {
-              document.getElementById('upi-payment-fields').style.display = 'block';
-              document.getElementById('card-payment-fields').style.display = 'none';
-            } else {
-              document.getElementById('upi-payment-fields').style.display = 'none';
-              document.getElementById('card-payment-fields').style.display = 'block';
-            }
-          });
-        });
-
-        const checkoutForm = document.getElementById('payment-gate-form');
-        if (checkoutForm) {
-          checkoutForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const feeId = document.getElementById('checkout-fee-id').value;
-            const method = document.querySelector('input[name="pay-method"]:checked').value;
-            
-            try {
-              await DatabaseService.payFee(feeId, method);
-              Toast.show("Tuition invoice cleared successfully! Receipt generated.", "success");
-              document.getElementById('checkout-modal').classList.remove('active');
-              checkoutForm.reset();
-              
-              const freshData = await DatabaseService.getStudentDashboardData(user.id);
-              data.fees = freshData.fees;
-              
-              const pending = data.fees.filter(f => f.status === 'pending');
-              const sum = pending.reduce((s, i) => s + parseFloat(i.amount), 0);
-              document.getElementById('student-pending-fees').textContent = `₹ ${sum}`;
-              
-              renderFeesTable();
-            } catch (err) {
-              Toast.show(err.message, "error");
-            }
-          });
-        }
-
-        const checkoutClose = document.getElementById('checkout-modal-close');
-        if (checkoutClose) {
-          checkoutClose.addEventListener('click', () => {
-            document.getElementById('checkout-modal').classList.remove('active');
-          });
-        }
-
-        const liveGrid = document.getElementById('student-live-grid');
-        if (liveGrid) {
-          if (data.liveClasses.length === 0) {
-            liveGrid.innerHTML = `<div style="grid-column: 1/-1;" class="card text-center"><p style="margin:0;">No live classes currently scheduled.</p></div>`;
-          } else {
-            liveGrid.innerHTML = data.liveClasses.map(l => `
-              <div class="card" style="padding:1.25rem;">
-                <span class="badge badge-primary" style="margin-bottom:0.5rem;">Live Broadcast</span>
-                <h4 style="margin-bottom:0.25rem; font-size:1.1rem;">${l.title}</h4>
-                <p style="font-size:0.8rem; margin-bottom:1rem;"><i data-lucide="clock" style="width:12px; display:inline-block; vertical-align:middle;"></i> ${new Date(l.scheduled_at).toLocaleString()}</p>
-                <a href="${l.meeting_link}" target="_blank" class="btn btn-outline btn-sm" style="border-radius:20px; font-size:0.75rem;"><i data-lucide="video" style="width:14px;"></i> Join Zoom</a>
-              </div>
-            `).join('');
-          }
-        }
-
-        const recordedGrid = document.getElementById('student-recorded-grid');
-        if (recordedGrid) {
-          if (data.recorded.length === 0) {
-            recordedGrid.innerHTML = `<div style="grid-column: 1/-1;" class="card text-center"><p style="margin:0;">No playbacks uploaded.</p></div>`;
-          } else {
-            recordedGrid.innerHTML = data.recorded.map(r => `
-              <div class="card" style="padding:1rem;">
-                <div style="border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color); margin-bottom:0.75rem;">
-                  <video controls style="width: 100%; display:block;">
-                    <source src="${r.video_url}" type="video/mp4">
-                  </video>
-                </div>
-                <h4 style="font-size:0.9rem; margin-bottom:0.25rem;">${r.title}</h4>
-                <p style="font-size:0.75rem; margin:0; color:var(--text-muted);">Recorded Playback</p>
-              </div>
-            `).join('');
-          }
-        }
-
-        // Tab selection clickers
-        document.querySelectorAll('#dashboard-sidebar .sidebar-link').forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            document.querySelectorAll('#dashboard-sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            
-            const activeTab = link.getAttribute('data-tab');
-            document.getElementById('student-section-title').textContent = link.textContent.trim();
-            
-            document.querySelectorAll('.dashboard-tab-content').forEach(tc => tc.style.display = 'none');
-            document.getElementById(`${activeTab}-tab`).style.display = 'block';
-            
-            sidebar.classList.remove('active');
-            lucide.createIcons();
-          });
-        });
-        lucide.createIcons();
-      });
-
-      // -- 8. FACULTY DASHBOARD VIEW --
-      Router.register('#faculty', async (mount) => {
-        updateHeaderNav();
-        const user = AuthService.getCurrentUser();
-        const temp = document.getElementById('faculty-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        document.getElementById('faculty-display-name').textContent = user.full_name;
-        document.getElementById('faculty-avatar-initials').textContent = user.full_name.charAt(0);
-
-        const sidebar = document.getElementById('faculty-sidebar');
-        const dbToggle = document.getElementById('faculty-menu-toggle');
-        if (dbToggle && sidebar) {
-          dbToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('active');
-          });
-          document.addEventListener('click', () => sidebar.classList.remove('active'));
-        }
-
-        let data = { courses: [], enrollments: [], students: [], attendance: [], liveClasses: [] };
-        try {
-          data = await DatabaseService.getFacultyDashboardData(user.id);
-        } catch (err) {
-          console.warn("Supabase fetch failed, falling back to faculty mock data:", err);
-          const courses = mockDB.courses.filter(c => c.faculty_id === user.id || c.faculty_id === 'f1');
-          const courseIds = courses.map(c => c.id);
-          const enrollments = mockDB.enrollments.filter(e => courseIds.includes(e.course_id));
-          const studentIds = enrollments.map(e => e.student_id);
-          const students = mockDB.profiles.filter(p => studentIds.includes(p.id));
-          const attendance = mockDB.attendance.filter(a => courseIds.includes(a.course_id));
-          const liveClasses = mockDB.live_classes.filter(l => courseIds.includes(l.course_id));
-          
-          data = { courses, enrollments, students, attendance, liveClasses };
-        }
-
-        const classesTbody = document.getElementById('faculty-classes-tbody');
-        function renderSchedule() {
-          if (classesTbody) {
-            if (data.liveClasses.length === 0) {
-              classesTbody.innerHTML = `<tr><td colspan="4" class="text-center">No broadcasts scheduled yet.</td></tr>`;
-              return;
-            }
-            classesTbody.innerHTML = data.liveClasses.map(l => `
-              <tr>
-                <td style="font-weight:600;">${l.title}</td>
-                <td>${new Date(l.scheduled_at).toLocaleString()}</td>
-                <td><a href="${l.meeting_link}" target="_blank" style="color:var(--primary-color); text-decoration:underline;">Meeting Link</a></td>
-                <td><span class="badge badge-success">${l.status}</span></td>
-              </tr>
-            `).join('');
-          }
-        }
-        renderSchedule();
-
-        const courseSelect = document.getElementById('att-course-select');
-        const scheduleCourseSelect = document.getElementById('sc-course-id');
-        
-        if (courseSelect) {
-          courseSelect.innerHTML = `<option value="">Choose Course...</option>` + 
-            data.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
-        }
-        if (scheduleCourseSelect) {
-          scheduleCourseSelect.innerHTML = data.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
-        }
-
-        const attDateInput = document.getElementById('att-date-select');
-        if (attDateInput) {
-          attDateInput.value = new Date().toISOString().split('T')[0];
-        }
-
-        const btnLoadAtt = document.getElementById('btn-load-attendance-list');
-        const attTableWrapper = document.getElementById('attendance-table-wrapper');
-        const attTbody = document.getElementById('faculty-attendance-tbody');
-        
-        let loadedStudents = [];
-
-        if (btnLoadAtt) {
-          btnLoadAtt.addEventListener('click', () => {
-            const courseId = courseSelect.value;
-            const date = attDateInput.value;
-            
-            if (!courseId || !date) {
-              Toast.show("Please select both course and date registry", "error");
-              return;
-            }
-
-            const enrollments = data.enrollments.filter(e => e.course_id === parseInt(courseId));
-            loadedStudents = enrollments.map(e => data.students.find(s => s.id === e.student_id)).filter(Boolean);
-
-            if (loadedStudents.length === 0) {
-              Toast.show("No active students enrolled in this course.", "info");
-              attTableWrapper.style.display = 'none';
-              return;
-            }
-
-            attTbody.innerHTML = loadedStudents.map(s => {
-              const existingRecord = data.attendance.find(a => a.student_id === s.id && a.course_id === parseInt(courseId) && a.date === date);
-              const presentChecked = (!existingRecord || existingRecord.status === 'present') ? 'checked' : '';
-              const absentChecked = (existingRecord && existingRecord.status === 'absent') ? 'checked' : '';
-              const lateChecked = (existingRecord && existingRecord.status === 'late') ? 'checked' : '';
-
-              return `
-                <tr data-student-id="${s.id}">
-                  <td style="font-weight:600;">${s.full_name}</td>
-                  <td>${s.email}</td>
-                  <td><input type="radio" name="att-${s.id}" value="present" ${presentChecked}></td>
-                  <td><input type="radio" name="att-${s.id}" value="absent" ${absentChecked}></td>
-                  <td><input type="radio" name="att-${s.id}" value="late" ${lateChecked}></td>
-                </tr>
-              `;
-            }).join('');
-
-            attTableWrapper.style.display = 'block';
-            lucide.createIcons();
-          });
-        }
-
-        const btnSaveAtt = document.getElementById('btn-save-attendance-record');
-        if (btnSaveAtt) {
-          btnSaveAtt.addEventListener('click', async () => {
-            const courseId = courseSelect.value;
-            const date = attDateInput.value;
-            const rows = attTbody.querySelectorAll('tr');
-            
-            try {
-              for (let row of rows) {
-                const studentId = row.getAttribute('data-student-id');
-                const status = row.querySelector(`input[name="att-${studentId}"]:checked`).value;
-                await DatabaseService.markAttendance(studentId, courseId, date, status, user.id);
-              }
-              Toast.show("Attendance registries synced successfully!", "success");
-              
-              const freshData = await DatabaseService.getFacultyDashboardData(user.id);
-              data.attendance = freshData.attendance;
-            } catch (err) {
-              Toast.show(err.message, "error");
-            }
-          });
-        }
-
-        const btnShowSchedule = document.getElementById('btn-schedule-class');
-        const modal = document.getElementById('schedule-class-modal');
-        const scheduleForm = document.getElementById('schedule-class-form');
-        
-        if (btnShowSchedule && modal) {
-          btnShowSchedule.addEventListener('click', () => modal.classList.add('active'));
-        }
-        if (scheduleForm) {
-          scheduleForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const courseId = document.getElementById('sc-course-id').value;
-            const title = document.getElementById('sc-title').value;
-            const time = document.getElementById('sc-time').value;
-            const link = document.getElementById('sc-link').value;
-            
-            try {
-              const newC = await DatabaseService.scheduleLiveClass(courseId, title, time, link);
-              Toast.show("Lecture Scheduled!", "success");
-              modal.classList.remove('active');
-              scheduleForm.reset();
-              
-              const freshData = await DatabaseService.getFacultyDashboardData(user.id);
-              data.liveClasses = freshData.liveClasses;
-              renderSchedule();
-            } catch (err) {
-              Toast.show(err.message, "error");
-            }
-          });
-        }
-
-        const modalClose = document.getElementById('schedule-class-close');
-        if (modalClose) {
-          modalClose.addEventListener('click', () => modal.classList.remove('active'));
-        }
-
-        document.querySelectorAll('#faculty-sidebar .sidebar-link').forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            document.querySelectorAll('#faculty-sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            
-            const activeTab = link.getAttribute('data-tab');
-            document.getElementById('faculty-section-title').textContent = link.textContent.trim();
-            
-            document.querySelectorAll('.dashboard-tab-content').forEach(tc => tc.style.display = 'none');
-            document.getElementById(`${activeTab}-tab`).style.display = 'block';
-            
-            sidebar.classList.remove('active');
-            lucide.createIcons();
-          });
-        });
-      });
-
-      // -- 9. ADMIN DASHBOARD VIEW --
-      Router.register('#admin', async (mount) => {
-        updateHeaderNav();
-        const user = AuthService.getCurrentUser();
-        const temp = document.getElementById('admin-view').content.cloneNode(true);
-        mount.innerHTML = '';
-        mount.appendChild(temp);
-
-        const sidebar = document.getElementById('admin-sidebar');
-        const dbToggle = document.getElementById('admin-menu-toggle');
-        if (dbToggle && sidebar) {
-          dbToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('active');
-          });
-          document.addEventListener('click', () => sidebar.classList.remove('active'));
-        }
-
-        let data = { courses: [], enrollments: [], students: [], faculty: [], attendance: [], fees: [], logs: [] };
-        try {
-          data = await DatabaseService.getAdminDashboardData();
-        } catch (err) {
-          console.warn("Supabase fetch failed, falling back to admin mock data:", err);
-          data = {
-            courses: mockDB.courses,
-            enrollments: mockDB.enrollments,
-            students: mockDB.profiles.filter(p => p.role === 'student'),
-            faculty: mockDB.profiles.filter(p => p.role === 'faculty'),
-            attendance: mockDB.attendance,
-            fees: mockDB.fees,
-            logs: mockDB.audit_logs
-          };
-        }
-
-        const totalPaidAmt = data.fees.filter(f => f.status === 'paid').reduce((s, i) => s + parseFloat(i.amount), 0);
-        document.getElementById('admin-rev-metric').textContent = `₹ ${totalPaidAmt}`;
-        document.getElementById('admin-students-metric').textContent = data.students.length;
-        document.getElementById('admin-enrolls-metric').textContent = data.enrollments.length;
-        
-        const presents = data.attendance.filter(a => a.status === 'present').length;
-        const totalAtt = data.attendance.length;
-        document.getElementById('admin-attendance-metric').textContent = totalAtt > 0 ? `${Math.round((presents / totalAtt) * 100)}%` : '85%';
-
-        const splitBarDiv = document.getElementById('admin-course-split-bars');
-        if (splitBarDiv) {
-          splitBarDiv.innerHTML = data.courses.map(c => {
-            const count = data.enrollments.filter(e => e.course_id === c.id).length;
-            const pct = data.enrollments.length > 0 ? Math.round((count / data.enrollments.length) * 100) : 0;
-            return `
-              <div>
-                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
-                  <span>${c.title}</span><strong>${count} Enrolled</strong>
-                </div>
-                <div style="width:100%; height:8px; background:rgba(0,0,0,0.03); border-radius:10px; overflow:hidden;">
-                  <div style="width:${pct}%; height:100%; background:var(--primary-gradient);"></div>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-
-        const coursesTbody = document.getElementById('admin-courses-tbody');
-        function renderCoursesList() {
-          if (coursesTbody) {
-            coursesTbody.innerHTML = data.courses.map(c => `
-              <tr>
-                <td style="font-weight:600;">${c.title}</td>
-                <td><span class="badge badge-primary">${c.duration}</span></td>
-                <td><strong>$${c.fees}</strong></td>
-                <td>${c.faculty_name || 'Dr. Sarah Jenkins'}</td>
-                <td>
-                  <button class="btn btn-outline btn-sm btn-delete-course" data-id="${c.id}" style="border-color:var(--accent-rose); color:var(--accent-rose); padding:0.25rem 0.5rem;"><i data-lucide="trash-2" style="width:16px;"></i></button>
-                </td>
-              </tr>
-            `).join('');
-
-            document.querySelectorAll('.btn-delete-course').forEach(btn => {
-              btn.addEventListener('click', async () => {
-                const courseId = btn.getAttribute('data-id');
-                if (confirm("Are you sure you want to remove this course and all associated enrollments?")) {
-                  await DatabaseService.deleteCourse(courseId);
-                  Toast.show("Course deleted successfully.", "success");
-                  
-                  const freshData = await DatabaseService.getAdminDashboardData();
-                  data.courses = freshData.courses;
-                  renderCoursesList();
-                }
-              });
-            });
-            lucide.createIcons();
-          }
-        }
-        renderCoursesList();
-
-        const facultySelect = document.getElementById('ac-faculty');
-        if (facultySelect) {
-          facultySelect.innerHTML = data.faculty.map(f => `<option value="${f.id}">${f.full_name}</option>`).join('');
-        }
-
-        const showAddCourse = document.getElementById('btn-admin-add-course');
-        const courseModal = document.getElementById('admin-add-course-modal');
-        const courseForm = document.getElementById('admin-add-course-form');
-        
-        if (showAddCourse && courseModal) {
-          showAddCourse.addEventListener('click', () => courseModal.classList.add('active'));
-        }
-        if (courseForm) {
-          courseForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const title = document.getElementById('ac-title').value;
-            const desc = document.getElementById('ac-desc').value;
-            const duration = document.getElementById('ac-duration').value;
-            const fees = document.getElementById('ac-fees').value;
-            const facultyId = document.getElementById('ac-faculty').value;
-
-            try {
-              await DatabaseService.addCourse(title, desc, duration, fees, facultyId);
-              Toast.show("New course successfully listed!", "success");
-              courseModal.classList.remove('active');
-              courseForm.reset();
-
-              const freshData = await DatabaseService.getAdminDashboardData();
-              data.courses = freshData.courses;
-              renderCoursesList();
-            } catch (err) {
-              Toast.show(err.message, "error");
-            }
-          });
-        }
-        const courseModalClose = document.getElementById('admin-add-course-close');
-        if (courseModalClose) {
-          courseModalClose.addEventListener('click', () => courseModal.classList.remove('active'));
-        }
-
-        const studentsTbody = document.getElementById('admin-students-tbody');
-        if (studentsTbody) {
-          studentsTbody.innerHTML = data.students.map(s => `
-            <tr>
-              <td style="font-weight:600;">${s.full_name}</td>
-              <td>${s.email}</td>
-              <td>${s.phone || 'N/A'}</td>
-            </tr>
-          `).join('');
-        }
-
-        const facultyTbody = document.getElementById('admin-faculty-tbody');
-        if (facultyTbody) {
-          facultyTbody.innerHTML = data.faculty.map(f => `
-            <tr>
-              <td style="font-weight:600;">${f.full_name}</td>
-              <td>${f.email}</td>
-              <td>${f.phone || 'N/A'}</td>
-            </tr>
-          `).join('');
-        }
-
-        const noticeForm = document.getElementById('admin-notice-form');
-        const noticesListDiv = document.getElementById('admin-notices-list');
-        
-        async function renderNoticesAdmin() {
-          let notices = [];
-          try {
-            notices = await DatabaseService.getNotices('admin');
-          } catch (err) {
-            console.warn("Supabase fetch failed, falling back to mock notices:", err);
-            notices = mockDB.notices;
-          }
-          if (noticesListDiv) {
-            noticesListDiv.innerHTML = notices.map(n => `
-              <div style="background:#f8fafc; border:1px solid var(--border-color); padding:1rem; border-radius:var(--radius-sm);">
-                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-                  <span style="font-weight:600; font-size:0.95rem;">${n.title}</span>
-                  <span class="badge badge-primary">${n.target_role.toUpperCase()}</span>
-                </div>
-                <p style="font-size:0.85rem; margin:0; color:var(--text-secondary);">${n.content}</p>
-              </div>
-            `).join('');
-          }
-        }
-        renderNoticesAdmin();
-
-        if (noticeForm) {
-          noticeForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const title = document.getElementById('nt-title').value;
-            const role = document.getElementById('nt-role').value;
-            const content = document.getElementById('nt-content').value;
-
-            try {
-              await DatabaseService.addNotice(title, content, role);
-              Toast.show("Notice broadcasted successfully!", "success");
-              noticeForm.reset();
-              renderNoticesAdmin();
-            } catch (err) {
-              Toast.show(err.message, "error");
-            }
-          });
-        }
-
-        const logsTbody = document.getElementById('admin-logs-tbody');
-        if (logsTbody) {
-          logsTbody.innerHTML = data.logs.map(l => `
-            <tr>
-              <td><strong>${l.action}</strong></td>
-              <td>${l.user_name || 'System / Guest'}</td>
-              <td>${l.details}</td>
-              <td>${new Date(l.created_at).toLocaleTimeString()}</td>
-            </tr>
-          `).join('');
-        }
-
-        const btnExport = document.getElementById('btn-admin-export');
-        if (btnExport) {
-          btnExport.addEventListener('click', () => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mockDB, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "psychology_sphere_db_backup.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            Toast.show("Backup JSON archive exported successfully!", "success");
-          });
-        }
-
-        document.querySelectorAll('#admin-sidebar .sidebar-link').forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            document.querySelectorAll('#admin-sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            
-            const activeTab = link.getAttribute('data-tab');
-            document.getElementById('admin-section-title').textContent = link.textContent.trim();
-            
-            document.querySelectorAll('.dashboard-tab-content').forEach(tc => tc.style.display = 'none');
-            document.getElementById(`${activeTab}-tab`).style.display = 'block';
-            
-            sidebar.classList.remove('active');
-            lucide.createIcons();
-          });
-        });
-      });
-
-      Router.init();
-    });
-  </script>
 </body>
 </html>
