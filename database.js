@@ -6,13 +6,13 @@
   // --- SUPABASE CONFIGURATION ---
   // Input your Supabase credentials here. 
   // If left as defaults, the application will automatically run in LocalStorage mode.
-  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  const SUPABASE_URL = 'https://ghldkcokjlxugsgqqhxn.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_gXiAe-KDUTIumozOJHa-tg_M2waJ56L';
 
-  const isSupabaseConfigured = 
-    SUPABASE_URL && 
-    SUPABASE_URL !== 'YOUR_SUPABASE_URL' && 
-    SUPABASE_ANON_KEY && 
+  const isSupabaseConfigured =
+    SUPABASE_URL &&
+    SUPABASE_URL !== 'YOUR_SUPABASE_URL' &&
+    SUPABASE_ANON_KEY &&
     SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
 
   let supabaseClient = null;
@@ -172,7 +172,7 @@
             .from('courses')
             .select('*, profiles(full_name)')
             .order('created_at', { ascending: true });
-          
+
           if (error) throw error;
 
           if (!data || data.length === 0) {
@@ -213,7 +213,7 @@
               .eq('role', 'faculty')
               .limit(1)
               .maybeSingle();
-            
+
             if (profile) {
               faculty_id = profile.id;
             }
@@ -238,7 +238,7 @@
           const { error } = await supabaseClient
             .from('courses')
             .upsert(payload);
-          
+
           if (error) throw error;
           return course;
         } catch (err) {
@@ -277,7 +277,7 @@
               .from('courses')
               .delete()
               .eq('id', numericId);
-            
+
             if (error) throw error;
           }
         } catch (err) {
@@ -302,7 +302,7 @@
             .select('*')
             .eq('role', 'faculty')
             .order('created_at', { ascending: true });
-          
+
           if (error) throw error;
 
           if (!data || data.length === 0) {
@@ -343,7 +343,7 @@
           const { error } = await supabaseClient
             .from('profiles')
             .upsert(payload);
-          
+
           if (error) throw error;
           return member;
         } catch (err) {
