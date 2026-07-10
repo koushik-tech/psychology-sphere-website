@@ -611,6 +611,10 @@
       }
     },
 
+    isLive: function () {
+      return supabaseClient !== null;
+    },
+
     // Reset database back to default LocalStorage states
     reset: async function () {
       if (supabaseClient) {

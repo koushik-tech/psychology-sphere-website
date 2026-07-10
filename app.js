@@ -17,6 +17,20 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMainWebsite();
   initDatabaseManager();
 
+  // Update connection status badge based on Supabase database live connectivity
+  const dbBadge = document.getElementById("db-connection-badge");
+  if (dbBadge) {
+    if (window.AppDB.isLive()) {
+      dbBadge.textContent = "Live Database";
+      dbBadge.style.backgroundColor = "#10b981";
+      dbBadge.style.color = "#ffffff";
+    } else {
+      dbBadge.textContent = "Mock Local Storage";
+      dbBadge.style.backgroundColor = "#f59e0b";
+      dbBadge.style.color = "#ffffff";
+    }
+  }
+
   // Initialize Lucide Icons
   if (window.lucide) {
     window.lucide.createIcons();
