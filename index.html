@@ -56,7 +56,7 @@
         <div class="hero-illustration-wrapper">
           <div class="hero-circle-purple-light"></div>
           <div class="hero-circle-purple-solid"></div>
-          <img src="images/student_cutout.png" alt="Smiling Psychology Student" class="hero-student-cutout-img">
+          <img src="images/student_cutout.png" alt="Smiling Psychology Student" class="hero-student-cutout-img" id="hero-student-image">
         </div>
       </div>
     </section>
@@ -109,65 +109,7 @@
         </div>
         
         <div class="grid-4" id="home-courses-grid">
-          <!-- Card 1: UGC NET -->
-          <div class="course-card-premium" data-course-id="1">
-            <div class="course-card-image-box">
-              <img src="images/course_ugc_net.png" alt="UGC NET Psychology">
-            </div>
-            <div class="course-card-body-content">
-              <h4>UGC NET Psychology</h4>
-              <p class="description-text">Complete preparation for UGC NET entrance exam with comprehensive syllabus coverage.</p>
-              <div class="course-card-footer-box">
-                <span class="course-card-duration-text">Duration: <strong>6 Months</strong></span>
-                <span class="course-card-price-value">₹ 8,999</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 2: MA Psychology -->
-          <div class="course-card-premium" data-course-id="2">
-            <div class="course-card-image-box">
-              <img src="images/course_ma.png" alt="MA Psychology">
-            </div>
-            <div class="course-card-body-content">
-              <h4>MA Psychology</h4>
-              <p class="description-text">In-depth learning for future leaders. Advanced counseling theories and practices.</p>
-              <div class="course-card-footer-box">
-                <span class="course-card-duration-text">Duration: <strong>2 Years</strong></span>
-                <span class="course-card-price-value">₹ 24,000</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 3: CUET PG -->
-          <div class="course-card-premium" data-course-id="3">
-            <div class="course-card-image-box">
-              <img src="images/course_cuet.png" alt="CUET PG Psychology">
-            </div>
-            <div class="course-card-body-content">
-              <h4>CUET PG Psychology</h4>
-              <p class="description-text">Crack CUET PG with confidence. Specialized mock tests and concepts.</p>
-              <div class="course-card-footer-box">
-                <span class="course-card-duration-text">Duration: <strong>3 Months</strong></span>
-                <span class="course-card-price-value">₹ 6,999</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 4: TISSNET -->
-          <div class="course-card-premium" data-course-id="4">
-            <div class="course-card-image-box">
-              <img src="images/course_tissnet.png" alt="TISSNET Psychology">
-            </div>
-            <div class="course-card-body-content">
-              <h4>TISSNET Psychology</h4>
-              <p class="description-text">Specialized coaching for TISSNET entrance. Structured curriculum and guidance.</p>
-              <div class="course-card-footer-box">
-                <span class="course-card-duration-text">Duration: <strong>3 Months</strong></span>
-                <span class="course-card-price-value">₹ 7,499</span>
-              </div>
-            </div>
-          </div>
+          <!-- Dynamically populated from AppDB -->
         </div>
       </div>
     </section>
@@ -181,42 +123,8 @@
           <p>Learn from the best minds in psychology education.</p>
         </div>
 
-        <div class="grid-3">
-          <!-- Faculty 1 -->
-          <div class="card text-center faculty-card-rewrite">
-            <div class="faculty-avatar-rewrite">SJ</div>
-            <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Dr. Sarah Jenkins</h3>
-            <p class="subtitle" style="font-size:0.75rem; font-weight:700; margin-bottom:1rem;">Ph.D. / Senior Lecturer</p>
-            <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">Specialization: Clinical Counseling. 10+ Years of coaching entrance aspirants.</p>
-            <div class="faculty-socials">
-              <a href="#"><i data-lucide="linkedin"></i></a>
-              <a href="#"><i data-lucide="mail"></i></a>
-            </div>
-          </div>
-
-          <!-- Faculty 2 -->
-          <div class="card text-center faculty-card-rewrite">
-            <div class="faculty-avatar-rewrite">RK</div>
-            <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Dr. Rajesh Kumar</h3>
-            <p class="subtitle" style="font-size:0.75rem; font-weight:700; margin-bottom:1rem;">Ph.D. / Cognitive Scientist</p>
-            <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">Specialization: Research Methods & Neuropsychology. Former DU professor.</p>
-            <div class="faculty-socials">
-              <a href="#"><i data-lucide="linkedin"></i></a>
-              <a href="#"><i data-lucide="mail"></i></a>
-            </div>
-          </div>
-
-          <!-- Faculty 3 -->
-          <div class="card text-center faculty-card-rewrite">
-            <div class="faculty-avatar-rewrite">AS</div>
-            <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Prof. Ananya Sen</h3>
-            <p class="subtitle" style="font-size:0.75rem; font-weight:700; margin-bottom:1rem;">M.Phil. / Senior Mentor</p>
-            <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">Specialization: Child Development & Counseling. 8+ Years teaching.</p>
-            <div class="faculty-socials">
-              <a href="#"><i data-lucide="linkedin"></i></a>
-              <a href="#"><i data-lucide="mail"></i></a>
-            </div>
-          </div>
+        <div class="grid-3" id="home-faculty-grid">
+          <!-- Dynamically populated from AppDB -->
         </div>
       </div>
     </section>
@@ -473,6 +381,7 @@
           <li><a href="#" class="sidebar-link active" data-tab="admin-analytics"><i data-lucide="bar-chart-2"></i> Analytics</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-courses"><i data-lucide="book-open"></i> Manage Courses</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-notices"><i data-lucide="megaphone"></i> Broadcast Notices</a></li>
+          <li><a href="#" class="sidebar-link" data-tab="admin-db"><i data-lucide="database"></i> Database Manager</a></li>
         </ul>
 
         <div class="sidebar-footer-rewrite">
@@ -896,6 +805,50 @@
               </div>
             </div>
           </div>
+
+          <!-- Admin Database Tab Panel -->
+          <div class="dashboard-tab-view" id="admin-db-tab" style="display:none;">
+            <div class="db-manager-layout" style="text-align:left;">
+              <div class="card db-manager-card" style="padding: 1.75rem; text-align: left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                  <div>
+                    <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Database Explorer & Image Link Manager</h3>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">Configure Google Drive images and view dynamic updates instantly.</p>
+                  </div>
+                  <button class="btn btn-outline btn-sm" id="btn-db-reset" style="border-color:#ef4444; color:#ef4444; font-size:0.75rem; border-radius:20px; padding:0.4rem 1rem;">
+                    <i data-lucide="refresh-cw" style="width:12px;"></i> Reset Database
+                  </button>
+                </div>
+                
+                <!-- Table Selection Tabs -->
+                <div class="db-tabs" style="display:flex; gap:0.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1px; margin-bottom:1.5rem;">
+                  <button class="btn db-tab-btn active" data-table="courses" style="background:transparent; border:none; border-bottom:2px solid var(--primary-color); border-radius:0; padding:0.5rem 1rem; font-size:0.85rem; color:var(--primary-color); font-weight:700;">Courses Table</button>
+                  <button class="btn db-tab-btn" data-table="faculty" style="background:transparent; border:none; border-bottom:2px solid transparent; border-radius:0; padding:0.5rem 1rem; font-size:0.85rem; color:var(--text-secondary); font-weight:500;">Faculty Table</button>
+                  <button class="btn db-tab-btn" data-table="assets" style="background:transparent; border:none; border-bottom:2px solid transparent; border-radius:0; padding:0.5rem 1rem; font-size:0.85rem; color:var(--text-secondary); font-weight:500;">Site Assets Table</button>
+                </div>
+                
+                <!-- Helper Instructions Banner -->
+                <div class="db-helper-banner" style="background:#f5f3ff; border:1px solid rgba(124, 58, 237, 0.15); padding:1rem; border-radius:12px; margin-bottom:1.5rem;">
+                  <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+                    <i data-lucide="info" style="color:var(--primary-color); flex-shrink:0; margin-top:2px; width:18px; height:18px;"></i>
+                    <div>
+                      <strong style="font-size:0.85rem; color:var(--text-primary);">Google Drive Embedding Instructions:</strong>
+                      <p style="font-size:0.8rem; color:var(--text-secondary); margin:0.25rem 0 0; line-height:1.4;">
+                        1. In Google Drive, right-click your image file and choose <strong>Share &gt; Share with others</strong>.<br>
+                        2. Change the General Access option to <strong>"Anyone with the link can view"</strong>, and click <strong>"Copy link"</strong>.<br>
+                        3. Paste that copied sharing link in any of the Google Drive image URL fields below and click <strong>Save</strong>.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Database Content Grid -->
+                <div id="db-table-explorer">
+                  <!-- Dynamically populated rows by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -1020,6 +973,8 @@
     </div>
   </div>
 
+  <!-- Database Script -->
+  <script src="database.js"></script>
   <!-- Main JavaScript File -->
   <script src="app.js"></script>
 </body>

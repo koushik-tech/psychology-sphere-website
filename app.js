@@ -1,6 +1,10 @@
 /* Psychology Sphere - Client Interactions & Mock Portals */
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialize Database Rendering on Startup
+  renderMainWebsite();
+  initDatabaseManager();
+
   // Initialize Lucide Icons
   if (window.lucide) {
     window.lucide.createIcons();
@@ -209,6 +213,10 @@ document.addEventListener("DOMContentLoaded", () => {
       targetTab.style.display = "block";
     }
     
+    if (tabId === "admin-db") {
+      renderDatabaseTable(activeDbTable);
+    }
+    
     if (window.lucide) {
       window.lucide.createIcons();
     }
@@ -308,21 +316,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const fees = document.getElementById("ac-fees").value;
       const faculty = document.getElementById("ac-faculty").value;
 
-      // Add row to mock table
-      const coursesTableBody = document.querySelector("#admin-courses-table tbody");
-      if (coursesTableBody) {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td style="font-weight:600;">${title}</td>
-          <td>${duration}</td>
-          <td>₹ ${Number(fees).toLocaleString("en-IN")}</td>
-          <td>${faculty}</td>
-          <td><button class="btn btn-outline btn-sm btn-delete-course-mock" style="border-color:#ef4444; color:#ef4444; padding:0.25rem 0.5rem;"><i data-lucide="trash-2" style="width:16px;"></i></button></td>
-        `;
-        coursesTableBody.appendChild(row);
-        bindDeleteCourseMockButtons();
-        if (window.lucide) window.lucide.createIcons();
-      }
+      const newCourse = {
+        id: Date.now().toString(),
+        title: title,
+        description: `Complete study program in ${title} assigned under our expert guidance.`,
+        duration: duration,
+        fees: fees,
+        faculty: faculty,
+        image: '' // default placeholder
+      };
+      
+      window.AppDB.saveCourse(newCourse);
+      renderMainWebsite();
 
       // Update analytics stats
       const studentsVal = document.getElementById("admin-students-val");
@@ -338,17 +343,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function bindDeleteCourseMockButtons() {
     document.querySelectorAll(".btn-delete-course-mock").forEach(btn => {
-      // Avoid stacking events
       btn.onclick = null;
       btn.onclick = () => {
         if (confirm("Are you sure you want to remove this course and all associated enrollments?")) {
-          btn.closest("tr").remove();
+          const courseId = btn.getAttribute("data-id");
+          window.AppDB.deleteCourse(courseId);
+          renderMainWebsite();
           showToast("Course record successfully deleted from database.", "success");
         }
       };
     });
   }
-  bindDeleteCourseMockButtons();
 
 
   // --- ADMIN NOTICE BROADCASTING ---
@@ -381,33 +386,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // --- PUBLIC COURSE DETAILS MODAL POPUPS ---
-  const coursesData = {
-    "1": {
-      title: "UGC NET Psychology",
-      description: "Complete preparation for UGC NET entrance exam with comprehensive syllabus coverage.",
-      duration: "6 Months",
-      fees: "₹ 8,999"
-    },
-    "2": {
-      title: "MA Psychology",
-      description: "In-depth learning for future leaders. Advanced counseling theories and practices.",
-      duration: "2 Years",
-      fees: "₹ 24,000"
-    },
-    "3": {
-      title: "CUET PG Psychology",
-      description: "Crack CUET PG with confidence. Specialized mock tests and concepts.",
-      duration: "3 Months",
-      fees: "₹ 6,999"
-    },
-    "4": {
-      title: "TISSNET Psychology",
-      description: "Specialized coaching for TISSNET entrance. Structured curriculum and guidance.",
-      duration: "3 Months",
-      fees: "₹ 7,499"
-    }
-  };
-
   const courseDetailModal = document.getElementById("course-detail-modal");
   const courseModalClose = document.getElementById("course-modal-close");
   const courseModalContent = document.getElementById("course-modal-content");
@@ -419,49 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (courseModalClose) {
     courseModalClose.addEventListener("click", closeCourseModal);
   }
-
-  document.querySelectorAll(".course-card-premium").forEach(card => {
-    card.addEventListener("click", () => {
-      const courseId = card.getAttribute("data-course-id");
-      const course = coursesData[courseId];
-      if (course && courseDetailModal && courseModalContent) {
-        courseModalContent.innerHTML = `
-          <span class="badge badge-primary" style="margin-bottom:0.75rem;">Syllabus Overview</span>
-          <h2 style="margin-bottom:0.5rem; font-size:1.5rem; font-weight:800; color:#0f172a;">${course.title}</h2>
-          <p style="margin-bottom:1.5rem; font-size:0.95rem; color:#475569; line-height:1.5;">${course.description}</p>
-          
-          <h4 style="margin-bottom:0.5rem; color:#3b20a6; font-weight:700;">Curriculum Modules</h4>
-          <ul style="list-style:none; padding:0; margin-bottom:2rem; display:flex; flex-direction:column; gap:0.5rem; text-align:left;">
-            <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 1: Foundations & Historical Timeline</li>
-            <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 2: Research Design & Experimental Methods</li>
-            <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 3: Clinical Case Histories & Assessments</li>
-            <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 4: Mock Entrance Exams & Practice Papers</li>
-          </ul>
-
-          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f3f7; padding-top:1.25rem;">
-            <div>
-              <div style="font-size:0.75rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">Total Fees</div>
-              <div style="font-size:1.45rem; font-weight:800; color:#3b20a6;">${course.fees}</div>
-            </div>
-            <button class="btn btn-hero-primary btn-enroll-now" style="font-size:0.85rem; padding:0.6rem 1.25rem;">Enroll Program</button>
-          </div>
-        `;
-        courseDetailModal.classList.add("active");
-        if (window.lucide) {
-          window.lucide.createIcons();
-        }
-
-        // Bind Enroll Program action
-        const enrollBtn = courseModalContent.querySelector(".btn-enroll-now");
-        if (enrollBtn) {
-          enrollBtn.addEventListener("click", () => {
-            closeCourseModal();
-            showToast(`Enrollment request for ${course.title} sent successfully!`, "success");
-          });
-        }
-      }
-    });
-  });
 
   // --- ADMISSION INQUIRY FORM ---
   const inquiryForm = document.getElementById("public-inquiry-form");
@@ -548,5 +483,321 @@ document.addEventListener("DOMContentLoaded", () => {
       toast.style.animation = "slideIn 0.3s ease reverse forwards";
       setTimeout(() => toast.remove(), 300);
     }, 3500);
+  }
+
+  // --- DATABASE & RENDERING INTEGRATION LOGIC ---
+  function renderMainWebsite() {
+    // 1. Render Hero Image
+    const heroImgEl = document.getElementById("hero-student-image");
+    if (heroImgEl) {
+      const heroLink = window.AppDB.getAssets().hero_student_image;
+      heroImgEl.src = window.AppDB.getGoogleDriveDirectLink(heroLink);
+    }
+
+    // 2. Render Courses Grid
+    const coursesGrid = document.getElementById("home-courses-grid");
+    if (coursesGrid) {
+      coursesGrid.innerHTML = "";
+      const courses = window.AppDB.getCourses();
+      courses.forEach(course => {
+        const card = document.createElement("div");
+        card.className = "course-card-premium";
+        card.setAttribute("data-course-id", course.id);
+        
+        const directLink = window.AppDB.getGoogleDriveDirectLink(course.image);
+        const feeFormatted = isNaN(Number(course.fees)) ? course.fees : `₹ ${Number(course.fees).toLocaleString("en-IN")}`;
+        
+        card.innerHTML = `
+          <div class="course-card-image-box">
+            <img src="${directLink}" alt="${course.title}" onerror="this.src='images/course_ugc_net.png';">
+          </div>
+          <div class="course-card-body-content">
+            <h4>${course.title}</h4>
+            <p class="description-text">${course.description}</p>
+            <div class="course-card-footer-box">
+              <span class="course-card-duration-text">Duration: <strong>${course.duration}</strong></span>
+              <span class="course-card-price-value">${feeFormatted}</span>
+            </div>
+          </div>
+        `;
+        coursesGrid.appendChild(card);
+      });
+      bindCourseDetailsClicks();
+    }
+
+    // 3. Render Faculty Grid
+    const facultyGrid = document.getElementById("home-faculty-grid");
+    if (facultyGrid) {
+      facultyGrid.innerHTML = "";
+      const facultyList = window.AppDB.getFaculty();
+      facultyList.forEach(faculty => {
+        const card = document.createElement("div");
+        card.className = "card text-center faculty-card-rewrite";
+        
+        const hasPhoto = faculty.image && faculty.image.trim() !== "";
+        const directPhotoLink = hasPhoto ? window.AppDB.getGoogleDriveDirectLink(faculty.image) : "";
+        
+        card.innerHTML = `
+          ${hasPhoto 
+            ? `<div class="faculty-avatar-rewrite" style="overflow:hidden; background:transparent; border:1px solid var(--border-color); padding:0;"><img src="${directPhotoLink}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='${faculty.avatar}';"></div>` 
+            : `<div class="faculty-avatar-rewrite">${faculty.avatar}</div>`}
+          <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">${faculty.name}</h3>
+          <p class="subtitle" style="font-size:0.75rem; font-weight:700; margin-bottom:1rem;">${faculty.role}</p>
+          <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.5;">${faculty.specialization}</p>
+          <div class="faculty-socials">
+            <a href="#"><i data-lucide="linkedin"></i></a>
+            <a href="#"><i data-lucide="mail"></i></a>
+          </div>
+        `;
+        facultyGrid.appendChild(card);
+      });
+    }
+
+    // 4. Render Admin Manage Courses Table
+    const coursesTableBody = document.querySelector("#admin-courses-table tbody");
+    if (coursesTableBody) {
+      coursesTableBody.innerHTML = "";
+      const courses = window.AppDB.getCourses();
+      courses.forEach(course => {
+        const row = document.createElement("tr");
+        const feeFormatted = isNaN(Number(course.fees)) ? course.fees : `₹ ${Number(course.fees).toLocaleString("en-IN")}`;
+        
+        row.innerHTML = `
+          <td style="font-weight:600;">${course.title}</td>
+          <td>${course.duration}</td>
+          <td>${feeFormatted}</td>
+          <td>${course.faculty}</td>
+          <td><button class="btn btn-outline btn-sm btn-delete-course-mock" data-id="${course.id}" style="border-color:#ef4444; color:#ef4444; padding:0.25rem 0.5rem;"><i data-lucide="trash-2" style="width:16px;"></i></button></td>
+        `;
+        coursesTableBody.appendChild(row);
+      });
+      bindDeleteCourseMockButtons();
+    }
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }
+
+  function bindCourseDetailsClicks() {
+    document.querySelectorAll(".course-card-premium").forEach(card => {
+      card.addEventListener("click", () => {
+        const courseId = card.getAttribute("data-course-id");
+        const courses = window.AppDB.getCourses();
+        const course = courses.find(c => c.id === courseId);
+        
+        if (course && courseDetailModal && courseModalContent) {
+          const feeFormatted = isNaN(Number(course.fees)) ? course.fees : `₹ ${Number(course.fees).toLocaleString("en-IN")}`;
+          
+          courseModalContent.innerHTML = `
+            <span class="badge badge-primary" style="margin-bottom:0.75rem;">Syllabus Overview</span>
+            <h2 style="margin-bottom:0.5rem; font-size:1.5rem; font-weight:800; color:#0f172a;">${course.title}</h2>
+            <p style="margin-bottom:1.5rem; font-size:0.95rem; color:#475569; line-height:1.5;">${course.description}</p>
+            
+            <h4 style="margin-bottom:0.5rem; color:#3b20a6; font-weight:700;">Curriculum Modules</h4>
+            <ul style="list-style:none; padding:0; margin-bottom:2rem; display:flex; flex-direction:column; gap:0.5rem; text-align:left;">
+              <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 1: Foundations & Historical Timeline</li>
+              <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 2: Research Design & Experimental Methods</li>
+              <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 3: Clinical Case Histories & Assessments</li>
+              <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 4: Mock Entrance Exams & Practice Papers</li>
+            </ul>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f3f7; padding-top:1.25rem;">
+              <div>
+                <div style="font-size:0.75rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">Total Fees</div>
+                <div style="font-size:1.45rem; font-weight:800; color:#3b20a6;">${feeFormatted}</div>
+              </div>
+              <button class="btn btn-hero-primary btn-enroll-now" style="font-size:0.85rem; padding:0.6rem 1.25rem;">Enroll Program</button>
+            </div>
+          `;
+          courseDetailModal.classList.add("active");
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+
+          const enrollBtn = courseModalContent.querySelector(".btn-enroll-now");
+          if (enrollBtn) {
+            enrollBtn.addEventListener("click", () => {
+              closeCourseModal();
+              showToast(`Enrollment request for ${course.title} sent successfully!`, "success");
+            });
+          }
+        }
+      });
+    });
+  }
+
+  // --- DATABASE MANAGER ---
+  let activeDbTable = "courses";
+  
+  function initDatabaseManager() {
+    // Bind DB sub-tab buttons
+    document.querySelectorAll(".db-tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".db-tab-btn").forEach(b => {
+          b.classList.remove("active");
+          b.style.color = "var(--text-secondary)";
+          b.style.fontWeight = "500";
+          b.style.borderColor = "transparent";
+        });
+        
+        btn.classList.add("active");
+        btn.style.color = "var(--primary-color)";
+        btn.style.fontWeight = "700";
+        btn.style.borderColor = "var(--primary-color)";
+        
+        activeDbTable = btn.getAttribute("data-table");
+        renderDatabaseTable(activeDbTable);
+      });
+    });
+
+    // Bind DB Reset Button
+    const dbResetBtn = document.getElementById("btn-db-reset");
+    if (dbResetBtn) {
+      dbResetBtn.addEventListener("click", () => {
+        if (confirm("Are you sure you want to reset the database to defaults? All custom Google Drive links will be restored to local assets.")) {
+          window.AppDB.reset();
+          renderMainWebsite();
+          renderDatabaseTable(activeDbTable);
+          showToast("Database successfully restored to defaults.", "info");
+        }
+      });
+    }
+  }
+
+  function renderDatabaseTable(tableName) {
+    const explorer = document.getElementById("db-table-explorer");
+    if (!explorer) return;
+    
+    explorer.innerHTML = "";
+    
+    if (tableName === "courses") {
+      const courses = window.AppDB.getCourses();
+      courses.forEach(course => {
+        const card = document.createElement("div");
+        card.className = "db-row-card";
+        
+        const directLink = window.AppDB.getGoogleDriveDirectLink(course.image);
+        
+        card.innerHTML = `
+          <div class="db-preview-container">
+            ${course.image ? `<img src="${directLink}" class="db-preview-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : ''}
+            <div class="db-preview-placeholder" style="${course.image ? 'display:none;' : 'display:flex;'}">
+              <i data-lucide="image" style="width:24px; height:24px;"></i>
+              <span style="margin-top:0.25rem;">No Preview</span>
+            </div>
+          </div>
+          <div class="db-row-details">
+            <div class="db-row-title">${course.title}</div>
+            <div class="db-row-meta">ID: <code>${course.id}</code> | Mentor: ${course.faculty} | Duration: ${course.duration}</div>
+            <div class="db-input-group">
+              <input type="text" class="db-link-input" placeholder="Paste Google Drive image link" value="${course.image || ''}">
+              <button class="db-save-btn" data-id="${course.id}"><i data-lucide="save" style="width:14px; height:14px;"></i> Save</button>
+            </div>
+          </div>
+        `;
+        
+        explorer.appendChild(card);
+      });
+    } else if (tableName === "faculty") {
+      const facultyList = window.AppDB.getFaculty();
+      facultyList.forEach(faculty => {
+        const card = document.createElement("div");
+        card.className = "db-row-card";
+        
+        const directLink = window.AppDB.getGoogleDriveDirectLink(faculty.image);
+        
+        card.innerHTML = `
+          <div class="db-preview-container">
+            ${faculty.image ? `<img src="${directLink}" class="db-preview-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : ''}
+            <div class="db-preview-placeholder" style="${faculty.image ? 'display:none;' : 'display:flex;'}">
+              <i data-lucide="user" style="width:24px; height:24px;"></i>
+              <span style="margin-top:0.25rem;">Fallback: ${faculty.avatar}</span>
+            </div>
+          </div>
+          <div class="db-row-details">
+            <div class="db-row-title">${faculty.name}</div>
+            <div class="db-row-meta">ID: <code>${faculty.id}</code> | Role: ${faculty.role}</div>
+            <div class="db-input-group">
+              <input type="text" class="db-link-input" placeholder="Paste Google Drive image link" value="${faculty.image || ''}">
+              <button class="db-save-btn" data-id="${faculty.id}"><i data-lucide="save" style="width:14px; height:14px;"></i> Save</button>
+            </div>
+          </div>
+        `;
+        
+        explorer.appendChild(card);
+      });
+    } else if (tableName === "assets") {
+      const assets = window.AppDB.getAssets();
+      Object.keys(assets).forEach(key => {
+        const val = assets[key];
+        const card = document.createElement("div");
+        card.className = "db-row-card";
+        
+        const directLink = window.AppDB.getGoogleDriveDirectLink(val);
+        const displayLabel = key === 'hero_student_image' ? 'Hero Section Student Illustration' : key;
+        
+        card.innerHTML = `
+          <div class="db-preview-container">
+            ${val ? `<img src="${directLink}" class="db-preview-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : ''}
+            <div class="db-preview-placeholder" style="${val ? 'display:none;' : 'display:flex;'}">
+              <i data-lucide="image" style="width:24px; height:24px;"></i>
+              <span style="margin-top:0.25rem;">No Preview</span>
+            </div>
+          </div>
+          <div class="db-row-details">
+            <div class="db-row-title">${displayLabel}</div>
+            <div class="db-row-meta">Key: <code>${key}</code></div>
+            <div class="db-input-group">
+              <input type="text" class="db-link-input" placeholder="Paste Google Drive image link" value="${val || ''}">
+              <button class="db-save-btn" data-key="${key}"><i data-lucide="save" style="width:14px; height:14px;"></i> Save</button>
+            </div>
+          </div>
+        `;
+        
+        explorer.appendChild(card);
+      });
+    }
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+    
+    // Bind Save buttons
+    explorer.querySelectorAll(".db-save-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const input = btn.previousElementSibling;
+        const linkVal = input.value.trim();
+        
+        if (tableName === "courses") {
+          const id = btn.getAttribute("data-id");
+          const courses = window.AppDB.getCourses();
+          const course = courses.find(c => c.id === id);
+          if (course) {
+            course.image = linkVal;
+            window.AppDB.saveCourse(course);
+            showToast(`Course image for "${course.title}" updated in database!`, "success");
+          }
+        } else if (tableName === "faculty") {
+          const id = btn.getAttribute("data-id");
+          const facultyList = window.AppDB.getFaculty();
+          const faculty = facultyList.find(f => f.id === id);
+          if (faculty) {
+            faculty.image = linkVal;
+            window.AppDB.saveFaculty(faculty);
+            showToast(`Faculty photo for "${faculty.name}" updated in database!`, "success");
+          }
+        } else if (tableName === "assets") {
+          const key = btn.getAttribute("data-key");
+          window.AppDB.saveAsset(key, linkVal);
+          showToast(`Asset "${key}" updated in database!`, "success");
+        }
+        
+        // Refresh site dynamic UI
+        renderMainWebsite();
+        // Refresh explorer view to show updated previews
+        renderDatabaseTable(tableName);
+      });
+    });
   }
 });
