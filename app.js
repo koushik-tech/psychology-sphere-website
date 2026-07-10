@@ -417,9 +417,46 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- ADMISSION INQUIRY FORM ---
   const inquiryForm = document.getElementById("public-inquiry-form");
   if (inquiryForm) {
-    inquiryForm.addEventListener("submit", (e) => {
+    inquiryForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      showToast("Inquiry submitted successfully! Admissions team will contact you soon.", "success");
+      const name = document.getElementById("inq-name").value.trim();
+      const email = document.getElementById("inq-email").value.trim();
+      const phone = document.getElementById("inq-phone").value.trim();
+      
+      const courseSelect = document.getElementById("inq-course");
+      const courseIdVal = courseSelect.value;
+      const courseTitle = courseSelect.options[courseSelect.selectedIndex].text.trim();
+
+      try {
+        // 1. Resolve course ID dynamically by matching title to ensure no ID mismatch errors
+        const courses = await window.AppDB.getCourses();
+        const course = courses.find(c => c.title.toLowerCase() === courseTitle.toLowerCase());
+        const targetCourseId = course ? course.id : courseIdVal;
+
+        // 2. Get or create student profile
+        let studentProfile = await window.AppDB.getProfileByEmail(email);
+        if (!studentProfile) {
+          studentProfile = await window.AppDB.createProfile({
+            id: generateUUID(),
+            full_name: name,
+            email: email,
+            phone: phone,
+            role: "student"
+          });
+        }
+
+        if (studentProfile) {
+          // 3. Save the enrollment record in Supabase
+          await window.AppDB.enrollInCourse(targetCourseId, studentProfile.id);
+          showToast(`Inquiry submitted and enrolled in ${courseTitle} successfully!`, "success");
+        } else {
+          showToast("Failed to process profile. Please try again.", "error");
+        }
+      } catch (err) {
+        console.error("Admission inquiry submission failed:", err);
+        showToast("Failed to save enrollment. Please try again.", "error");
+      }
+
       inquiryForm.reset();
     });
   }
