@@ -310,20 +310,105 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- FACULTY MOCK ATTENDANCE LOADING & REGISTERING ---
+  // --- FACULTY LIVE ATTENDANCE LOADING & REGISTERING ---
   const loadFacultyAttBtn = document.getElementById("btn-load-faculty-att");
   const facultyAttTableWrapper = document.getElementById("faculty-att-table-wrapper");
   if (loadFacultyAttBtn && facultyAttTableWrapper) {
-    loadFacultyAttBtn.addEventListener("click", () => {
-      facultyAttTableWrapper.style.display = "block";
-      showToast("Class list registry loaded successfully.", "info");
+    loadFacultyAttBtn.addEventListener("click", async () => {
+      const programSel = document.getElementById("att-program-sel");
+      if (!programSel) return;
+      
+      const programTitle = programSel.options[programSel.selectedIndex].text.trim();
+      
+      // Resolve the database course ID for this program
+      const courses = await window.AppDB.getCourses();
+      const course = courses.find(c => c.title.toLowerCase() === programTitle.toLowerCase());
+      
+      if (!course) {
+        showToast("Selected program does not exist in courses table.", "error");
+        return;
+      }
+      
+      // Store course ID on the wrapper element for saving later
+      facultyAttTableWrapper.setAttribute("data-course-id", course.id);
+      
+      const tbody = facultyAttTableWrapper.querySelector("tbody");
+      if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Loading class list...</td></tr>`;
+        facultyAttTableWrapper.style.display = "block";
+        
+        try {
+          const students = await window.AppDB.getEnrolledStudents(course.id);
+          if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">No students enrolled in this program yet.</td></tr>`;
+            return;
+          }
+          
+          tbody.innerHTML = "";
+          students.forEach(student => {
+            const row = document.createElement("tr");
+            row.setAttribute("data-student-id", student.id);
+            row.innerHTML = `
+              <td style="font-weight:600;">${student.name}</td>
+              <td>${student.email}</td>
+              <td><input type="radio" name="att-${student.id}" value="present" checked></td>
+              <td><input type="radio" name="att-${student.id}" value="absent"></td>
+              <td><input type="radio" name="att-${student.id}" value="late"></td>
+            `;
+            tbody.appendChild(row);
+          });
+          showToast(`Loaded ${students.length} enrolled students.`, "success");
+        } catch (e) {
+          console.error("Failed to load class list:", e);
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ef4444;">Error loading class list from database.</td></tr>`;
+        }
+      }
     });
   }
 
   const saveFacultyAttBtn = document.getElementById("btn-save-faculty-att");
   if (saveFacultyAttBtn) {
-    saveFacultyAttBtn.addEventListener("click", () => {
-      showToast("Attendance logs successfully synchronized with Cloud Server!", "success");
+    saveFacultyAttBtn.addEventListener("click", async () => {
+      const dateInput = document.getElementById("att-date-sel");
+      if (!dateInput || !dateInput.value) {
+        showToast("Please select a date to mark attendance.", "error");
+        return;
+      }
+      
+      const dateStr = dateInput.value;
+      const courseId = facultyAttTableWrapper.getAttribute("data-course-id");
+      
+      if (!courseId) {
+        showToast("No active class list loaded to save.", "error");
+        return;
+      }
+      
+      const rows = facultyAttTableWrapper.querySelectorAll("tbody tr[data-student-id]");
+      if (rows.length === 0) {
+        showToast("No student records to save.", "error");
+        return;
+      }
+      
+      const records = [];
+      rows.forEach(row => {
+        const studentId = row.getAttribute("data-student-id");
+        const statusVal = row.querySelector(`input[name="att-${studentId}"]:checked`).value;
+        records.push({
+          student_id: studentId,
+          course_id: parseInt(courseId),
+          date: dateStr,
+          status: statusVal,
+          marked_by: null
+        });
+      });
+      
+      try {
+        await window.AppDB.saveAttendanceRecords(records);
+        showToast(`Attendance synchronized successfully for ${dateStr}!`, "success");
+      } catch (err) {
+        console.error("Failed to save attendance:", err);
+        showToast("Failed to synchronize attendance with database.", "error");
+      }
     });
   }
 
@@ -629,6 +714,13 @@ document.addEventListener("DOMContentLoaded", () => {
         coursesTableBody.appendChild(row);
       });
       bindDeleteCourseMockButtons();
+    }
+
+    // Dynamic Program Select for Mark Attendance
+    const attProgramSel = document.getElementById("att-program-sel");
+    if (attProgramSel) {
+      const courses = await window.AppDB.getCourses();
+      attProgramSel.innerHTML = courses.map(c => `<option value="${c.id}">${c.title}</option>`).join("");
     }
 
     if (window.lucide) {

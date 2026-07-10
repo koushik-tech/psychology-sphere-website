@@ -476,6 +476,65 @@
       return [];
     },
 
+    getEnrolledStudents: async function (courseId) {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('enrollments')
+            .select('*, profiles(*)')
+            .eq('course_id', parseInt(courseId));
+          if (error) throw error;
+          
+          if (!data) return [];
+          return data.filter(e => e.profiles !== null).map(e => ({
+            id: e.profiles.id,
+            name: e.profiles.full_name,
+            email: e.profiles.email
+          }));
+        } catch (e) {
+          console.error("Supabase getEnrolledStudents failed:", e);
+          return [];
+        }
+      }
+      return [];
+    },
+
+    saveAttendanceRecords: async function (records) {
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('attendance')
+            .upsert(records, { onConflict: 'student_id,course_id,date' });
+          if (error) throw error;
+          return true;
+        } catch (e) {
+          console.error("Supabase saveAttendanceRecords failed:", e);
+          throw e;
+        }
+      } else {
+        const db = loadDB();
+        if (!db.attendance) db.attendance = [];
+        records.forEach(r => {
+          const existingIdx = db.attendance.findIndex(a => a.student_id === r.student_id && a.course_id === r.course_id.toString() && a.date === r.date);
+          if (existingIdx !== -1) {
+            db.attendance[existingIdx] = {
+              id: db.attendance[existingIdx].id,
+              ...r,
+              course_id: r.course_id.toString()
+            };
+          } else {
+            db.attendance.push({
+              id: Date.now().toString() + Math.random().toString(),
+              ...r,
+              course_id: r.course_id.toString()
+            });
+          }
+        });
+        saveDB(db);
+        return true;
+      }
+    },
+
     saveInquiry: async function (inquiry) {
       if (supabaseClient) {
         try {
