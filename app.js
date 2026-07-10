@@ -253,6 +253,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (tabId === "student-attendance") {
       renderStudentAttendance();
     }
+
+    if (tabId === "student-courses") {
+      renderStudentCourses();
+    }
     
     if (window.lucide) {
       window.lucide.createIcons();
@@ -767,6 +771,92 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {
       console.error("Failed to render student attendance:", e);
       tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#ef4444;">Error loading attendance logs from database.</td></tr>`;
+    }
+  }
+
+  async function renderStudentCourses() {
+    const grid = document.getElementById("student-enrolled-courses-grid");
+    const select = document.getElementById("student-enroll-course-sel");
+    if (!grid || !select) return;
+
+    grid.innerHTML = `<div style="grid-column: span 2; text-align:center; padding: 1rem;">Loading enrolled courses...</div>`;
+    
+    if (!loggedInUser || loggedInUser.role !== "student") return;
+
+    try {
+      // 1. Get student profile
+      const studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
+      if (!studentProfile) {
+        grid.innerHTML = `<div style="grid-column: span 2; text-align:center; color:var(--text-secondary); padding: 1rem;">No student profile found. Please try again.</div>`;
+        return;
+      }
+
+      // 2. Fetch all courses and enrollments
+      const [allCourses, enrollments] = await Promise.all([
+        window.AppDB.getCourses(),
+        window.AppDB.getStudentEnrollments(studentProfile.id)
+      ]);
+
+      // 3. Render active enrolled courses
+      if (enrollments.length === 0) {
+        grid.innerHTML = `<div style="grid-column: span 2; text-align:center; color:var(--text-secondary); padding: 1.5rem; background: #f8fafc; border:1px solid var(--border-color); border-radius: 8px;">You are not enrolled in any programs yet. Select a course below to enroll.</div>`;
+      } else {
+        grid.innerHTML = "";
+        enrollments.forEach(e => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <span class="badge badge-primary" style="margin-bottom:0.75rem;">Active Program</span>
+            <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">${e.courseTitle}</h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Duration: ${e.courseDuration}</p>
+            <div style="background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:8px; font-size:0.8rem;">
+              <strong>Status:</strong> <span style="font-weight:600; color:#3b20a6;">${e.status.charAt(0).toUpperCase() + e.status.slice(1)}</span>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      // 4. Populate available courses dropdown (excluding already enrolled ones)
+      const enrolledIds = enrollments.map(e => e.courseId.toString());
+      const availableCourses = allCourses.filter(c => !enrolledIds.includes(c.id.toString()));
+
+      const enrollBtn = document.getElementById("btn-student-enroll-now");
+      if (availableCourses.length === 0) {
+        select.innerHTML = `<option value="">No new programs available</option>`;
+        if (enrollBtn) enrollBtn.disabled = true;
+      } else {
+        select.innerHTML = availableCourses.map(c => `<option value="${c.id}">${c.title}</option>`).join("");
+        if (enrollBtn) enrollBtn.disabled = false;
+      }
+
+      // 5. Bind Enroll button click (one-time setup if not already bound)
+      if (enrollBtn && !enrollBtn.dataset.bound) {
+        enrollBtn.dataset.bound = "true";
+        enrollBtn.addEventListener("click", async () => {
+          const courseId = select.value;
+          if (!courseId) return;
+
+          try {
+            enrollBtn.disabled = true;
+            enrollBtn.textContent = "Enrolling...";
+            await window.AppDB.enrollInCourse(courseId, studentProfile.id);
+            showToast("Successfully enrolled in the program!", "success");
+            // Reload the view
+            await renderStudentCourses();
+          } catch (err) {
+            console.error("Dashboard enrollment failed:", err);
+            showToast("Failed to complete enrollment. Please try again.", "error");
+          } finally {
+            enrollBtn.disabled = false;
+            enrollBtn.textContent = "Enroll Now";
+          }
+        });
+      }
+
+    } catch (e) {
+      console.error("Failed to render student courses:", e);
+      grid.innerHTML = `<div style="grid-column: span 2; text-align:center; color:#ef4444; padding: 1rem;">Error loading courses from database.</div>`;
     }
   }
 

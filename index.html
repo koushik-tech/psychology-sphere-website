@@ -486,22 +486,21 @@
           </div>
 
           <div class="dashboard-tab-view" id="student-courses-tab" style="display:none;">
-            <div class="grid-2" style="text-align:left;">
-              <div class="card">
-                <span class="badge badge-primary" style="margin-bottom:0.75rem;">Active Program</span>
-                <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">UGC NET Psychology</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Duration: 6 Months | Assigned Mentor: Dr. Sarah Jenkins</p>
-                <div style="background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:8px; font-size:0.8rem;">
-                  <strong>Module Status:</strong> Foundations & Historical Timeline (Completed)
+            <h3 style="font-size:1.15rem; margin-bottom:1.5rem; text-align:left;">My Enrolled Courses</h3>
+            <div class="grid-2" id="student-enrolled-courses-grid" style="text-align:left; margin-bottom:2.5rem;">
+              <!-- Dynamically populated -->
+            </div>
+            
+            <div class="card" style="padding:1.5rem; text-align:left; max-width:600px; margin-bottom:2rem;">
+              <h3 style="font-size:1.15rem; margin-bottom:1rem;">Enroll in a New Program</h3>
+              <div style="display:flex; gap:1rem; align-items:flex-end;">
+                <div class="form-group" style="margin-bottom:0; flex:1;">
+                  <label for="student-enroll-course-sel">Select Program</label>
+                  <select id="student-enroll-course-sel" class="form-control">
+                    <!-- Dynamically populated -->
+                  </select>
                 </div>
-              </div>
-              <div class="card">
-                <span class="badge badge-primary" style="margin-bottom:0.75rem;">Active Program</span>
-                <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">MA Psychology</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Duration: 2 Years | Assigned Mentor: Dr. Rajesh Kumar</p>
-                <div style="background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:8px; font-size:0.8rem;">
-                  <strong>Module Status:</strong> Research Design & Experimental Methods (In Progress)
-                </div>
+                <button class="btn btn-primary" id="btn-student-enroll-now" style="height:44px;">Enroll Now</button>
               </div>
             </div>
           </div>

@@ -499,6 +499,44 @@
       return [];
     },
 
+    getStudentEnrollments: async function (studentId) {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('enrollments')
+            .select('*, courses(*)')
+            .eq('student_id', studentId);
+          if (error) throw error;
+          
+          if (!data) return [];
+          return data.filter(e => e.courses !== null).map(e => ({
+            id: e.id,
+            courseId: e.courses.id,
+            courseTitle: e.courses.title,
+            courseDuration: e.courses.duration,
+            status: e.status
+          }));
+        } catch (e) {
+          console.error("Supabase getStudentEnrollments failed:", e);
+          return [];
+        }
+      } else {
+        const db = loadDB();
+        if (!db.enrollments) db.enrollments = [];
+        const studentEnrollments = db.enrollments.filter(e => e.student_id === studentId);
+        return studentEnrollments.map(e => {
+          const course = db.courses.find(c => c.id === e.course_id);
+          return {
+            id: e.id,
+            courseId: e.course_id,
+            courseTitle: course ? course.title : 'Unknown Course',
+            courseDuration: course ? course.duration : 'N/A',
+            status: e.status
+          };
+        });
+      }
+    },
+
     saveAttendanceRecords: async function (records) {
       if (supabaseClient) {
         try {
