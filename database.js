@@ -1,7 +1,31 @@
-/* Psychology Sphere - Client-side Database Layer using LocalStorage */
+/* Psychology Sphere - Client-side Database Layer using LocalStorage and Supabase */
 
 (function (global) {
   const DB_KEY = 'psychology_sphere_db';
+
+  // --- SUPABASE CONFIGURATION ---
+  // Input your Supabase credentials here. 
+  // If left as defaults, the application will automatically run in LocalStorage mode.
+  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+  const isSupabaseConfigured = 
+    SUPABASE_URL && 
+    SUPABASE_URL !== 'YOUR_SUPABASE_URL' && 
+    SUPABASE_ANON_KEY && 
+    SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+
+  let supabaseClient = null;
+  if (isSupabaseConfigured && typeof supabase !== 'undefined') {
+    try {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      console.log("Supabase successfully initialized.");
+    } catch (e) {
+      console.error("Failed to initialize Supabase client: ", e);
+    }
+  } else {
+    console.warn("Supabase is not configured or SDK is missing. Falling back to LocalStorage database.");
+  }
 
   // Helper to extract Google Drive file ID and build a direct embeddable link
   function getGoogleDriveDirectLink(url) {
@@ -84,7 +108,7 @@
         role: 'Ph.D. / Senior Lecturer',
         specialization: 'Clinical Counseling. 10+ Years of coaching entrance aspirants.',
         avatar: 'SJ',
-        image: '' // empty by default, will fall back to initials unless Google Drive link is provided
+        image: '' // empty by default
       },
       {
         id: '2',
@@ -108,7 +132,7 @@
     }
   };
 
-  // Internal operations
+  // LocalStorage fallback utilities
   function loadDB() {
     try {
       const raw = localStorage.getItem(DB_KEY);
@@ -119,7 +143,6 @@
       const data = JSON.parse(raw);
       // Ensure all keys exist
       if (!data.courses || !data.faculty || !data.assets) {
-        // Merge or reset
         const merged = Object.assign({}, defaultDB, data);
         saveDB(merged);
         return merged;
@@ -136,64 +159,241 @@
     localStorage.setItem(DB_KEY, JSON.stringify(data));
   }
 
-  // Expose the API
+  // Expose the API (all DB operations are async to support Supabase seamlessly)
   const AppDB = {
     // Helper URL converter
     getGoogleDriveDirectLink: getGoogleDriveDirectLink,
 
     // Course Methods
-    getCourses: function () {
-      const db = loadDB();
-      return db.courses;
-    },
-    saveCourse: function (course) {
-      const db = loadDB();
-      const existingIdx = db.courses.findIndex(c => c.id === course.id);
-      if (existingIdx !== -1) {
-        db.courses[existingIdx] = course;
+    getCourses: async function () {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('courses')
+            .select('*, profiles(full_name)')
+            .order('created_at', { ascending: true });
+          
+          if (error) throw error;
+
+          if (!data || data.length === 0) {
+            // If empty, return default courses
+            return defaultDB.courses;
+          }
+
+          return data.map(c => ({
+            id: c.id.toString(),
+            title: c.title,
+            description: c.description || '',
+            duration: c.duration || '',
+            fees: c.fees ? c.fees.toString() : '0',
+            faculty: c.profiles?.full_name || 'Dr. Sarah Jenkins',
+            image: c.image || c.image_url || 'images/course_ugc_net.png'
+          }));
+        } catch (err) {
+          console.error("Supabase getCourses failed, falling back to local database.", err);
+          const db = loadDB();
+          return db.courses;
+        }
       } else {
-        db.courses.push(course);
+        const db = loadDB();
+        return db.courses;
       }
-      saveDB(db);
-      return course;
-    },
-    deleteCourse: function (id) {
-      const db = loadDB();
-      db.courses = db.courses.filter(c => c.id !== id);
-      saveDB(db);
     },
 
-    // Faculty Methods
-    getFaculty: function () {
-      const db = loadDB();
-      return db.faculty;
-    },
-    saveFaculty: function (member) {
-      const db = loadDB();
-      const existingIdx = db.faculty.findIndex(f => f.id === member.id);
-      if (existingIdx !== -1) {
-        db.faculty[existingIdx] = member;
+    saveCourse: async function (course) {
+      if (supabaseClient) {
+        try {
+          // Attempt to resolve the faculty name to a profiles UUID
+          let faculty_id = null;
+          if (course.faculty) {
+            const { data: profile } = await supabaseClient
+              .from('profiles')
+              .select('id')
+              .eq('full_name', course.faculty)
+              .eq('role', 'faculty')
+              .limit(1)
+              .maybeSingle();
+            
+            if (profile) {
+              faculty_id = profile.id;
+            }
+          }
+
+          // Build insertion payload mapping to standard course schema
+          const payload = {
+            title: course.title,
+            description: course.description || '',
+            duration: course.duration || '',
+            fees: isNaN(Number(course.fees)) ? 0 : Number(course.fees),
+            faculty_id: faculty_id,
+            image: course.image || ''
+          };
+
+          // Try to parse id to use for upsert. If it is client-generated, use it.
+          const numericId = parseInt(course.id);
+          if (course.id && !isNaN(numericId) && numericId > 1000000000) {
+            payload.id = numericId;
+          }
+
+          const { error } = await supabaseClient
+            .from('courses')
+            .upsert(payload);
+          
+          if (error) throw error;
+          return course;
+        } catch (err) {
+          console.error("Supabase saveCourse failed, writing to LocalStorage.", err);
+          // Fallback to local storage write
+          const db = loadDB();
+          const existingIdx = db.courses.findIndex(c => c.id === course.id);
+          if (existingIdx !== -1) {
+            db.courses[existingIdx] = course;
+          } else {
+            db.courses.push(course);
+          }
+          saveDB(db);
+          return course;
+        }
       } else {
-        db.faculty.push(member);
+        const db = loadDB();
+        const existingIdx = db.courses.findIndex(c => c.id === course.id);
+        if (existingIdx !== -1) {
+          db.courses[existingIdx] = course;
+        } else {
+          db.courses.push(course);
+        }
+        saveDB(db);
+        return course;
       }
-      saveDB(db);
-      return member;
     },
 
-    // Asset Methods
-    getAssets: function () {
+    deleteCourse: async function (id) {
+      if (supabaseClient) {
+        try {
+          // If the ID is a numeric string/bigint, we parse it
+          const numericId = parseInt(id);
+          if (!isNaN(numericId)) {
+            const { error } = await supabaseClient
+              .from('courses')
+              .delete()
+              .eq('id', numericId);
+            
+            if (error) throw error;
+          }
+        } catch (err) {
+          console.error("Supabase deleteCourse failed, removing from LocalStorage.", err);
+          const db = loadDB();
+          db.courses = db.courses.filter(c => c.id !== id);
+          saveDB(db);
+        }
+      } else {
+        const db = loadDB();
+        db.courses = db.courses.filter(c => c.id !== id);
+        saveDB(db);
+      }
+    },
+
+    // Faculty Methods (fetched from public.profiles table where role = 'faculty')
+    getFaculty: async function () {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('role', 'faculty')
+            .order('created_at', { ascending: true });
+          
+          if (error) throw error;
+
+          if (!data || data.length === 0) {
+            return defaultDB.faculty;
+          }
+
+          return data.map(f => ({
+            id: f.id,
+            name: f.full_name,
+            role: f.academic_role || 'Lecturer / Instructor',
+            specialization: f.specialization || 'Coaching entrance aspirants.',
+            avatar: f.avatar || f.full_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
+            image: f.image || f.image_url || ''
+          }));
+        } catch (err) {
+          console.error("Supabase getFaculty failed, falling back to LocalStorage.", err);
+          const db = loadDB();
+          return db.faculty;
+        }
+      } else {
+        const db = loadDB();
+        return db.faculty;
+      }
+    },
+
+    saveFaculty: async function (member) {
+      if (supabaseClient) {
+        try {
+          const payload = {
+            id: member.id, // UUID in Supabase
+            full_name: member.name,
+            academic_role: member.role,
+            specialization: member.specialization,
+            avatar: member.avatar,
+            image: member.image
+          };
+
+          const { error } = await supabaseClient
+            .from('profiles')
+            .upsert(payload);
+          
+          if (error) throw error;
+          return member;
+        } catch (err) {
+          console.error("Supabase saveFaculty failed, writing to LocalStorage.", err);
+          const db = loadDB();
+          const existingIdx = db.faculty.findIndex(f => f.id === member.id);
+          if (existingIdx !== -1) {
+            db.faculty[existingIdx] = member;
+          } else {
+            db.faculty.push(member);
+          }
+          saveDB(db);
+          return member;
+        }
+      } else {
+        const db = loadDB();
+        const existingIdx = db.faculty.findIndex(f => f.id === member.id);
+        if (existingIdx !== -1) {
+          db.faculty[existingIdx] = member;
+        } else {
+          db.faculty.push(member);
+        }
+        saveDB(db);
+        return member;
+      }
+    },
+
+    // Asset Methods (Keep client-side configuration locally in LocalStorage)
+    getAssets: async function () {
       const db = loadDB();
       return db.assets;
     },
-    saveAsset: function (key, value) {
+
+    saveAsset: async function (key, value) {
       const db = loadDB();
       db.assets[key] = value;
       saveDB(db);
       return value;
     },
 
-    // Full Reset
-    reset: function () {
+    // Reset database back to default LocalStorage states
+    reset: async function () {
+      if (supabaseClient) {
+        try {
+          // Clear courses on live DB
+          await supabaseClient.from('courses').delete().neq('id', 0);
+        } catch (e) {
+          console.error("Failed to reset courses in Supabase: ", e);
+        }
+      }
       saveDB(defaultDB);
       return defaultDB;
     }

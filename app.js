@@ -309,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const addCourseForm = document.getElementById("admin-add-course-form");
   if (addCourseForm) {
-    addCourseForm.addEventListener("submit", (e) => {
+    addCourseForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const title = document.getElementById("ac-title").value;
       const duration = document.getElementById("ac-duration").value;
@@ -326,8 +326,8 @@ document.addEventListener("DOMContentLoaded", () => {
         image: '' // default placeholder
       };
       
-      window.AppDB.saveCourse(newCourse);
-      renderMainWebsite();
+      await window.AppDB.saveCourse(newCourse);
+      await renderMainWebsite();
 
       // Update analytics stats
       const studentsVal = document.getElementById("admin-students-val");
@@ -344,11 +344,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function bindDeleteCourseMockButtons() {
     document.querySelectorAll(".btn-delete-course-mock").forEach(btn => {
       btn.onclick = null;
-      btn.onclick = () => {
+      btn.onclick = async () => {
         if (confirm("Are you sure you want to remove this course and all associated enrollments?")) {
           const courseId = btn.getAttribute("data-id");
-          window.AppDB.deleteCourse(courseId);
-          renderMainWebsite();
+          await window.AppDB.deleteCourse(courseId);
+          await renderMainWebsite();
           showToast("Course record successfully deleted from database.", "success");
         }
       };
@@ -486,11 +486,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- DATABASE & RENDERING INTEGRATION LOGIC ---
-  function renderMainWebsite() {
+  async function renderMainWebsite() {
     // 1. Render Hero Image
     const heroImgEl = document.getElementById("hero-student-image");
     if (heroImgEl) {
-      const heroLink = window.AppDB.getAssets().hero_student_image;
+      const assets = await window.AppDB.getAssets();
+      const heroLink = assets.hero_student_image;
       heroImgEl.src = window.AppDB.getGoogleDriveDirectLink(heroLink);
     }
 
@@ -498,7 +499,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const coursesGrid = document.getElementById("home-courses-grid");
     if (coursesGrid) {
       coursesGrid.innerHTML = "";
-      const courses = window.AppDB.getCourses();
+      const courses = await window.AppDB.getCourses();
       courses.forEach(course => {
         const card = document.createElement("div");
         card.className = "course-card-premium";
@@ -529,7 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const facultyGrid = document.getElementById("home-faculty-grid");
     if (facultyGrid) {
       facultyGrid.innerHTML = "";
-      const facultyList = window.AppDB.getFaculty();
+      const facultyList = await window.AppDB.getFaculty();
       facultyList.forEach(faculty => {
         const card = document.createElement("div");
         card.className = "card text-center faculty-card-rewrite";
@@ -557,7 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const coursesTableBody = document.querySelector("#admin-courses-table tbody");
     if (coursesTableBody) {
       coursesTableBody.innerHTML = "";
-      const courses = window.AppDB.getCourses();
+      const courses = await window.AppDB.getCourses();
       courses.forEach(course => {
         const row = document.createElement("tr");
         const feeFormatted = isNaN(Number(course.fees)) ? course.fees : `₹ ${Number(course.fees).toLocaleString("en-IN")}`;
@@ -581,9 +582,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function bindCourseDetailsClicks() {
     document.querySelectorAll(".course-card-premium").forEach(card => {
-      card.addEventListener("click", () => {
+      card.addEventListener("click", async () => {
         const courseId = card.getAttribute("data-course-id");
-        const courses = window.AppDB.getCourses();
+        const courses = await window.AppDB.getCourses();
         const course = courses.find(c => c.id === courseId);
         
         if (course && courseDetailModal && courseModalContent) {
@@ -633,7 +634,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function initDatabaseManager() {
     // Bind DB sub-tab buttons
     document.querySelectorAll(".db-tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         document.querySelectorAll(".db-tab-btn").forEach(b => {
           b.classList.remove("active");
           b.style.color = "var(--text-secondary)";
@@ -647,32 +648,32 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.style.borderColor = "var(--primary-color)";
         
         activeDbTable = btn.getAttribute("data-table");
-        renderDatabaseTable(activeDbTable);
+        await renderDatabaseTable(activeDbTable);
       });
     });
 
     // Bind DB Reset Button
     const dbResetBtn = document.getElementById("btn-db-reset");
     if (dbResetBtn) {
-      dbResetBtn.addEventListener("click", () => {
+      dbResetBtn.addEventListener("click", async () => {
         if (confirm("Are you sure you want to reset the database to defaults? All custom Google Drive links will be restored to local assets.")) {
-          window.AppDB.reset();
-          renderMainWebsite();
-          renderDatabaseTable(activeDbTable);
+          await window.AppDB.reset();
+          await renderMainWebsite();
+          await renderDatabaseTable(activeDbTable);
           showToast("Database successfully restored to defaults.", "info");
         }
       });
     }
   }
 
-  function renderDatabaseTable(tableName) {
+  async function renderDatabaseTable(tableName) {
     const explorer = document.getElementById("db-table-explorer");
     if (!explorer) return;
     
     explorer.innerHTML = "";
     
     if (tableName === "courses") {
-      const courses = window.AppDB.getCourses();
+      const courses = await window.AppDB.getCourses();
       courses.forEach(course => {
         const card = document.createElement("div");
         card.className = "db-row-card";
@@ -700,7 +701,7 @@ document.addEventListener("DOMContentLoaded", () => {
         explorer.appendChild(card);
       });
     } else if (tableName === "faculty") {
-      const facultyList = window.AppDB.getFaculty();
+      const facultyList = await window.AppDB.getFaculty();
       facultyList.forEach(faculty => {
         const card = document.createElement("div");
         card.className = "db-row-card";
@@ -728,7 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
         explorer.appendChild(card);
       });
     } else if (tableName === "assets") {
-      const assets = window.AppDB.getAssets();
+      const assets = await window.AppDB.getAssets();
       Object.keys(assets).forEach(key => {
         const val = assets[key];
         const card = document.createElement("div");
@@ -765,38 +766,38 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Bind Save buttons
     explorer.querySelectorAll(".db-save-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const input = btn.previousElementSibling;
         const linkVal = input.value.trim();
         
         if (tableName === "courses") {
           const id = btn.getAttribute("data-id");
-          const courses = window.AppDB.getCourses();
+          const courses = await window.AppDB.getCourses();
           const course = courses.find(c => c.id === id);
           if (course) {
             course.image = linkVal;
-            window.AppDB.saveCourse(course);
+            await window.AppDB.saveCourse(course);
             showToast(`Course image for "${course.title}" updated in database!`, "success");
           }
         } else if (tableName === "faculty") {
           const id = btn.getAttribute("data-id");
-          const facultyList = window.AppDB.getFaculty();
+          const facultyList = await window.AppDB.getFaculty();
           const faculty = facultyList.find(f => f.id === id);
           if (faculty) {
             faculty.image = linkVal;
-            window.AppDB.saveFaculty(faculty);
+            await window.AppDB.saveFaculty(faculty);
             showToast(`Faculty photo for "${faculty.name}" updated in database!`, "success");
           }
         } else if (tableName === "assets") {
           const key = btn.getAttribute("data-key");
-          window.AppDB.saveAsset(key, linkVal);
+          await window.AppDB.saveAsset(key, linkVal);
           showToast(`Asset "${key}" updated in database!`, "success");
         }
         
         // Refresh site dynamic UI
-        renderMainWebsite();
+        await renderMainWebsite();
         // Refresh explorer view to show updated previews
-        renderDatabaseTable(tableName);
+        await renderDatabaseTable(tableName);
       });
     });
   }
