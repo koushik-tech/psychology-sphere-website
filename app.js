@@ -425,7 +425,8 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast(`Attendance synchronized successfully for ${dateStr}!`, "success");
       } catch (err) {
         console.error("Failed to save attendance:", err);
-        showToast("Failed to synchronize attendance with database.", "error");
+        const detailMsg = err && err.message ? err.message : "Database connection error";
+        showToast(`Failed to synchronize attendance: ${detailMsg}`, "error");
       }
     });
   }
