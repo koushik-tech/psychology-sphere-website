@@ -3,6 +3,16 @@
 document.addEventListener("DOMContentLoaded", () => {
   let loggedInUser = null;
 
+  function generateUUID() {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   // Initialize Database Rendering on Startup
   renderMainWebsite();
   initDatabaseManager();
@@ -636,7 +646,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
                 if (!studentProfile) {
                   studentProfile = await window.AppDB.createProfile({
-                    id: crypto.randomUUID(),
+                    id: generateUUID(),
                     full_name: loggedInUser.email.split("@")[0].toUpperCase(),
                     email: loggedInUser.email,
                     role: "student"
