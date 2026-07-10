@@ -1,6 +1,8 @@
 /* Psychology Sphere - Client Interactions & Mock Portals */
 
 document.addEventListener("DOMContentLoaded", () => {
+  let loggedInUser = null;
+
   // Initialize Database Rendering on Startup
   renderMainWebsite();
   initDatabaseManager();
@@ -105,10 +107,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const loginForm = document.getElementById("login-form");
   if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("login-email").value;
       const role = document.getElementById("login-role").value;
+      
+      // Store user session details
+      loggedInUser = { email: email, role: role };
       
       // Determine Display name
       let displayName = "Student User";
@@ -173,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("btn-logout-trigger");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
+      loggedInUser = null;
       if (publicWebsite && portalDashboard) {
         portalDashboard.style.display = "none";
         publicWebsite.style.display = "block";
@@ -618,9 +624,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const enrollBtn = courseModalContent.querySelector(".btn-enroll-now");
           if (enrollBtn) {
-            enrollBtn.addEventListener("click", () => {
+            enrollBtn.addEventListener("click", async () => {
+              if (!loggedInUser || loggedInUser.role !== "student") {
+                showToast("Please login as a Student to enroll in this course!", "error");
+                openLoginModal();
+                return;
+              }
+
+              try {
+                // Get or create student profile in profiles table
+                let studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
+                if (!studentProfile) {
+                  studentProfile = await window.AppDB.createProfile({
+                    id: crypto.randomUUID(),
+                    full_name: loggedInUser.email.split("@")[0].toUpperCase(),
+                    email: loggedInUser.email,
+                    role: "student"
+                  });
+                }
+                
+                if (studentProfile) {
+                  await window.AppDB.enrollInCourse(course.id, studentProfile.id);
+                  showToast(`Successfully enrolled in ${course.title}!`, "success");
+                } else {
+                  showToast("Failed to create student profile. Please try again.", "error");
+                }
+              } catch (err) {
+                console.error("Enrollment failed:", err);
+                showToast("Failed to complete course enrollment. Please try again.", "error");
+              }
               closeCourseModal();
-              showToast(`Enrollment request for ${course.title} sent successfully!`, "success");
             });
           }
         }

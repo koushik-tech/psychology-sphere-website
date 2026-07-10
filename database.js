@@ -384,6 +384,75 @@
       return value;
     },
 
+    // Profile & Enrollment Methods
+    getProfileByEmail: async function (email) {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('email', email)
+            .limit(1)
+            .maybeSingle();
+          if (error) throw error;
+          return data;
+        } catch (e) {
+          console.error("Supabase getProfileByEmail failed:", e);
+          return null;
+        }
+      }
+      return null;
+    },
+
+    createProfile: async function (profile) {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('profiles')
+            .insert(profile)
+            .select()
+            .single();
+          if (error) throw error;
+          return data;
+        } catch (e) {
+          console.error("Supabase createProfile failed:", e);
+          return null;
+        }
+      }
+      return null;
+    },
+
+    enrollInCourse: async function (courseId, studentId) {
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('enrollments')
+            .insert({
+              student_id: studentId,
+              course_id: parseInt(courseId),
+              status: 'active'
+            });
+          if (error) throw error;
+          return true;
+        } catch (e) {
+          console.error("Supabase enrollInCourse failed:", e);
+          throw e;
+        }
+      } else {
+        const db = loadDB();
+        if (!db.enrollments) db.enrollments = [];
+        db.enrollments.push({
+          id: Date.now().toString(),
+          student_id: studentId,
+          course_id: courseId.toString(),
+          status: 'active',
+          enrolled_at: new Date().toISOString()
+        });
+        saveDB(db);
+        return true;
+      }
+    },
+
     // Reset database back to default LocalStorage states
     reset: async function () {
       if (supabaseClient) {
