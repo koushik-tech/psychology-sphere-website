@@ -424,37 +424,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const phone = document.getElementById("inq-phone").value.trim();
       
       const courseSelect = document.getElementById("inq-course");
-      const courseIdVal = courseSelect.value;
       const courseTitle = courseSelect.options[courseSelect.selectedIndex].text.trim();
 
       try {
-        // 1. Resolve course ID dynamically by matching title to ensure no ID mismatch errors
-        const courses = await window.AppDB.getCourses();
-        const course = courses.find(c => c.title.toLowerCase() === courseTitle.toLowerCase());
-        const targetCourseId = course ? course.id : courseIdVal;
-
-        // 2. Get or create student profile
-        let studentProfile = await window.AppDB.getProfileByEmail(email);
-        if (!studentProfile) {
-          studentProfile = await window.AppDB.createProfile({
-            id: generateUUID(),
-            full_name: name,
-            email: email,
-            phone: phone,
-            role: "student"
-          });
-        }
-
-        if (studentProfile) {
-          // 3. Save the enrollment record in Supabase
-          await window.AppDB.enrollInCourse(targetCourseId, studentProfile.id);
-          showToast(`Inquiry submitted and enrolled in ${courseTitle} successfully!`, "success");
-        } else {
-          showToast("Failed to process profile. Please try again.", "error");
-        }
+        await window.AppDB.saveInquiry({
+          name: name,
+          email: email,
+          phone: phone,
+          courseInterest: courseTitle
+        });
+        showToast("Your admission inquiry has been submitted successfully!", "success");
       } catch (err) {
         console.error("Admission inquiry submission failed:", err);
-        showToast("Failed to save enrollment. Please try again.", "error");
+        showToast("Failed to submit inquiry. Please try again.", "error");
       }
 
       inquiryForm.reset();

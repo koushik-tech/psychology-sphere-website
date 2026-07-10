@@ -453,6 +453,44 @@
       }
     },
 
+    saveInquiry: async function (inquiry) {
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('inquiries')
+            .insert({
+              name: inquiry.name,
+              email: inquiry.email,
+              phone: inquiry.phone || null,
+              course_interest: inquiry.courseInterest
+            });
+          if (error) throw error;
+          return true;
+        } catch (err) {
+          console.error("Supabase saveInquiry failed, falling back to LocalStorage.", err);
+          const db = loadDB();
+          if (!db.inquiries) db.inquiries = [];
+          db.inquiries.push({
+            id: Date.now().toString(),
+            ...inquiry,
+            created_at: new Date().toISOString()
+          });
+          saveDB(db);
+          return true;
+        }
+      } else {
+        const db = loadDB();
+        if (!db.inquiries) db.inquiries = [];
+        db.inquiries.push({
+          id: Date.now().toString(),
+          ...inquiry,
+          created_at: new Date().toISOString()
+        });
+        saveDB(db);
+        return true;
+      }
+    },
+
     // Reset database back to default LocalStorage states
     reset: async function () {
       if (supabaseClient) {
