@@ -124,6 +124,23 @@ document.addEventListener("DOMContentLoaded", () => {
       
       // Store user session details
       loggedInUser = { email: email, role: role };
+
+      if (role === "student") {
+        try {
+          // Ensure student profile exists in profiles table
+          let studentProfile = await window.AppDB.getProfileByEmail(email);
+          if (!studentProfile) {
+            await window.AppDB.createProfile({
+              id: generateUUID(),
+              full_name: email.split("@")[0].toUpperCase(),
+              email: email,
+              role: "student"
+            });
+          }
+        } catch (err) {
+          console.error("Failed to check/create student profile:", err);
+        }
+      }
       
       // Determine Display name
       let displayName = "Student User";
@@ -231,6 +248,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (tabId === "admin-db") {
       renderDatabaseTable(activeDbTable);
+    }
+
+    if (tabId === "student-attendance") {
+      renderStudentAttendance();
     }
     
     if (window.lucide) {
@@ -612,6 +633,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (window.lucide) {
       window.lucide.createIcons();
+    }
+  }
+
+  async function renderStudentAttendance() {
+    const tbody = document.querySelector("#student-attendance-tab tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Loading attendance logs...</td></tr>`;
+
+    if (!loggedInUser || loggedInUser.role !== "student") return;
+
+    try {
+      const studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
+      if (!studentProfile) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-secondary);">No student profile found. Please try again.</td></tr>`;
+        return;
+      }
+
+      const logs = await window.AppDB.getStudentAttendance(studentProfile.id);
+      if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-secondary);">No attendance records found in the database.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = "";
+      logs.forEach(log => {
+        const row = document.createElement("tr");
+        const statusClean = (log.status || "present").toLowerCase();
+        const badgeClass = statusClean === "present" ? "badge-success" : 
+                            (statusClean === "late" ? "badge-warning" : "badge-danger");
+        const statusFormatted = statusClean.charAt(0).toUpperCase() + statusClean.slice(1);
+        
+        row.innerHTML = `
+          <td>${log.date}</td>
+          <td style="font-weight:600;">${log.courseTitle}</td>
+          <td><span class="badge ${badgeClass}">${statusFormatted}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    } catch (e) {
+      console.error("Failed to render student attendance:", e);
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#ef4444;">Error loading attendance logs from database.</td></tr>`;
     }
   }
 

@@ -453,6 +453,29 @@
       }
     },
 
+    getStudentAttendance: async function (studentId) {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('attendance')
+            .select('*, courses(title)')
+            .eq('student_id', studentId)
+            .order('date', { ascending: false });
+          if (error) throw error;
+          
+          return data.map(a => ({
+            date: a.date,
+            courseTitle: a.courses?.title || 'Psychology Course',
+            status: a.status
+          }));
+        } catch (e) {
+          console.error("Supabase getStudentAttendance failed:", e);
+          return [];
+        }
+      }
+      return [];
+    },
+
     saveInquiry: async function (inquiry) {
       if (supabaseClient) {
         try {
