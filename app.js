@@ -792,6 +792,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function renderStudentCourses() {
     const grid = document.getElementById("student-enrolled-courses-grid");
     const select = document.getElementById("student-enroll-course-sel");
+    const batchSelect = document.getElementById("student-enroll-batch-sel");
+    const batchGroup = document.getElementById("student-enroll-batch-group");
     if (!grid || !select) return;
 
     grid.innerHTML = `<div style="grid-column: span 2; text-align:center; padding: 1rem;">Loading enrolled courses...</div>`;
@@ -820,13 +822,35 @@ document.addEventListener("DOMContentLoaded", () => {
         enrollments.forEach(e => {
           const card = document.createElement("div");
           card.className = "card";
+          
+          let batchHtml = "";
+          if (e.batch) {
+            let badgeStyle = "background:#e0e7ff; color:#3730a3;"; // Online (indigo)
+            if (e.batch.type.toLowerCase() === "offline") {
+              badgeStyle = "background:#fee2e2; color:#991b1b;"; // Offline (red)
+            } else if (e.batch.type.toLowerCase() === "custom") {
+              badgeStyle = "background:#fef3c7; color:#92400e;"; // Custom (amber)
+            }
+            
+            batchHtml = `
+              <div style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--border-color); font-size:0.8rem;">
+                <strong>Batch:</strong> <span class="badge" style="${badgeStyle} padding:2px 6px; font-size:0.75rem; border-radius:4px; font-weight:600; text-transform:uppercase;">${e.batch.type}</span>
+                <span style="font-weight:600; color:var(--text-primary); margin-left:0.25rem;">${e.batch.name}</span>
+                <div style="margin-top:0.35rem; font-size:0.75rem; color:#64748b; display:flex; align-items:center; gap:0.25rem;">
+                  <i data-lucide="clock" style="width:12px; height:12px; flex-shrink:0;"></i> ${e.batch.timings}
+                </div>
+              </div>
+            `;
+          }
+
           card.innerHTML = `
             <span class="badge badge-primary" style="margin-bottom:0.75rem;">Active Program</span>
             <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">${e.courseTitle}</h3>
-            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Duration: ${e.courseDuration}</p>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.75rem;">Duration: ${e.courseDuration}</p>
             <div style="background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:8px; font-size:0.8rem;">
               <strong>Status:</strong> <span style="font-weight:600; color:#3b20a6;">${e.status.charAt(0).toUpperCase() + e.status.slice(1)}</span>
             </div>
+            ${batchHtml}
           `;
           grid.appendChild(card);
         });
@@ -839,10 +863,31 @@ document.addEventListener("DOMContentLoaded", () => {
       const enrollBtn = document.getElementById("btn-student-enroll-now");
       if (availableCourses.length === 0) {
         select.innerHTML = `<option value="">No new programs available</option>`;
+        if (batchSelect) {
+          batchSelect.innerHTML = `<option value="">N/A</option>`;
+          batchSelect.disabled = true;
+        }
         if (enrollBtn) enrollBtn.disabled = true;
       } else {
         select.innerHTML = availableCourses.map(c => `<option value="${c.id}">${c.title}</option>`).join("");
         if (enrollBtn) enrollBtn.disabled = false;
+        
+        // Populate batch options dynamically
+        const updateBatchDropdown = () => {
+          const courseId = select.value;
+          const course = availableCourses.find(c => c.id.toString() === courseId);
+          if (course && course.batches && batchSelect) {
+            batchSelect.innerHTML = course.batches.map(b => `<option value="${b.id}">[${b.type}] ${b.name} - ${b.timings}</option>`).join("");
+            batchSelect.disabled = false;
+            if (batchGroup) batchGroup.style.display = "block";
+          } else if (batchSelect) {
+            batchSelect.innerHTML = `<option value="">No slots available</option>`;
+            batchSelect.disabled = true;
+          }
+        };
+        
+        select.onchange = updateBatchDropdown;
+        updateBatchDropdown();
       }
 
       // 5. Bind Enroll button click (one-time setup if not already bound)
@@ -850,12 +895,13 @@ document.addEventListener("DOMContentLoaded", () => {
         enrollBtn.dataset.bound = "true";
         enrollBtn.addEventListener("click", async () => {
           const courseId = select.value;
+          const batchId = batchSelect ? batchSelect.value : null;
           if (!courseId) return;
 
           try {
             enrollBtn.disabled = true;
             enrollBtn.textContent = "Enrolling...";
-            await window.AppDB.enrollInCourse(courseId, studentProfile.id);
+            await window.AppDB.enrollInCourse(courseId, studentProfile.id, batchId);
             showToast("Successfully enrolled in the program!", "success");
             // Reload the view
             await renderStudentCourses();
@@ -867,6 +913,10 @@ document.addEventListener("DOMContentLoaded", () => {
             enrollBtn.textContent = "Enroll Now";
           }
         });
+      }
+
+      if (window.lucide) {
+        window.lucide.createIcons();
       }
 
     } catch (e) {
@@ -885,6 +935,33 @@ document.addEventListener("DOMContentLoaded", () => {
         if (course && courseDetailModal && courseModalContent) {
           const feeFormatted = isNaN(Number(course.fees)) ? course.fees : `₹ ${Number(course.fees).toLocaleString("en-IN")}`;
           
+          let batchesHtml = "";
+          if (course.batches && course.batches.length > 0) {
+            batchesHtml = `
+              <h4 style="margin-bottom:0.75rem; color:#3b20a6; font-weight:700;">Select Learning Batch</h4>
+              <div class="modal-batch-selection" style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:2rem; text-align:left;">
+                ${course.batches.map((b, idx) => {
+                  let iconName = "monitor";
+                  if (b.type.toLowerCase() === "offline") iconName = "map-pin";
+                  else if (b.type.toLowerCase() === "custom") iconName = "settings";
+                  
+                  return `
+                    <label style="display:flex; align-items:center; gap:0.75rem; border:1px solid var(--border-color); padding:0.75rem 1rem; border-radius:8px; cursor:pointer; background:#f8fafc; font-size:0.875rem; transition: all 0.2s ease;">
+                      <input type="radio" name="modal-batch-radio" value="${b.id}" ${idx === 0 ? 'checked' : ''} style="margin:0; accent-color:#3b20a6;">
+                      <div style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:#e0e7ff; color:#3730a3; flex-shrink:0;">
+                        <i data-lucide="${iconName}" style="width:14px; height:14px;"></i>
+                      </div>
+                      <div style="flex:1;">
+                        <div style="font-weight:600; color:var(--text-primary); font-size:0.85rem;">[${b.type}] ${b.name}</div>
+                        <div style="color:var(--text-secondary); font-size:0.75rem; margin-top:0.15rem;">${b.timings}</div>
+                      </div>
+                    </label>
+                  `;
+                }).join('')}
+              </div>
+            `;
+          }
+
           courseModalContent.innerHTML = `
             <span class="badge badge-primary" style="margin-bottom:0.75rem;">Syllabus Overview</span>
             <h2 style="margin-bottom:0.5rem; font-size:1.5rem; font-weight:800; color:#0f172a;">${course.title}</h2>
@@ -897,6 +974,8 @@ document.addEventListener("DOMContentLoaded", () => {
               <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 3: Clinical Case Histories & Assessments</li>
               <li style="display:flex; gap:0.5rem; font-size:0.875rem; color:#475569;"><i data-lucide="check" style="width:16px; color:#059669; flex-shrink:0;"></i> Module 4: Mock Entrance Exams & Practice Papers</li>
             </ul>
+
+            ${batchesHtml}
 
             <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f3f7; padding-top:1.25rem;">
               <div>
@@ -920,6 +999,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
               }
 
+              // Get selected batch ID
+              const selectedRadio = courseModalContent.querySelector('input[name="modal-batch-radio"]:checked');
+              const batchId = selectedRadio ? selectedRadio.value : null;
+
               try {
                 // Get or create student profile in profiles table
                 let studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
@@ -933,8 +1016,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 
                 if (studentProfile) {
-                  await window.AppDB.enrollInCourse(course.id, studentProfile.id);
+                  await window.AppDB.enrollInCourse(course.id, studentProfile.id, batchId);
                   showToast(`Successfully enrolled in ${course.title}!`, "success");
+                  // Reload dashboard if visual
+                  if (document.getElementById("portal-dashboard").style.display !== "none") {
+                    await renderStudentCourses();
+                  }
                 } else {
                   showToast("Failed to create student profile. Please try again.", "error");
                 }
@@ -1002,6 +1089,11 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const directLink = window.AppDB.getGoogleDriveDirectLink(course.image);
         
+        let batchesSummary = "";
+        if (course.batches) {
+          batchesSummary = course.batches.map(b => `${b.type} (${b.name}: ${b.timings})`).join(" | ");
+        }
+
         card.innerHTML = `
           <div class="db-preview-container">
             ${course.image ? `<img src="${directLink}" class="db-preview-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : ''}
@@ -1013,6 +1105,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="db-row-details">
             <div class="db-row-title">${course.title}</div>
             <div class="db-row-meta">ID: <code>${course.id}</code> | Mentor: ${course.faculty} | Duration: ${course.duration}</div>
+            <div class="db-row-meta" style="margin-top:0.25rem;"><strong>Batches:</strong> ${batchesSummary || 'None'}</div>
             <div class="db-input-group">
               <input type="text" class="db-link-input" placeholder="Paste Google Drive image link" value="${course.image || ''}">
               <button class="db-save-btn" data-id="${course.id}"><i data-lucide="save" style="width:14px; height:14px;"></i> Save</button>

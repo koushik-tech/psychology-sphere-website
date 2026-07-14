@@ -493,15 +493,21 @@
             
             <div class="card" style="padding:1.5rem; text-align:left; max-width:600px; margin-bottom:2rem;">
               <h3 style="font-size:1.15rem; margin-bottom:1rem;">Enroll in a New Program</h3>
-              <div style="display:flex; gap:1rem; align-items:flex-end;">
-                <div class="form-group" style="margin-bottom:0; flex:1;">
+              <div style="display:flex; flex-direction:column; gap:1.25rem; margin-bottom:1.5rem;">
+                <div class="form-group" style="margin-bottom:0;">
                   <label for="student-enroll-course-sel">Select Program</label>
                   <select id="student-enroll-course-sel" class="form-control">
                     <!-- Dynamically populated -->
                   </select>
                 </div>
-                <button class="btn btn-primary" id="btn-student-enroll-now" style="height:44px;">Enroll Now</button>
+                <div class="form-group" id="student-enroll-batch-group" style="margin-bottom:0;">
+                  <label for="student-enroll-batch-sel">Select Batch Slot</label>
+                  <select id="student-enroll-batch-sel" class="form-control">
+                    <!-- Dynamically populated -->
+                  </select>
+                </div>
               </div>
+              <button class="btn btn-primary" id="btn-student-enroll-now" style="width:100%; height:44px; border-radius:30px; background-color:#3b20a6;">Enroll Now</button>
             </div>
           </div>
 

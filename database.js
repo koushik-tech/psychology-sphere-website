@@ -71,7 +71,12 @@
         duration: '6 Months',
         fees: '8999',
         faculty: 'Dr. Sarah Jenkins',
-        image: 'images/course_ugc_net.png'
+        image: 'images/course_ugc_net.png',
+        batches: [
+          { id: '1_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '1_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '1_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
       },
       {
         id: '2',
@@ -80,7 +85,12 @@
         duration: '2 Years',
         fees: '24000',
         faculty: 'Dr. Rajesh Kumar',
-        image: 'images/course_ma.png'
+        image: 'images/course_ma.png',
+        batches: [
+          { id: '2_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '2_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '2_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
       },
       {
         id: '3',
@@ -89,7 +99,12 @@
         duration: '3 Months',
         fees: '6999',
         faculty: 'Dr. Sarah Jenkins',
-        image: 'images/course_cuet.png'
+        image: 'images/course_cuet.png',
+        batches: [
+          { id: '3_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '3_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '3_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
       },
       {
         id: '4',
@@ -98,7 +113,12 @@
         duration: '3 Months',
         fees: '7499',
         faculty: 'Prof. Ananya Sen',
-        image: 'images/course_tissnet.png'
+        image: 'images/course_tissnet.png',
+        batches: [
+          { id: '4_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '4_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '4_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
       }
     ],
     faculty: [
@@ -147,6 +167,21 @@
         saveDB(merged);
         return merged;
       }
+      // Migration: Ensure all existing courses in LocalStorage have default batches
+      let migrationUpdated = false;
+      data.courses.forEach(c => {
+        if (!c.batches) {
+          c.batches = [
+            { id: c.id + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+            { id: c.id + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+            { id: c.id + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+          ];
+          migrationUpdated = true;
+        }
+      });
+      if (migrationUpdated) {
+        saveDB(data);
+      }
       return data;
     } catch (e) {
       console.error('Failed to load local DB, resetting to defaults.', e);
@@ -187,7 +222,12 @@
             duration: c.duration || '',
             fees: c.fees ? c.fees.toString() : '0',
             faculty: c.profiles?.full_name || 'Dr. Sarah Jenkins',
-            image: c.image || c.image_url || 'images/course_ugc_net.png'
+            image: c.image || c.image_url || 'images/course_ugc_net.png',
+            batches: c.batches || [
+              { id: c.id.toString() + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+              { id: c.id.toString() + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+              { id: c.id.toString() + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+            ]
           }));
         } catch (err) {
           console.error("Supabase getCourses failed, falling back to local database.", err);
@@ -247,8 +287,18 @@
           const db = loadDB();
           const existingIdx = db.courses.findIndex(c => c.id === course.id);
           if (existingIdx !== -1) {
+            if (!course.batches && db.courses[existingIdx].batches) {
+              course.batches = db.courses[existingIdx].batches;
+            }
             db.courses[existingIdx] = course;
           } else {
+            if (!course.batches) {
+              course.batches = [
+                { id: course.id + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+                { id: course.id + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+                { id: course.id + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+              ];
+            }
             db.courses.push(course);
           }
           saveDB(db);
@@ -258,8 +308,18 @@
         const db = loadDB();
         const existingIdx = db.courses.findIndex(c => c.id === course.id);
         if (existingIdx !== -1) {
+          if (!course.batches && db.courses[existingIdx].batches) {
+            course.batches = db.courses[existingIdx].batches;
+          }
           db.courses[existingIdx] = course;
         } else {
+          if (!course.batches) {
+            course.batches = [
+              { id: course.id + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+              { id: course.id + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+              { id: course.id + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+            ];
+          }
           db.courses.push(course);
         }
         saveDB(db);
@@ -422,7 +482,7 @@
       return null;
     },
 
-    enrollInCourse: async function (courseId, studentId) {
+    enrollInCourse: async function (courseId, studentId, batchId) {
       if (supabaseClient) {
         try {
           const { error } = await supabaseClient
@@ -430,9 +490,20 @@
             .insert({
               student_id: studentId,
               course_id: parseInt(courseId),
+              batch_id: batchId,
               status: 'active'
             });
-          if (error) throw error;
+          if (error) {
+            console.warn("Supabase enroll with batchId failed, retrying without batch:", error);
+            const { error: retryError } = await supabaseClient
+              .from('enrollments')
+              .insert({
+                student_id: studentId,
+                course_id: parseInt(courseId),
+                status: 'active'
+              });
+            if (retryError) throw retryError;
+          }
           return true;
         } catch (e) {
           console.error("Supabase enrollInCourse failed:", e);
@@ -445,6 +516,7 @@
           id: Date.now().toString(),
           student_id: studentId,
           course_id: courseId.toString(),
+          batch_id: batchId,
           status: 'active',
           enrolled_at: new Date().toISOString()
         });
@@ -509,13 +581,25 @@
           if (error) throw error;
           
           if (!data) return [];
-          return data.filter(e => e.courses !== null).map(e => ({
-            id: e.id,
-            courseId: e.courses.id,
-            courseTitle: e.courses.title,
-            courseDuration: e.courses.duration,
-            status: e.status
-          }));
+          return data.filter(e => e.courses !== null).map(e => {
+            const courseIdStr = e.courses.id.toString();
+            // Generate standard batches for this course
+            const mockBatches = [
+              { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+              { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+              { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+            ];
+            const batchId = e.batch_id;
+            const batchDetails = mockBatches.find(b => b.id === batchId) || mockBatches[0];
+            return {
+              id: e.id,
+              courseId: e.courses.id,
+              courseTitle: e.courses.title,
+              courseDuration: e.courses.duration,
+              batch: batchDetails,
+              status: e.status
+            };
+          });
         } catch (e) {
           console.error("Supabase getStudentEnrollments failed:", e);
           return [];
@@ -526,11 +610,16 @@
         const studentEnrollments = db.enrollments.filter(e => e.student_id === studentId);
         return studentEnrollments.map(e => {
           const course = db.courses.find(c => c.id === e.course_id);
+          let batchDetails = null;
+          if (course && course.batches && e.batch_id) {
+            batchDetails = course.batches.find(b => b.id === e.batch_id);
+          }
           return {
             id: e.id,
             courseId: e.course_id,
             courseTitle: course ? course.title : 'Unknown Course',
             courseDuration: course ? course.duration : 'N/A',
+            batch: batchDetails,
             status: e.status
           };
         });
