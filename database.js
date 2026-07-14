@@ -215,20 +215,45 @@
             return defaultDB.courses;
           }
 
-          return data.map(c => ({
-            id: c.id.toString(),
-            title: c.title,
-            description: c.description || '',
-            duration: c.duration || '',
-            fees: c.fees ? c.fees.toString() : '0',
-            faculty: c.profiles?.full_name || 'Dr. Sarah Jenkins',
-            image: c.image || c.image_url || 'images/course_ugc_net.png',
-            batches: c.batches || [
-              { id: c.id.toString() + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-              { id: c.id.toString() + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-              { id: c.id.toString() + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
-            ]
-          }));
+          // Fetch batches if Supabase batches table exists
+          let batchesByCourse = {};
+          try {
+            const { data: batchesData, error: batchesError } = await supabaseClient
+              .from('batches')
+              .select('*');
+            if (!batchesError && batchesData) {
+              batchesData.forEach(b => {
+                const cId = b.course_id.toString();
+                if (!batchesByCourse[cId]) batchesByCourse[cId] = [];
+                batchesByCourse[cId].push({
+                  id: b.id,
+                  type: b.type,
+                  name: b.name,
+                  timings: b.timings
+                });
+              });
+            }
+          } catch (e) {
+            console.warn("Could not fetch batches from Supabase table 'batches', falling back to defaults.", e);
+          }
+
+          return data.map(c => {
+            const courseIdStr = c.id.toString();
+            return {
+              id: courseIdStr,
+              title: c.title,
+              description: c.description || '',
+              duration: c.duration || '',
+              fees: c.fees ? c.fees.toString() : '0',
+              faculty: c.profiles?.full_name || 'Dr. Sarah Jenkins',
+              image: c.image || c.image_url || 'images/course_ugc_net.png',
+              batches: batchesByCourse[courseIdStr] || [
+                { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+                { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+                { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+              ]
+            };
+          });
         } catch (err) {
           console.error("Supabase getCourses failed, falling back to local database.", err);
           const db = loadDB();
@@ -275,11 +300,55 @@
             payload.id = numericId;
           }
 
-          const { error } = await supabaseClient
-            .from('courses')
-            .upsert(payload);
+          let dbCourseId = null;
+          try {
+            const { data: savedCourse, error } = await supabaseClient
+              .from('courses')
+              .upsert(payload)
+              .select()
+              .maybeSingle();
+            if (!error && savedCourse) {
+              dbCourseId = savedCourse.id;
+            }
+          } catch (upsertErr) {
+            const { error } = await supabaseClient
+              .from('courses')
+              .upsert(payload);
+            if (error) throw error;
+          }
 
-          if (error) throw error;
+          if (!dbCourseId) {
+            dbCourseId = numericId;
+            if (!dbCourseId) {
+              try {
+                const { data: fetchedCourse } = await supabaseClient
+                  .from('courses')
+                  .select('id')
+                  .eq('title', course.title)
+                  .limit(1)
+                  .maybeSingle();
+                if (fetchedCourse) dbCourseId = fetchedCourse.id;
+              } catch (fErr) {}
+            }
+          }
+
+          // Save batches if batches array exists and batches table is supported
+          if (course.batches && dbCourseId) {
+            try {
+              const batchesPayload = course.batches.map(b => ({
+                id: b.id.includes('_') ? b.id : `${dbCourseId}_${b.type.toLowerCase()}`,
+                course_id: dbCourseId,
+                type: b.type,
+                name: b.name,
+                timings: b.timings
+              }));
+              await supabaseClient
+                .from('batches')
+                .upsert(batchesPayload);
+            } catch (e) {
+              console.warn("Could not save batches to Supabase batches table:", e);
+            }
+          }
           return course;
         } catch (err) {
           console.error("Supabase saveCourse failed, writing to LocalStorage.", err);
@@ -581,16 +650,31 @@
           if (error) throw error;
           
           if (!data) return [];
+
+          // Try to fetch batches from Supabase batches table
+          let allBatches = [];
+          try {
+            const { data: batchesData } = await supabaseClient
+              .from('batches')
+              .select('*');
+            if (batchesData) allBatches = batchesData;
+          } catch (e) {
+            console.warn("Could not load batches from Supabase table 'batches' for enrollments lookup:", e);
+          }
+
           return data.filter(e => e.courses !== null).map(e => {
             const courseIdStr = e.courses.id.toString();
-            // Generate standard batches for this course
-            const mockBatches = [
-              { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-              { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-              { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
-            ];
-            const batchId = e.batch_id;
-            const batchDetails = mockBatches.find(b => b.id === batchId) || mockBatches[0];
+            // Find batch in allBatches
+            let batchDetails = allBatches.find(b => b.id === e.batch_id && b.course_id.toString() === courseIdStr);
+            if (!batchDetails) {
+              // Generate standard mock batches for this course as fallback
+              const mockBatches = [
+                { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+                { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+                { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+              ];
+              batchDetails = mockBatches.find(b => b.id === e.batch_id) || mockBatches[0];
+            }
             return {
               id: e.id,
               courseId: e.courses.id,
