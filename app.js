@@ -456,15 +456,23 @@ document.addEventListener("DOMContentLoaded", () => {
       const duration = document.getElementById("ac-duration").value;
       const fees = document.getElementById("ac-fees").value;
       const faculty = document.getElementById("ac-faculty").value;
+      const onlineTimings = document.getElementById("ac-online-timings").value.trim() || "Mon, Wed, Fri 8 AM";
+      const offlineTimings = document.getElementById("ac-offline-timings").value.trim() || "Mon 2 PM, Wed 5 PM, Sat 7 PM";
 
+      const courseId = Date.now().toString();
       const newCourse = {
-        id: Date.now().toString(),
+        id: courseId,
         title: title,
         description: `Complete study program in ${title} assigned under our expert guidance.`,
         duration: duration,
         fees: fees,
         faculty: faculty,
-        image: '' // default placeholder
+        image: '', // default placeholder
+        batches: [
+          { id: courseId + '_online', type: 'Online', name: 'Batch 1', timings: onlineTimings },
+          { id: courseId + '_offline', type: 'Offline', name: 'Batch 2', timings: offlineTimings },
+          { id: courseId + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
       };
       
       await window.AppDB.saveCourse(newCourse);
@@ -1089,9 +1097,13 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const directLink = window.AppDB.getGoogleDriveDirectLink(course.image);
         
-        let batchesSummary = "";
+        let onlineTiming = "Mon, Wed, Fri 8 AM";
+        let offlineTiming = "Mon 2 PM, Wed 5 PM, Sat 7 PM";
         if (course.batches) {
-          batchesSummary = course.batches.map(b => `${b.type} (${b.name}: ${b.timings})`).join(" | ");
+          const onlineB = course.batches.find(b => b.type === "Online");
+          if (onlineB) onlineTiming = onlineB.timings;
+          const offlineB = course.batches.find(b => b.type === "Offline");
+          if (offlineB) offlineTiming = offlineB.timings;
         }
 
         card.innerHTML = `
@@ -1105,7 +1117,18 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="db-row-details">
             <div class="db-row-title">${course.title}</div>
             <div class="db-row-meta">ID: <code>${course.id}</code> | Mentor: ${course.faculty} | Duration: ${course.duration}</div>
-            <div class="db-row-meta" style="margin-top:0.25rem;"><strong>Batches:</strong> ${batchesSummary || 'None'}</div>
+            
+            <div style="margin-top:0.5rem; display:flex; flex-direction:column; gap:0.35rem; padding:0.5rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; margin-bottom:0.75rem;">
+              <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.75rem;">
+                <span style="font-weight:600; width:100px; color:#3730a3;">Online Batch:</span>
+                <input type="text" class="db-batch-online-input" style="flex:1; padding:2px 6px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.75rem;" value="${onlineTiming}">
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.75rem;">
+                <span style="font-weight:600; width:100px; color:#991b1b;">Offline Batch:</span>
+                <input type="text" class="db-batch-offline-input" style="flex:1; padding:2px 6px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.75rem;" value="${offlineTiming}">
+              </div>
+            </div>
+
             <div class="db-input-group">
               <input type="text" class="db-link-input" placeholder="Paste Google Drive image link" value="${course.image || ''}">
               <button class="db-save-btn" data-id="${course.id}"><i data-lucide="save" style="width:14px; height:14px;"></i> Save</button>
@@ -1190,9 +1213,28 @@ document.addEventListener("DOMContentLoaded", () => {
           const courses = await window.AppDB.getCourses();
           const course = courses.find(c => c.id === id);
           if (course) {
+            const cardEl = btn.closest(".db-row-card");
+            const onlineInp = cardEl.querySelector(".db-batch-online-input");
+            const offlineInp = cardEl.querySelector(".db-batch-offline-input");
+            
             course.image = linkVal;
+            
+            // Save modified batch timings
+            if (course.batches) {
+              const onlineB = course.batches.find(b => b.type === "Online");
+              if (onlineB && onlineInp) onlineB.timings = onlineInp.value.trim();
+              const offlineB = course.batches.find(b => b.type === "Offline");
+              if (offlineB && offlineInp) offlineB.timings = offlineInp.value.trim();
+            } else {
+              course.batches = [
+                { id: id + '_online', type: 'Online', name: 'Batch 1', timings: onlineInp ? onlineInp.value.trim() : "Mon, Wed, Fri 8 AM" },
+                { id: id + '_offline', type: 'Offline', name: 'Batch 2', timings: offlineInp ? offlineInp.value.trim() : "Mon 2 PM, Wed 5 PM, Sat 7 PM" },
+                { id: id + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+              ];
+            }
+            
             await window.AppDB.saveCourse(course);
-            showToast(`Course image for "${course.title}" updated in database!`, "success");
+            showToast(`Course details and batch timings for "${course.title}" updated!`, "success");
           }
         } else if (tableName === "faculty") {
           const id = btn.getAttribute("data-id");
