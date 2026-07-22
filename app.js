@@ -536,15 +536,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- PUBLIC COURSE DETAILS MODAL POPUPS ---
   const courseDetailModal = document.getElementById("course-detail-modal");
-  const courseModalClose = document.getElementById("course-modal-close");
   const courseModalContent = document.getElementById("course-modal-content");
 
   const closeCourseModal = () => {
     if (courseDetailModal) courseDetailModal.classList.remove("active");
   };
 
-  if (courseModalClose) {
-    courseModalClose.addEventListener("click", closeCourseModal);
+  if (courseDetailModal) {
+    courseDetailModal.addEventListener("click", (e) => {
+      if (e.target.closest("#course-modal-close") || e.target === courseDetailModal) {
+        closeCourseModal();
+      }
+    });
   }
 
   // --- ADMISSION INQUIRY FORM ---
@@ -691,7 +694,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         coursesGrid.appendChild(card);
       });
-      bindCourseDetailsClicks();
+      bindCourseDetailsClicks(courses);
     }
 
     // 3. Render Faculty Grid
@@ -933,11 +936,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function bindCourseDetailsClicks() {
+  function bindCourseDetailsClicks(courses) {
+    if (!courses) return;
     document.querySelectorAll(".course-card-premium").forEach(card => {
-      card.addEventListener("click", async () => {
+      card.addEventListener("click", () => {
         const courseId = card.getAttribute("data-course-id");
-        const courses = await window.AppDB.getCourses();
         const course = courses.find(c => c.id === courseId);
         
         if (course && courseDetailModal && courseModalContent) {

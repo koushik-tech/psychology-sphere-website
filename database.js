@@ -66,12 +66,12 @@
     courses: [
       {
         id: '1',
-        title: 'UGC NET Psychology',
-        description: 'Complete preparation for UGC NET entrance exam with comprehensive syllabus coverage.',
-        duration: '6 Months',
-        fees: '8999',
+        title: 'Introduction to Psychology',
+        description: 'Explore the foundational principles of human behavior, cognitive science, emotions, and research methods. KOUSHIK DAS',
+        duration: '3 Months',
+        fees: '499',
         faculty: 'Dr. Sarah Jenkins',
-        image: 'images/course_ugc_net.png',
+        image: 'https://drive.google.com/file/d/1T3Bc5OZGwzAB5LhrlSiN9MBkhssfuK_m/view?usp=sharing',
         batches: [
           { id: '1_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
           { id: '1_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
@@ -80,12 +80,12 @@
       },
       {
         id: '2',
-        title: 'MA Psychology',
-        description: 'In-depth learning for future leaders. Advanced counseling theories and practices.',
-        duration: '2 Years',
-        fees: '24000',
-        faculty: 'Dr. Rajesh Kumar',
-        image: 'images/course_ma.png',
+        title: 'Clinical Psychology & Counseling',
+        description: 'Advanced training in psychiatric diagnostics, clinical therapeutic methods, and practical counseling designs.',
+        duration: '6 Months',
+        fees: '899',
+        faculty: 'Dr. Sarah Jenkins',
+        image: 'https://drive.google.com/file/d/1Q1z-ot8-aJxRRG3Kb1xVIgYAggVTdYXF/view?usp=drive_link',
         batches: [
           { id: '2_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
           { id: '2_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
@@ -94,12 +94,12 @@
       },
       {
         id: '3',
-        title: 'CUET PG Psychology',
-        description: 'Crack CUET PG with confidence. Specialized mock tests and concepts.',
-        duration: '3 Months',
-        fees: '6999',
-        faculty: 'Dr. Sarah Jenkins',
-        image: 'images/course_cuet.png',
+        title: 'Child & Adolescent Development',
+        description: 'Analyze behavioral psychology, neurological development, and family dynamics from infancy to adolescence.',
+        duration: '4 Months',
+        fees: '599',
+        faculty: 'Prof. Ananya Sen',
+        image: 'https://drive.google.com/file/d/1DNlnrPsMCYrhrW01t7RFy26cuG3-ViAY/view?usp=drive_link',
         batches: [
           { id: '3_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
           { id: '3_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
@@ -108,6 +108,76 @@
       },
       {
         id: '4',
+        title: 'Cognitive Neuropsychology',
+        description: 'Delve into brain-behavior relationships, memory architectures, executive functions, and neural mapping.',
+        duration: '5 Months',
+        fees: '749',
+        faculty: 'Dr. Sarah Jenkins',
+        image: 'https://drive.google.com/file/d/111DybtLL0b8kQTXDiqgN4WrnctcRwnWB/view?usp=drive_link',
+        batches: [
+          { id: '4_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '4_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '4_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
+      },
+      {
+        id: '5',
+        title: 'Research Methodologies & Statistics',
+        description: 'Master quantitative/qualitative analysis, research setups, SPSS operations, and journal thesis structures.',
+        duration: '3 Months',
+        fees: '399',
+        faculty: 'Dr. Sarah Jenkins',
+        image: 'https://drive.google.com/file/d/1x3MIow2LHA8H65y4fp7vphc6wqKhYf78/view?usp=drive_link',
+        batches: [
+          { id: '5_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '5_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '5_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
+      },
+      {
+        id: '11',
+        title: 'UGC NET Psychology',
+        description: 'Complete preparation for UGC NET entrance exam with comprehensive syllabus coverage.',
+        duration: '6 Months',
+        fees: '8999',
+        faculty: 'Dr. Sarah Jenkins',
+        image: 'images/course_ugc_net.png',
+        batches: [
+          { id: '11_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '11_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '11_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
+      },
+      {
+        id: '12',
+        title: 'WBCS PsychologY',
+        description: 'In-depth learning for future leaders. Advanced counseling theories and practices.',
+        duration: '2 Years',
+        fees: '24000',
+        faculty: 'Dr. Rajesh Kumar',
+        image: 'images/course_ma.png',
+        batches: [
+          { id: '12_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '12_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '12_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
+      },
+      {
+        id: '13',
+        title: 'CUET PG Psychology TEST KOUSHIK',
+        description: 'Crack CUET PG with confidence. Specialized mock tests and concepts.',
+        duration: '3 Months',
+        fees: '6999',
+        faculty: 'Dr. Sarah Jenkins',
+        image: 'images/course_cuet.png',
+        batches: [
+          { id: '13_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '13_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '13_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+        ]
+      },
+      {
+        id: '14',
         title: 'TISSNET Psychology',
         description: 'Specialized coaching for TISSNET entrance. Structured curriculum and guidance.',
         duration: '3 Months',
@@ -115,9 +185,9 @@
         faculty: 'Prof. Ananya Sen',
         image: 'images/course_tissnet.png',
         batches: [
-          { id: '4_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-          { id: '4_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-          { id: '4_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+          { id: '14_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+          { id: '14_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+          { id: '14_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
         ]
       }
     ],
