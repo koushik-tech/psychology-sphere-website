@@ -901,42 +901,47 @@
             .eq('student_id', studentId);
           if (error) throw error;
           
-          if (!data) return [];
+          if (data && data.length > 0) {
+            const validEnrollments = data.filter(e => e.courses !== null);
+            if (validEnrollments.length > 0) {
+              // Try to fetch batches from Supabase batches table
+              let allBatches = [];
+              try {
+                const { data: batchesData } = await supabaseClient
+                  .from('batches')
+                  .select('*');
+                if (batchesData) allBatches = batchesData;
+              } catch (e) {
+                console.warn("Could not load batches from Supabase table 'batches' for enrollments lookup:", e);
+              }
 
-          // Try to fetch batches from Supabase batches table
-          let allBatches = [];
-          try {
-            const { data: batchesData } = await supabaseClient
-              .from('batches')
-              .select('*');
-            if (batchesData) allBatches = batchesData;
-          } catch (e) {
-            console.warn("Could not load batches from Supabase table 'batches' for enrollments lookup:", e);
-          }
-
-          return data.filter(e => e.courses !== null).map(e => {
-            const courseIdStr = e.courses.id.toString();
-            // Find batch in allBatches
-            let batchDetails = allBatches.find(b => b.id === e.batch_id && b.course_id.toString() === courseIdStr);
-            if (!batchDetails) {
-              // Generate standard mock batches for this course as fallback
-              const mockBatches = [
-                { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-                { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-                { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
-              ];
-              batchDetails = mockBatches.find(b => b.id === e.batch_id) || mockBatches[0];
+              return validEnrollments.map(e => {
+                const courseIdStr = e.courses.id.toString();
+                // Find batch in allBatches
+                let batchDetails = allBatches.find(b => b.id === e.batch_id && b.course_id.toString() === courseIdStr);
+                if (!batchDetails) {
+                  // Generate standard mock batches for this course as fallback
+                  const mockBatches = [
+                    { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
+                    { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
+                    { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+                  ];
+                  batchDetails = mockBatches.find(b => b.id === e.batch_id) || mockBatches[0];
+                }
+                return {
+                  id: e.id,
+                  courseId: e.courses.id,
+                  courseTitle: e.courses.title,
+                  courseDuration: e.courses.duration,
+                  courseFees: e.courses.fees,
+                  batch: batchDetails,
+                  status: e.status
+                };
+              });
             }
-            return {
-              id: e.id,
-              courseId: e.courses.id,
-              courseTitle: e.courses.title,
-              courseDuration: e.courses.duration,
-              courseFees: e.courses.fees,
-              batch: batchDetails,
-              status: e.status
-            };
-          });
+          }
+          // If no Supabase enrollments or course is empty, trigger LocalStorage fallback
+          throw new Error("No valid enrollments found in Supabase");
         } catch (e) {
           console.error("Supabase getStudentEnrollments failed, falling back to LocalStorage:", e);
         }
