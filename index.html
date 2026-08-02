@@ -35,7 +35,7 @@
             <li><a href="#live-classes">Live Classes</a></li>
             <li><a href="#resources">Resources</a></li>
             <li><a href="#about-us">About Us</a></li>
-            <li><button class="btn btn-login-nav" id="btn-login-trigger">Login</button></li>
+            <li><button class="btn btn-login-nav" id="btn-login-trigger" onclick="event.preventDefault(); document.getElementById('login-modal').classList.add('active');">Login</button></li>
           </ul>
         </nav>
         <div class="menu-toggle" id="menu-toggle">
@@ -329,9 +329,9 @@
           <div class="footer-links">
             <h4>Portals</h4>
             <ul>
-              <li><a href="#login" class="footer-login-trigger">Student Portal</a></li>
-              <li><a href="#login" class="footer-login-trigger">Faculty Desk</a></li>
-              <li><a href="#login" class="footer-login-trigger">Admin Office</a></li>
+              <li><a href="#login" class="footer-login-trigger" onclick="event.preventDefault(); document.getElementById('login-modal').classList.add('active');">Student Portal</a></li>
+              <li><a href="#login" class="footer-login-trigger" onclick="event.preventDefault(); document.getElementById('login-modal').classList.add('active');">Faculty Desk</a></li>
+              <li><a href="#login" class="footer-login-trigger" onclick="event.preventDefault(); document.getElementById('login-modal').classList.add('active');">Admin Office</a></li>
             </ul>
           </div>
           <div class="footer-links">
@@ -905,7 +905,7 @@
   <!-- 1. Login Modal -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-box" style="max-width: 440px;">
-      <i data-lucide="x" class="modal-close" id="login-modal-close"></i>
+      <i data-lucide="x" class="modal-close" id="login-modal-close" onclick="document.getElementById('login-modal').classList.remove('active');"></i>
       <div class="text-center" style="margin-bottom: 2rem;">
         <a href="#home" class="logo" style="justify-content:center; margin-bottom:0.5rem;">
           <i data-lucide="brain"></i>
