@@ -74,8 +74,39 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PUBLIC LOGIN MODAL ---
   const loginModal = document.getElementById("login-modal");
   const loginTrigger = document.getElementById("btn-login-trigger");
-  const loginClose = document.getElementById("login-modal-close");
   const footerLoginTriggers = document.querySelectorAll(".footer-login-trigger");
+
+  const signupForm = document.getElementById("signup-form");
+  const loginToggleWrapper = document.getElementById("login-toggle-wrapper");
+  const signupToggleWrapper = document.getElementById("signup-toggle-wrapper");
+  const modalTitle = document.getElementById("modal-title");
+  const modalSubtitle = document.getElementById("modal-subtitle");
+
+  const showSignupForm = (e) => {
+    if (e) e.preventDefault();
+    if (loginForm) loginForm.style.display = "none";
+    if (loginToggleWrapper) loginToggleWrapper.style.display = "none";
+    if (signupForm) signupForm.style.display = "block";
+    if (signupToggleWrapper) signupToggleWrapper.style.display = "block";
+    if (modalTitle) modalTitle.textContent = "Create Account";
+    if (modalSubtitle) modalSubtitle.textContent = "Join the Psychology Sphere";
+  };
+
+  const showLoginForm = (e) => {
+    if (e) e.preventDefault();
+    if (signupForm) signupForm.style.display = "none";
+    if (signupToggleWrapper) signupToggleWrapper.style.display = "none";
+    if (loginForm) loginForm.style.display = "block";
+    if (loginToggleWrapper) loginToggleWrapper.style.display = "block";
+    if (modalTitle) modalTitle.textContent = "Welcome Back!";
+    if (modalSubtitle) modalSubtitle.textContent = "Login to your learning portal";
+  };
+
+  const toggleToSignup = document.getElementById("toggle-to-signup");
+  const toggleToLogin = document.getElementById("toggle-to-login");
+
+  if (toggleToSignup) toggleToSignup.addEventListener("click", showSignupForm);
+  if (toggleToLogin) toggleToLogin.addEventListener("click", showLoginForm);
 
   const openLoginModal = (e) => {
     if (e) e.preventDefault();
@@ -84,38 +115,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const closeLoginModal = () => {
     if (loginModal) loginModal.classList.remove("active");
+    showLoginForm();
+    if (loginForm) loginForm.reset();
+    if (signupForm) signupForm.reset();
   };
 
   if (loginTrigger) loginTrigger.addEventListener("click", openLoginModal);
-  if (loginClose) loginClose.addEventListener("click", closeLoginModal);
   footerLoginTriggers.forEach(trigger => trigger.addEventListener("click", openLoginModal));
+
+  if (loginModal) {
+    loginModal.addEventListener("click", (e) => {
+      if (e.target.closest("#login-modal-close") || e.target === loginModal) {
+        closeLoginModal();
+      }
+    });
+  }
 
   // Automatically open login modal if requested in query parameters
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get("openLogin") === "true") {
     openLoginModal();
   }
-
-  // Quick Login Pre-population and Submit Trigger
-  document.querySelectorAll(".btn-quick-login").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const role = btn.getAttribute("data-role");
-      const email = btn.getAttribute("data-email");
-      
-      const emailInput = document.getElementById("login-email");
-      const passwordInput = document.getElementById("login-password");
-      const roleSelect = document.getElementById("login-role");
-      
-      if (emailInput && passwordInput && roleSelect) {
-        emailInput.value = email;
-        passwordInput.value = "demo1234";
-        roleSelect.value = role;
-        
-        // Auto submit
-        document.getElementById("login-form").dispatchEvent(new Event("submit"));
-      }
-    });
-  });
 
   // --- LOGIN LOGIC & DASHBOARD MOUNTING ---
   const publicWebsite = document.getElementById("public-website");
@@ -129,89 +149,148 @@ document.addEventListener("DOMContentLoaded", () => {
   const sidebarUserrole = document.getElementById("sidebar-userrole-txt");
   const dashboardTabTitle = document.getElementById("dashboard-tab-title");
 
+  // Unified login and mounting logic
+  function loginAndMountDashboard(profile) {
+    const role = profile.role;
+    const email = profile.email;
+    const displayName = profile.full_name || email.split("@")[0].toUpperCase();
+
+    // Store user session details
+    loggedInUser = { email: email, role: role };
+
+    // Hide public site and show dashboard container
+    if (publicWebsite && portalDashboard) {
+      publicWebsite.style.display = "none";
+      portalDashboard.style.display = "block";
+      window.scrollTo(0, 0);
+    }
+
+    // Hide all sidebar menus and enable the correct one
+    if (studentMenu) studentMenu.style.display = "none";
+    if (facultyMenu) facultyMenu.style.display = "none";
+    if (adminMenu) adminMenu.style.display = "none";
+
+    // Reset active tabs in sidebar links
+    document.querySelectorAll(".sidebar-menu-rewrite a").forEach(l => l.classList.remove("active"));
+
+    if (role === "student") {
+      if (studentMenu) studentMenu.style.display = "block";
+      const firstLink = studentMenu.querySelector("a");
+      if (firstLink) firstLink.classList.add("active");
+      
+      if (sidebarAvatar) sidebarAvatar.textContent = displayName.charAt(0);
+      if (sidebarUsername) sidebarUsername.textContent = displayName;
+      if (sidebarUserrole) sidebarUserrole.textContent = "Student Scholar";
+      
+      switchDashboardTab("student-overview", "Dashboard Overview");
+    } else if (role === "faculty") {
+      if (facultyMenu) facultyMenu.style.display = "block";
+      const firstLink = facultyMenu.querySelector("a");
+      if (firstLink) firstLink.classList.add("active");
+      
+      const avatarText = profile.avatar || displayName.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) || "FT";
+      if (sidebarAvatar) sidebarAvatar.textContent = avatarText;
+      if (sidebarUsername) sidebarUsername.textContent = displayName;
+      if (sidebarUserrole) sidebarUserrole.textContent = "Faculty Mentor";
+      
+      switchDashboardTab("faculty-classes", "Class Schedules");
+    } else if (role === "admin") {
+      if (adminMenu) adminMenu.style.display = "block";
+      const firstLink = adminMenu.querySelector("a");
+      if (firstLink) firstLink.classList.add("active");
+      
+      if (sidebarAvatar) sidebarAvatar.textContent = "A";
+      if (sidebarUsername) sidebarUsername.textContent = displayName;
+      if (sidebarUserrole) sidebarUserrole.textContent = "Office Coordinator";
+      
+      switchDashboardTab("admin-analytics", "Analytics Desk");
+    }
+
+    closeLoginModal();
+    showToast(`Welcome back, ${displayName}! Logged in successfully.`, "success");
+  }
+
   const loginForm = document.getElementById("login-form");
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById("login-email").value;
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
       const role = document.getElementById("login-role").value;
       
-      // Store user session details
-      loggedInUser = { email: email, role: role };
-
-      if (role === "student") {
-        try {
-          // Ensure student profile exists in profiles table
-          let studentProfile = await window.AppDB.getProfileByEmail(email);
-          if (!studentProfile) {
-            await window.AppDB.createProfile({
-              id: generateUUID(),
-              full_name: email.split("@")[0].toUpperCase(),
-              email: email,
-              role: "student"
-            });
-          }
-        } catch (err) {
-          console.error("Failed to check/create student profile:", err);
+      try {
+        const profile = await window.AppDB.getProfileByEmail(email);
+        if (!profile) {
+          showToast("No account found with this email. Please sign up.", "error");
+          return;
         }
+
+        // Verify password
+        if (profile.password && profile.password !== password) {
+          showToast("Incorrect password. Please try again.", "error");
+          return;
+        }
+
+        // Verify role
+        if (profile.role !== role) {
+          showToast("Incorrect portal selected. Choose your correct dashboard.", "error");
+          return;
+        }
+
+        loginAndMountDashboard(profile);
+        loginForm.reset();
+      } catch (err) {
+        console.error("Login verification failed:", err);
+        showToast("An error occurred during log in. Please try again.", "error");
       }
-      
-      // Determine Display name
-      let displayName = "Student User";
-      if (role === "student") displayName = email.split("@")[0].toUpperCase();
-      if (role === "faculty") displayName = "Dr. Sarah Jenkins";
-      if (role === "admin") displayName = "System Administrator";
+    });
+  }
 
-      // Hide public site and show dashboard container
-      if (publicWebsite && portalDashboard) {
-        publicWebsite.style.display = "none";
-        portalDashboard.style.display = "block";
-        window.scrollTo(0, 0);
+  if (signupForm) {
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("signup-name").value.trim();
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      const role = document.getElementById("signup-role").value;
+
+      try {
+        // Verify email doesn't already exist
+        const existingProfile = await window.AppDB.getProfileByEmail(email);
+        if (existingProfile) {
+          showToast("An account with this email already exists.", "error");
+          return;
+        }
+
+        // Build new profile payload
+        const newProfile = {
+          id: generateUUID(),
+          full_name: name,
+          email: email,
+          role: role,
+          password: password
+        };
+
+        // For Faculty, set extra details so they are listed properly
+        if (role === "faculty") {
+          newProfile.academic_role = "Lecturer / Mentor";
+          newProfile.specialization = "General Psychology & Counseling";
+          newProfile.avatar = name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) || "FT";
+          newProfile.image = "";
+        }
+
+        // Create profile
+        const result = await window.AppDB.createProfile(newProfile);
+        if (result) {
+          loginAndMountDashboard(result);
+          signupForm.reset();
+        } else {
+          showToast("Failed to create account. Please try again.", "error");
+        }
+      } catch (err) {
+        console.error("Signup failed:", err);
+        showToast("An error occurred during sign up. Please try again.", "error");
       }
-
-      // Hide all sidebar menus and enable the correct one
-      if (studentMenu) studentMenu.style.display = "none";
-      if (facultyMenu) facultyMenu.style.display = "none";
-      if (adminMenu) adminMenu.style.display = "none";
-
-      // Reset active tabs in sidebar links
-      document.querySelectorAll(".sidebar-menu-rewrite a").forEach(l => l.classList.remove("active"));
-
-      if (role === "student") {
-        if (studentMenu) studentMenu.style.display = "block";
-        const firstLink = studentMenu.querySelector("a");
-        if (firstLink) firstLink.classList.add("active");
-        
-        if (sidebarAvatar) sidebarAvatar.textContent = displayName.charAt(0);
-        if (sidebarUsername) sidebarUsername.textContent = displayName;
-        if (sidebarUserrole) sidebarUserrole.textContent = "Student Scholar";
-        
-        switchDashboardTab("student-overview", "Dashboard Overview");
-      } else if (role === "faculty") {
-        if (facultyMenu) facultyMenu.style.display = "block";
-        const firstLink = facultyMenu.querySelector("a");
-        if (firstLink) firstLink.classList.add("active");
-        
-        if (sidebarAvatar) sidebarAvatar.textContent = "SJ";
-        if (sidebarUsername) sidebarUsername.textContent = "Dr. Sarah Jenkins";
-        if (sidebarUserrole) sidebarUserrole.textContent = "Faculty Mentor";
-        
-        switchDashboardTab("faculty-classes", "Class Schedules");
-      } else if (role === "admin") {
-        if (adminMenu) adminMenu.style.display = "block";
-        const firstLink = adminMenu.querySelector("a");
-        if (firstLink) firstLink.classList.add("active");
-        
-        if (sidebarAvatar) sidebarAvatar.textContent = "A";
-        if (sidebarUsername) sidebarUsername.textContent = "System Admin";
-        if (sidebarUserrole) sidebarUserrole.textContent = "Office Coordinator";
-        
-        switchDashboardTab("admin-analytics", "Analytics Desk");
-      }
-
-      closeLoginModal();
-      showToast(`Welcome back, ${displayName}! Logged in successfully.`, "success");
-      loginForm.reset();
     });
   }
 
@@ -260,6 +339,14 @@ document.addEventListener("DOMContentLoaded", () => {
       targetTab.style.display = "block";
     }
     
+    if (tabId === "student-overview") {
+      renderStudentOverview();
+    }
+
+    if (tabId === "student-payments") {
+      renderStudentPayments();
+    }
+
     if (tabId === "admin-db") {
       renderDatabaseTable(activeDbTable);
     }
@@ -277,15 +364,167 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Close modals when clicking outside
-  window.addEventListener("click", (e) => {
-    if (e.target === loginModal) closeLoginModal();
-  });
+  // --- DYNAMIC STUDENT OVERVIEW & PAYMENTS RENDERERS ---
+  async function renderStudentOverview() {
+    if (!loggedInUser || loggedInUser.role !== "student") return;
 
+    try {
+      const studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
+      if (!studentProfile) return;
+
+      const [enrollments, attendanceLogs, payments] = await Promise.all([
+        window.AppDB.getStudentEnrollments(studentProfile.id),
+        window.AppDB.getStudentAttendance(studentProfile.id),
+        window.AppDB.getStudentPayments(studentProfile.id)
+      ]);
+
+      // 1. My Courses count
+      const coursesCountEl = document.getElementById("student-courses-count");
+      if (coursesCountEl) {
+        coursesCountEl.textContent = enrollments.length;
+      }
+
+      // 2. Attendance Average percentage
+      const attendancePercentEl = document.getElementById("student-attendance-percent");
+      if (attendancePercentEl) {
+        if (attendanceLogs.length === 0) {
+          attendancePercentEl.textContent = "0%";
+        } else {
+          const presentLogs = attendanceLogs.filter(l => l.status === "present" || l.status === "late");
+          const percentage = Math.round((presentLogs.length / attendanceLogs.length) * 100);
+          attendancePercentEl.textContent = `${percentage}%`;
+        }
+      }
+
+      // 3. Pending balance card
+      const pendingInvoiceEl = document.getElementById("student-pending-invoice");
+      const pendingInvoiceDueEl = document.getElementById("student-pending-invoice-due");
+      if (pendingInvoiceEl && pendingInvoiceDueEl) {
+        const pendingPayments = payments.filter(p => p.status === "pending");
+        if (pendingPayments.length === 0) {
+          pendingInvoiceEl.textContent = "₹ 0";
+          pendingInvoiceEl.style.color = "#059669";
+          pendingInvoiceDueEl.textContent = "No fees pending";
+        } else {
+          const totalAmount = pendingPayments.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
+          pendingInvoiceEl.textContent = `₹ ${totalAmount.toLocaleString('en-IN')}`;
+          pendingInvoiceEl.style.color = "#dc2626";
+          pendingInvoiceDueEl.textContent = "Due on 15th";
+        }
+      }
+
+      // 4. Live Broadcast schedule
+      const broadcastTimeEl = document.getElementById("student-broadcast-time");
+      const broadcastSubjectEl = document.getElementById("student-broadcast-subject");
+      if (broadcastTimeEl && broadcastSubjectEl) {
+        if (enrollments.length === 0) {
+          broadcastTimeEl.textContent = "No sessions";
+          broadcastTimeEl.style.fontSize = "1rem";
+          broadcastSubjectEl.textContent = "None scheduled";
+        } else {
+          broadcastTimeEl.textContent = "Today, 6:00 PM";
+          broadcastTimeEl.style.fontSize = "1.15rem";
+          broadcastSubjectEl.textContent = enrollments[0].courseTitle || "Research Methods";
+        }
+      }
+
+      // 5. Active courses lists
+      const progressListEl = document.getElementById("student-active-programs-list");
+      if (progressListEl) {
+        if (enrollments.length === 0) {
+          progressListEl.innerHTML = `<div style="font-size:0.85rem; color:var(--text-secondary);">No active enrollments. Go to "Enroll Courses" to begin.</div>`;
+        } else {
+          progressListEl.innerHTML = "";
+          const baseProgress = [75, 60, 45];
+          enrollments.forEach((e, idx) => {
+            const progress = baseProgress[idx % baseProgress.length];
+            const item = document.createElement("div");
+            item.innerHTML = `
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem;">
+                <strong>${e.courseTitle}</strong>
+                <span>${progress}%</span>
+              </div>
+              <div class="progress-bar-bg-rewrite"><div class="progress-bar-fill-rewrite" style="width:${progress}%;"></div></div>
+            `;
+            progressListEl.appendChild(item);
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Failed to render student overview metrics:", e);
+    }
+  }
+
+  async function renderStudentPayments() {
+    const tbody = document.getElementById("student-payments-tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Loading transaction records...</td></tr>`;
+
+    if (!loggedInUser || loggedInUser.role !== "student") return;
+
+    try {
+      const studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
+      if (!studentProfile) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">No student profile found. Please try again.</td></tr>`;
+        return;
+      }
+
+      const payments = await window.AppDB.getStudentPayments(studentProfile.id);
+      if (payments.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">No transactions or payments found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = "";
+      payments.forEach(p => {
+        const row = document.createElement("tr");
+        row.setAttribute("data-invoice-id", p.id);
+        
+        let actionBtn = "";
+        let statusBadge = "";
+        
+        if (p.status === "paid") {
+          statusBadge = `<span class="badge badge-success">Paid</span>`;
+          actionBtn = `<button class="btn btn-outline btn-sm" style="border-radius:20px; font-size:0.75rem;"><i data-lucide="download" style="width:12px;"></i> Receipt</button>`;
+        } else {
+          statusBadge = `<span class="badge badge-danger">Pending</span>`;
+          actionBtn = `<button class="btn btn-primary btn-sm btn-pay-fees-mock" data-id="${p.id}" style="border-radius:20px; font-size:0.75rem;">Pay Now</button>`;
+        }
+
+        row.innerHTML = `
+          <td style="font-weight:600;">${p.description}</td>
+          <td>${p.date}</td>
+          <td>₹ ${parseFloat(p.amount).toLocaleString('en-IN')}</td>
+          <td>${statusBadge}</td>
+          <td>${actionBtn}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Bind Pay Now buttons
+      tbody.querySelectorAll(".btn-pay-fees-mock").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const invoiceId = btn.getAttribute("data-id");
+          const checkoutModal = document.getElementById("checkout-modal");
+          if (checkoutModal) {
+            checkoutModal.setAttribute("data-current-invoice-id", invoiceId);
+            checkoutModal.classList.add("active");
+          }
+        });
+      });
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    } catch (e) {
+      console.error("Failed to render student payments:", e);
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ef4444;">Error loading payments registry.</td></tr>`;
+    }
+  }
 
   // --- STUDENT MOCK INVOICE UPI PAYMENT ---
   const checkoutModal = document.getElementById("checkout-modal");
-  const checkoutClose = document.getElementById("checkout-modal-close");
   const payTriggerBtns = document.querySelectorAll(".btn-pay-fees-mock");
 
   const openCheckoutModal = (e) => {
@@ -294,36 +533,48 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const closeCheckoutModal = () => {
-    if (checkoutModal) checkoutModal.classList.remove("active");
+    if (checkoutModal) {
+      checkoutModal.classList.remove("active");
+      checkoutModal.removeAttribute("data-current-invoice-id");
+    }
   };
 
   payTriggerBtns.forEach(btn => btn.addEventListener("click", openCheckoutModal));
-  if (checkoutClose) checkoutClose.addEventListener("click", closeCheckoutModal);
+
+  if (checkoutModal) {
+    checkoutModal.addEventListener("click", (e) => {
+      if (e.target.closest("#checkout-modal-close") || e.target === checkoutModal) {
+        closeCheckoutModal();
+      }
+    });
+  }
 
   const mockPayBtn = document.getElementById("btn-mock-pay");
   if (mockPayBtn) {
-    mockPayBtn.addEventListener("click", () => {
-      showToast("UPI Payment transaction verified! Receipt REC-492984 generated.", "success");
-      closeCheckoutModal();
+    mockPayBtn.addEventListener("click", async () => {
+      const checkoutModal = document.getElementById("checkout-modal");
+      const invoiceId = checkoutModal ? checkoutModal.getAttribute("data-current-invoice-id") : null;
       
-      // Dynamically remove the unpaid row and update pending balance on dashboard
-      const tableRow = document.querySelector(".btn-pay-fees-mock").closest("tr");
-      if (tableRow) {
-        tableRow.innerHTML = `
-          <td style="font-weight:600;">MA Psychology Tuition Installment</td>
-          <td>2026-07-01</td>
-          <td>₹ 2,500</td>
-          <td><span class="badge badge-success">Paid</span></td>
-          <td><button class="btn btn-outline btn-sm" style="border-radius:20px; font-size:0.75rem;"><i data-lucide="download" style="width:12px;"></i> Receipt</button></td>
-        `;
-        if (window.lucide) window.lucide.createIcons();
-      }
-
-      // Update metrics
-      const metricValues = document.querySelectorAll(".metric-value");
-      if (metricValues[2]) {
-        metricValues[2].textContent = "₹ 0";
-        metricValues[2].style.color = "#059669";
+      if (invoiceId) {
+        try {
+          const paid = await window.AppDB.payInvoice(invoiceId);
+          if (paid) {
+            showToast("UPI Payment transaction verified! Receipt generated.", "success");
+            closeCheckoutModal();
+            // Re-render payments and overview tabs
+            await renderStudentPayments();
+            await renderStudentOverview();
+          } else {
+            showToast("Failed to complete transaction.", "error");
+          }
+        } catch (err) {
+          console.error("Payment confirmation failed:", err);
+          showToast("Payment failed. Please try again.", "error");
+        }
+      } else {
+        // Fallback for default hardcoded invoice pay now button if click triggered
+        showToast("UPI Payment transaction verified!", "success");
+        closeCheckoutModal();
       }
     });
   }
@@ -434,7 +685,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- ADMIN COURSE MANAGEMENT ---
   const adminAddCourseModal = document.getElementById("admin-add-course-modal");
-  const adminAddCourseClose = document.getElementById("admin-add-course-close");
   const adminAddCourseTrigger = document.getElementById("btn-admin-add-course");
 
   const openAdminAddModal = () => {
@@ -446,7 +696,14 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (adminAddCourseTrigger) adminAddCourseTrigger.addEventListener("click", openAdminAddModal);
-  if (adminAddCourseClose) adminAddCourseClose.addEventListener("click", closeAdminAddModal);
+
+  if (adminAddCourseModal) {
+    adminAddCourseModal.addEventListener("click", (e) => {
+      if (e.target.closest("#admin-add-course-close") || e.target === adminAddCourseModal) {
+        closeAdminAddModal();
+      }
+    });
+  }
 
   const addCourseForm = document.getElementById("admin-add-course-form");
   if (addCourseForm) {
@@ -912,10 +1169,15 @@ document.addEventListener("DOMContentLoaded", () => {
           try {
             enrollBtn.disabled = true;
             enrollBtn.textContent = "Enrolling...";
-            await window.AppDB.enrollInCourse(courseId, studentProfile.id, batchId);
-            showToast("Successfully enrolled in the program!", "success");
-            // Reload the view
+            const currentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
+            if (!currentProfile) {
+              showToast("No active student profile found. Please log in again.", "error");
+              return;
+            }
+            await window.AppDB.enrollInCourse(courseId, currentProfile.id, batchId);
             await renderStudentCourses();
+            await renderStudentOverview();
+            showToast("Successfully enrolled in the program!", "success");
           } catch (err) {
             console.error("Dashboard enrollment failed:", err);
             showToast("Failed to complete enrollment. Please try again.", "error");
@@ -1032,6 +1294,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   // Reload dashboard if visual
                   if (document.getElementById("portal-dashboard").style.display !== "none") {
                     await renderStudentCourses();
+                    await renderStudentOverview();
                   }
                 } else {
                   showToast("Failed to create student profile. Please try again.", "error");

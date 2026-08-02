@@ -410,7 +410,7 @@
               <div class="metric-card-rewrite">
                 <div>
                   <h3>My Courses</h3>
-                  <div class="metric-value">3</div>
+                  <div class="metric-value" id="student-courses-count">0</div>
                   <div class="metric-sub">Active Programs</div>
                 </div>
                 <div class="metric-icon-box metric-purple"><i data-lucide="book-open"></i></div>
@@ -418,7 +418,7 @@
               <div class="metric-card-rewrite">
                 <div>
                   <h3>Attendance</h3>
-                  <div class="metric-value">85%</div>
+                  <div class="metric-value" id="student-attendance-percent">0%</div>
                   <div class="metric-sub">Monthly Average</div>
                 </div>
                 <div class="metric-icon-box metric-emerald"><i data-lucide="check-square"></i></div>
@@ -426,16 +426,16 @@
               <div class="metric-card-rewrite">
                 <div>
                   <h3>Pending Invoice</h3>
-                  <div class="metric-value">₹ 2,500</div>
-                  <div class="metric-sub">Due on 15th</div>
+                  <div class="metric-value" id="student-pending-invoice">₹ 0</div>
+                  <div class="metric-sub" id="student-pending-invoice-due">No fees pending</div>
                 </div>
                 <div class="metric-icon-box metric-amber"><i data-lucide="credit-card"></i></div>
               </div>
               <div class="metric-card-rewrite">
                 <div>
                   <h3>Live Broadcast</h3>
-                  <div class="metric-value" style="font-size:1.15rem; font-weight:800; margin-top:0.5rem; color:#ef4444;">Today, 6:00 PM</div>
-                  <div class="metric-sub">Research Methods</div>
+                  <div class="metric-value" id="student-broadcast-time" style="font-size:1.15rem; font-weight:800; margin-top:0.5rem; color:#ef4444;">No sessions</div>
+                  <div class="metric-sub" id="student-broadcast-subject">None scheduled</div>
                 </div>
                 <div class="metric-icon-box metric-rose"><i data-lucide="clock"></i></div>
               </div>
@@ -444,28 +444,9 @@
             <div class="grid-2">
               <div class="card" style="padding:1.5rem; text-align:left;">
                 <h3 style="font-size:1.15rem; margin-bottom:1.25rem;">My Active Programs</h3>
-                <div style="display:flex; flex-direction:column; gap:1.25rem;">
-                  <div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem;">
-                      <strong>UGC NET Psychology</strong>
-                      <span>78%</span>
-                    </div>
-                    <div class="progress-bar-bg-rewrite"><div class="progress-bar-fill-rewrite" style="width:78%;"></div></div>
-                  </div>
-                  <div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem;">
-                      <strong>MA Psychology</strong>
-                      <span>60%</span>
-                    </div>
-                    <div class="progress-bar-bg-rewrite"><div class="progress-bar-fill-rewrite" style="width:60%;"></div></div>
-                  </div>
-                  <div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem;">
-                      <strong>CUET PG Psychology</strong>
-                      <span>40%</span>
-                    </div>
-                    <div class="progress-bar-bg-rewrite"><div class="progress-bar-fill-rewrite" style="width:40%;"></div></div>
-                  </div>
+                <div id="student-active-programs-list" style="display:flex; flex-direction:column; gap:1.25rem;">
+                  <!-- Dynamic progress bars -->
+                  <div style="font-size:0.85rem; color:var(--text-secondary);">No active enrollments. Go to "Enroll Courses" to begin.</div>
                 </div>
               </div>
 
@@ -554,21 +535,9 @@
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td style="font-weight:600;">MA Psychology Tuition Installment</td>
-                    <td>2026-07-01</td>
-                    <td>₹ 2,500</td>
-                    <td><span class="badge badge-danger">Pending</span></td>
-                    <td><button class="btn btn-primary btn-sm btn-pay-fees-mock" style="border-radius:20px; font-size:0.75rem;">Pay Now</button></td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:600;">UGC NET Study Materials Fee</td>
-                    <td>2026-06-15</td>
-                    <td>₹ 1,200</td>
-                    <td><span class="badge badge-success">Paid</span></td>
-                    <td><button class="btn btn-outline btn-sm" style="border-radius:20px; font-size:0.75rem;"><i data-lucide="download" style="width:12px;"></i> Receipt</button></td>
-                  </tr>
+                <tbody id="student-payments-tbody">
+                  <!-- Dynamically populated -->
+                  <tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">No transactions or payments found.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -871,8 +840,8 @@
           <i data-lucide="brain"></i>
           <span style="color:#3b20a6;">Psychology Sphere</span>
         </a>
-        <h3 style="margin-top:1.5rem; font-size:1.5rem;">Welcome Back!</h3>
-        <p>Login to your learning portal</p>
+        <h3 id="modal-title" style="margin-top:1.5rem; font-size:1.5rem;">Welcome Back!</h3>
+        <p id="modal-subtitle">Login to your learning portal</p>
       </div>
       
       <form id="login-form">
@@ -894,21 +863,40 @@
         </div>
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem; border-radius:30px; background-color:#3b20a6;">Sign In</button>
       </form>
-      
-      <!-- Quick test credentials -->
-      <div style="margin-top:2rem; padding:1rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
-        <h5 style="margin-bottom:0.75rem; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary); text-align:left;">Quick Test Accounts (Click one):</h5>
-        <div style="display:flex; flex-direction:column; gap:0.5rem;">
-          <button class="btn btn-secondary btn-sm btn-quick-login" data-role="student" data-email="student@psysphere.edu" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px; border:1px solid #e2e8f0; width:100%; text-align:left;">
-            <strong>Student</strong> <span style="color:#64748b;">student@psysphere.edu</span>
-          </button>
-          <button class="btn btn-secondary btn-sm btn-quick-login" data-role="faculty" data-email="faculty@psysphere.edu" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px; border:1px solid #e2e8f0; width:100%; text-align:left;">
-            <strong>Faculty</strong> <span style="color:#64748b;">faculty@psysphere.edu</span>
-          </button>
-          <button class="btn btn-secondary btn-sm btn-quick-login" data-role="admin" data-email="admin@psysphere.edu" style="font-size:0.75rem; justify-content:space-between; padding:0.4rem 0.8rem; border-radius:4px; border:1px solid #e2e8f0; width:100%; text-align:left;">
-            <strong>Admin</strong> <span style="color:#64748b;">admin@psysphere.edu</span>
-          </button>
+
+      <!-- Signup Form -->
+      <form id="signup-form" style="display: none;">
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" class="form-control" required placeholder="Enter your full name">
         </div>
+        <div class="form-group">
+          <label for="signup-email">Email Address</label>
+          <input type="email" id="signup-email" class="form-control" required placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" class="form-control" required placeholder="Create a password">
+        </div>
+        <div class="form-group">
+          <label for="signup-role">Join As</label>
+          <select id="signup-role" class="form-control">
+            <option value="student">Student Scholar</option>
+            <option value="faculty">Faculty Mentor (Teacher)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem; border-radius:30px; background-color:#3b20a6;">Create Account</button>
+      </form>
+
+      <!-- Toggle Navigation Links -->
+      <div class="text-center" id="login-toggle-wrapper" style="margin-top: 1.5rem; font-size: 0.9rem;">
+        <span style="color: var(--text-secondary);">Don't have an account? </span>
+        <a href="#" id="toggle-to-signup" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">Sign Up</a>
+      </div>
+
+      <div class="text-center" id="signup-toggle-wrapper" style="display: none; margin-top: 1.5rem; font-size: 0.9rem;">
+        <span style="color: var(--text-secondary);">Already have an account? </span>
+        <a href="#" id="toggle-to-login" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">Sign In</a>
       </div>
     </div>
   </div>

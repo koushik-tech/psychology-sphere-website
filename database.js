@@ -219,7 +219,112 @@
     ],
     assets: {
       hero_student_image: 'images/student_cutout.png'
-    }
+    },
+    profiles: [
+      {
+        id: '1',
+        full_name: 'Dr. Sarah Jenkins',
+        email: 'faculty@psysphere.edu',
+        role: 'faculty',
+        password: 'demo1234',
+        academic_role: 'Ph.D. / Senior Lecturer',
+        specialization: 'Clinical Counseling. 10+ Years of coaching entrance aspirants.',
+        avatar: 'SJ'
+      },
+      {
+        id: '2',
+        full_name: 'Dr. Rajesh Kumar',
+        email: 'rajesh@psysphere.edu',
+        role: 'faculty',
+        password: 'demo1234',
+        academic_role: 'Ph.D. / Cognitive Scientist',
+        specialization: 'Research Methods & Neuropsychology. Former DU professor.',
+        avatar: 'RK'
+      },
+      {
+        id: '3',
+        full_name: 'Prof. Ananya Sen',
+        email: 'ananya@psysphere.edu',
+        role: 'faculty',
+        password: 'demo1234',
+        academic_role: 'M.Phil. / Senior Mentor',
+        specialization: 'Child Development & Counseling. 8+ Years teaching.',
+        avatar: 'AS'
+      },
+      {
+        id: 'student-default-id',
+        full_name: 'STUDENT SCHOLAR',
+        email: 'student@psysphere.edu',
+        role: 'student',
+        password: 'demo1234'
+      },
+      {
+        id: 'admin-default-id',
+        full_name: 'System Admin',
+        email: 'admin@psysphere.edu',
+        role: 'admin',
+        password: 'demo1234'
+      }
+    ],
+    enrollments: [
+      {
+        id: 'enroll-1',
+        student_id: 'student-default-id',
+        course_id: '1',
+        batch_id: '1_online',
+        status: 'active',
+        enrolled_at: '2026-06-01T08:00:00.000Z'
+      },
+      {
+        id: 'enroll-2',
+        student_id: 'student-default-id',
+        course_id: '2',
+        batch_id: '2_online',
+        status: 'active',
+        enrolled_at: '2026-06-01T08:00:00.000Z'
+      }
+    ],
+    attendance: [
+      {
+        id: 'att-1',
+        student_id: 'student-default-id',
+        course_id: '1',
+        date: '2026-06-25',
+        status: 'present'
+      },
+      {
+        id: 'att-2',
+        student_id: 'student-default-id',
+        course_id: '2',
+        date: '2026-06-26',
+        status: 'present'
+      },
+      {
+        id: 'att-3',
+        student_id: 'student-default-id',
+        course_id: '1',
+        date: '2026-06-29',
+        status: 'absent'
+      }
+    ],
+    payments: [
+      {
+        id: 'pay-1',
+        student_id: 'student-default-id',
+        description: 'MA Psychology Tuition Installment',
+        date: '2026-07-01',
+        amount: '2500',
+        status: 'pending'
+      },
+      {
+        id: 'pay-2',
+        student_id: 'student-default-id',
+        description: 'UGC NET Study Materials Fee',
+        date: '2026-06-15',
+        amount: '1200',
+        status: 'paid'
+      }
+    ]
   };
 
   // LocalStorage fallback utilities
@@ -232,7 +337,7 @@
       }
       const data = JSON.parse(raw);
       // Ensure all keys exist
-      if (!data.courses || !data.faculty || !data.assets) {
+      if (!data.courses || !data.faculty || !data.assets || !data.profiles || !data.enrollments || !data.attendance || !data.payments) {
         const merged = Object.assign({}, defaultDB, data);
         saveDB(merged);
         return merged;
@@ -518,13 +623,23 @@
           }));
         } catch (err) {
           console.error("Supabase getFaculty failed, falling back to LocalStorage.", err);
-          const db = loadDB();
-          return db.faculty;
         }
-      } else {
-        const db = loadDB();
-        return db.faculty;
       }
+      // LocalStorage mode or fallback
+      const db = loadDB();
+      if (!db.profiles) db.profiles = [];
+      const localFaculty = db.profiles.filter(p => p.role === 'faculty');
+      if (localFaculty.length > 0) {
+        return localFaculty.map(f => ({
+          id: f.id,
+          name: f.full_name,
+          role: f.academic_role || 'Lecturer / Instructor',
+          specialization: f.specialization || 'Coaching entrance aspirants.',
+          avatar: f.avatar || f.full_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
+          image: f.image || ''
+        }));
+      }
+      return db.faculty;
     },
 
     saveFaculty: async function (member) {
@@ -585,6 +700,7 @@
 
     // Profile & Enrollment Methods
     getProfileByEmail: async function (email) {
+      let supabaseProfile = null;
       if (supabaseClient) {
         try {
           const { data, error } = await supabaseClient
@@ -593,32 +709,57 @@
             .eq('email', email)
             .limit(1)
             .maybeSingle();
-          if (error) throw error;
-          return data;
+          if (!error && data) {
+            supabaseProfile = data;
+          }
         } catch (e) {
           console.error("Supabase getProfileByEmail failed:", e);
-          return null;
         }
       }
-      return null;
+
+      // LocalStorage lookup
+      const db = loadDB();
+      if (!db.profiles) db.profiles = [];
+      const localProfile = db.profiles.find(p => p.email.toLowerCase() === email.toLowerCase()) || null;
+
+      if (supabaseProfile) {
+        // Merge Supabase profile with local password credentials
+        return {
+          ...supabaseProfile,
+          password: localProfile ? localProfile.password : (email.toLowerCase() === 'student@psysphere.edu' || email.toLowerCase() === 'faculty@psysphere.edu' || email.toLowerCase() === 'admin@psysphere.edu' ? 'demo1234' : undefined)
+        };
+      }
+      return localProfile;
     },
 
     createProfile: async function (profile) {
+      // Always store in LocalStorage first to backup password
+      const db = loadDB();
+      if (!db.profiles) db.profiles = [];
+      const existingIdx = db.profiles.findIndex(p => p.email.toLowerCase() === profile.email.toLowerCase());
+      if (existingIdx !== -1) {
+        db.profiles[existingIdx] = profile;
+      } else {
+        db.profiles.push(profile);
+      }
+      saveDB(db);
+
       if (supabaseClient) {
         try {
+          // Strip the password field since it is not in the live public.profiles schema
+          const { password, ...supabaseProfile } = profile;
           const { data, error } = await supabaseClient
             .from('profiles')
-            .insert(profile)
+            .insert(supabaseProfile)
             .select()
             .single();
           if (error) throw error;
-          return data;
+          return { ...data, password: profile.password };
         } catch (e) {
           console.error("Supabase createProfile failed:", e);
-          return null;
         }
       }
-      return null;
+      return profile;
     },
 
     enrollInCourse: async function (courseId, studentId, batchId) {
@@ -659,6 +800,19 @@
           status: 'active',
           enrolled_at: new Date().toISOString()
         });
+
+        // Generate dynamic pending invoice for the newly enrolled program
+        if (!db.payments) db.payments = [];
+        const course = db.courses.find(c => c.id === courseId.toString());
+        db.payments.push({
+          id: 'pay-' + Date.now().toString() + Math.random().toString().substring(2, 6),
+          student_id: studentId,
+          description: (course ? course.title : 'Psychology Program') + ' Tuition Installment',
+          date: new Date().toISOString().split('T')[0],
+          amount: course ? course.fees : '2500',
+          status: 'pending'
+        });
+
         saveDB(db);
         return true;
       }
@@ -852,6 +1006,24 @@
         saveDB(db);
         return true;
       }
+    },
+
+    getStudentPayments: async function (studentId) {
+      const db = loadDB();
+      if (!db.payments) db.payments = [];
+      return db.payments.filter(p => p.student_id === studentId);
+    },
+
+    payInvoice: async function (invoiceId) {
+      const db = loadDB();
+      if (!db.payments) db.payments = [];
+      const invoice = db.payments.find(p => p.id === invoiceId);
+      if (invoice) {
+        invoice.status = 'paid';
+        saveDB(db);
+        return true;
+      }
+      return false;
     },
 
     isLive: function () {
