@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const footerLoginTriggers = document.querySelectorAll(".footer-login-trigger");
 
   const signupForm = document.getElementById("signup-form");
+  const loginForm = document.getElementById("login-form");
   const loginToggleWrapper = document.getElementById("login-toggle-wrapper");
   const signupToggleWrapper = document.getElementById("signup-toggle-wrapper");
   const modalTitle = document.getElementById("modal-title");
@@ -210,7 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(`Welcome back, ${displayName}! Logged in successfully.`, "success");
   }
 
-  const loginForm = document.getElementById("login-form");
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
