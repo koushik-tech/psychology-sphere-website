@@ -1,7 +1,7 @@
 /* Psychology Sphere - Client Interactions & Mock Portals */
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Psychology Sphere App controller (v1.0.5) successfully loaded.");
+  console.log("Psychology Sphere App controller (v1.0.6) successfully loaded.");
   let loggedInUser = null;
 
   function generateUUID() {
@@ -550,7 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
           wrapper.innerHTML = `
             <input type="checkbox" value="${month}" ${isPaid ? "checked disabled" : ""} class="payment-month-cb" style="margin:0; accent-color:#3b20a6;">
             <div style="flex:1;">
-              <div style="font-weight:600; color:${isPaid ? "#0284c7" : "var(--text-primary)};">${month}</div>
+              <div style="font-weight:600; color:${isPaid ? "#0284c7" : "var(--text-primary)"};">${month}</div>
               <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:0.05rem;">${isPaid ? "Paid" : `₹ ${monthlyInstallment.toLocaleString('en-IN')}`}</div>
             </div>
           `;
