@@ -784,40 +784,73 @@
               });
             if (retryError) throw retryError;
           }
-          return true;
+
+          // Try to insert invoice in Supabase payments table
+          try {
+            const db = loadDB();
+            const localCourse = db.courses.find(c => c.id === courseId.toString());
+            let courseTitle = localCourse ? localCourse.title : 'Psychology Program';
+            let courseFees = localCourse ? localCourse.fees : '2500';
+
+            const { data: supabaseCourse } = await supabaseClient
+              .from('courses')
+              .select('title, fees')
+              .eq('id', parseInt(courseId))
+              .maybeSingle();
+            if (supabaseCourse) {
+              courseTitle = supabaseCourse.title;
+              courseFees = supabaseCourse.fees || '2500';
+            }
+
+            await supabaseClient
+              .from('payments')
+              .insert({
+                student_id: studentId,
+                description: courseTitle + ' Tuition Installment',
+                amount: courseFees.toString(),
+                status: 'pending',
+                date: new Date().toISOString().split('T')[0]
+              });
+          } catch (payErr) {
+            console.warn("Could not insert payment into Supabase payments table:", payErr);
+          }
         } catch (e) {
           console.error("Supabase enrollInCourse failed, falling back to LocalStorage:", e);
         }
       }
       
-      // LocalStorage fallback
+      // LocalStorage fallback (always runs to ensure local/offline database health)
       const db = loadDB();
       if (!db.enrollments) db.enrollments = [];
       const alreadyEnrolled = db.enrollments.some(e => e.student_id === studentId && e.course_id === courseId.toString());
-      if (alreadyEnrolled) {
-        return true;
+      if (!alreadyEnrolled) {
+        db.enrollments.push({
+          id: Date.now().toString(),
+          student_id: studentId,
+          course_id: courseId.toString(),
+          batch_id: batchId,
+          status: 'active',
+          enrolled_at: new Date().toISOString()
+        });
       }
 
-      db.enrollments.push({
-        id: Date.now().toString(),
-        student_id: studentId,
-        course_id: courseId.toString(),
-        batch_id: batchId,
-        status: 'active',
-        enrolled_at: new Date().toISOString()
-      });
-
-      // Generate dynamic pending invoice for the newly enrolled program
+      // Generate dynamic pending invoice for the newly enrolled program in LocalStorage
       if (!db.payments) db.payments = [];
       const course = db.courses.find(c => c.id === courseId.toString());
-      db.payments.push({
-        id: 'pay-' + Date.now().toString() + Math.random().toString().substring(2, 6),
-        student_id: studentId,
-        description: (course ? course.title : 'Psychology Program') + ' Tuition Installment',
-        date: new Date().toISOString().split('T')[0],
-        amount: course ? course.fees : '2500',
-        status: 'pending'
-      });
+      const invoiceDescription = (course ? course.title : 'Psychology Program') + ' Tuition Installment';
+      const invoiceAmount = course ? course.fees : '2500';
+
+      const alreadyHasPayment = db.payments.some(p => p.student_id === studentId && p.description === invoiceDescription && p.status === 'pending');
+      if (!alreadyHasPayment) {
+        db.payments.push({
+          id: 'pay-' + Date.now().toString() + Math.random().toString().substring(2, 6),
+          student_id: studentId,
+          description: invoiceDescription,
+          date: new Date().toISOString().split('T')[0],
+          amount: invoiceAmount,
+          status: 'pending'
+        });
+      }
 
       saveDB(db);
       return true;
@@ -1044,12 +1077,110 @@
     },
 
     getStudentPayments: async function (studentId) {
-      const db = loadDB();
-      if (!db.payments) db.payments = [];
-      return db.payments.filter(p => p.student_id === studentId);
+      let payments = [];
+      let loadedFromSupabase = false;
+
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('payments')
+            .select('*')
+            .eq('student_id', studentId);
+          if (error) throw error;
+          if (data && data.length > 0) {
+            payments = data;
+            loadedFromSupabase = true;
+          }
+        } catch (e) {
+          console.error("Supabase getStudentPayments failed:", e);
+        }
+      }
+      
+      if (!loadedFromSupabase) {
+        // Fallback to LocalStorage
+        const db = loadDB();
+        if (!db.payments) db.payments = [];
+        payments = db.payments.filter(p => p.student_id === studentId);
+      }
+
+      // SELF-HEALING: If payments count is less than enrollments count, generate missing invoices!
+      try {
+        const enrollments = await this.getStudentEnrollments(studentId);
+        if (enrollments && enrollments.length > 0) {
+          const db = loadDB();
+          if (!db.payments) db.payments = [];
+          
+          let updated = false;
+          for (const e of enrollments) {
+            const invoiceDescription = e.courseTitle + ' Tuition Installment';
+            
+            // Check if there is already a payment matching this description
+            const hasPayment = payments.some(p => p.description === invoiceDescription);
+            if (!hasPayment) {
+              const newInvoice = {
+                id: 'pay-' + Date.now().toString() + Math.random().toString().substring(2, 6),
+                student_id: studentId,
+                description: invoiceDescription,
+                date: new Date().toISOString().split('T')[0],
+                amount: e.courseFees || '2500',
+                status: 'pending'
+              };
+              
+              db.payments.push(newInvoice);
+              payments.push(newInvoice);
+              updated = true;
+
+              // Also try to push to Supabase if live
+              if (supabaseClient) {
+                try {
+                  await supabaseClient
+                    .from('payments')
+                    .insert({
+                      student_id: studentId,
+                      description: newInvoice.description,
+                      date: newInvoice.date,
+                      amount: newInvoice.amount.toString(),
+                      status: 'pending'
+                    });
+                } catch (sErr) {}
+              }
+            }
+          }
+          if (updated) {
+            saveDB(db);
+          }
+        }
+      } catch (err) {
+        console.warn("Self-healing payments generation failed:", err);
+      }
+
+      return payments;
     },
 
     payInvoice: async function (invoiceId) {
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('payments')
+            .update({ status: 'paid' })
+            .eq('id', invoiceId);
+          if (error) {
+            // Try to match by description if it is a local invoice ID not present in Supabase
+            const db = loadDB();
+            const invoice = db.payments.find(p => p.id === invoiceId);
+            if (invoice) {
+              await supabaseClient
+                .from('payments')
+                .update({ status: 'paid' })
+                .eq('student_id', invoice.student_id)
+                .eq('description', invoice.description);
+            }
+          }
+        } catch (e) {
+          console.error("Supabase payInvoice failed:", e);
+        }
+      }
+
       const db = loadDB();
       if (!db.payments) db.payments = [];
       const invoice = db.payments.find(p => p.id === invoiceId);
