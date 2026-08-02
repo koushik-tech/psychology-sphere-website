@@ -786,36 +786,41 @@
           }
           return true;
         } catch (e) {
-          console.error("Supabase enrollInCourse failed:", e);
-          throw e;
+          console.error("Supabase enrollInCourse failed, falling back to LocalStorage:", e);
         }
-      } else {
-        const db = loadDB();
-        if (!db.enrollments) db.enrollments = [];
-        db.enrollments.push({
-          id: Date.now().toString(),
-          student_id: studentId,
-          course_id: courseId.toString(),
-          batch_id: batchId,
-          status: 'active',
-          enrolled_at: new Date().toISOString()
-        });
-
-        // Generate dynamic pending invoice for the newly enrolled program
-        if (!db.payments) db.payments = [];
-        const course = db.courses.find(c => c.id === courseId.toString());
-        db.payments.push({
-          id: 'pay-' + Date.now().toString() + Math.random().toString().substring(2, 6),
-          student_id: studentId,
-          description: (course ? course.title : 'Psychology Program') + ' Tuition Installment',
-          date: new Date().toISOString().split('T')[0],
-          amount: course ? course.fees : '2500',
-          status: 'pending'
-        });
-
-        saveDB(db);
+      }
+      
+      // LocalStorage fallback
+      const db = loadDB();
+      if (!db.enrollments) db.enrollments = [];
+      const alreadyEnrolled = db.enrollments.some(e => e.student_id === studentId && e.course_id === courseId.toString());
+      if (alreadyEnrolled) {
         return true;
       }
+
+      db.enrollments.push({
+        id: Date.now().toString(),
+        student_id: studentId,
+        course_id: courseId.toString(),
+        batch_id: batchId,
+        status: 'active',
+        enrolled_at: new Date().toISOString()
+      });
+
+      // Generate dynamic pending invoice for the newly enrolled program
+      if (!db.payments) db.payments = [];
+      const course = db.courses.find(c => c.id === courseId.toString());
+      db.payments.push({
+        id: 'pay-' + Date.now().toString() + Math.random().toString().substring(2, 6),
+        student_id: studentId,
+        description: (course ? course.title : 'Psychology Program') + ' Tuition Installment',
+        date: new Date().toISOString().split('T')[0],
+        amount: course ? course.fees : '2500',
+        status: 'pending'
+      });
+
+      saveDB(db);
+      return true;
     },
 
     getStudentAttendance: async function (studentId) {
@@ -834,11 +839,22 @@
             status: a.status
           }));
         } catch (e) {
-          console.error("Supabase getStudentAttendance failed:", e);
-          return [];
+          console.error("Supabase getStudentAttendance failed, falling back to LocalStorage:", e);
         }
       }
-      return [];
+      
+      // LocalStorage fallback
+      const db = loadDB();
+      if (!db.attendance) db.attendance = [];
+      const records = db.attendance.filter(a => a.student_id === studentId);
+      return records.map(a => {
+        const course = db.courses.find(c => c.id === a.course_id.toString());
+        return {
+          date: a.date,
+          courseTitle: course ? course.title : 'Psychology Course',
+          status: a.status
+        };
+      });
     },
 
     getEnrolledStudents: async function (courseId) {
@@ -857,11 +873,23 @@
             email: e.profiles.email
           }));
         } catch (e) {
-          console.error("Supabase getEnrolledStudents failed:", e);
-          return [];
+          console.error("Supabase getEnrolledStudents failed, falling back to LocalStorage:", e);
         }
       }
-      return [];
+      
+      // LocalStorage fallback
+      const db = loadDB();
+      if (!db.enrollments) db.enrollments = [];
+      if (!db.profiles) db.profiles = [];
+      const courseEnrollments = db.enrollments.filter(e => e.course_id === courseId.toString());
+      return courseEnrollments.map(e => {
+        const profile = db.profiles.find(p => p.id === e.student_id);
+        return {
+          id: e.student_id,
+          name: profile ? profile.full_name : 'Unknown Student',
+          email: profile ? profile.email : ''
+        };
+      });
     },
 
     getStudentEnrollments: async function (studentId) {
@@ -909,29 +937,29 @@
             };
           });
         } catch (e) {
-          console.error("Supabase getStudentEnrollments failed:", e);
-          return [];
+          console.error("Supabase getStudentEnrollments failed, falling back to LocalStorage:", e);
         }
-      } else {
-        const db = loadDB();
-        if (!db.enrollments) db.enrollments = [];
-        const studentEnrollments = db.enrollments.filter(e => e.student_id === studentId);
-        return studentEnrollments.map(e => {
-          const course = db.courses.find(c => c.id === e.course_id);
-          let batchDetails = null;
-          if (course && course.batches && e.batch_id) {
-            batchDetails = course.batches.find(b => b.id === e.batch_id);
-          }
-          return {
-            id: e.id,
-            courseId: e.course_id,
-            courseTitle: course ? course.title : 'Unknown Course',
-            courseDuration: course ? course.duration : 'N/A',
-            batch: batchDetails,
-            status: e.status
-          };
-        });
       }
+
+      // LocalStorage fallback
+      const db = loadDB();
+      if (!db.enrollments) db.enrollments = [];
+      const studentEnrollments = db.enrollments.filter(e => e.student_id === studentId);
+      return studentEnrollments.map(e => {
+        const course = db.courses.find(c => c.id === e.course_id);
+        let batchDetails = null;
+        if (course && course.batches && e.batch_id) {
+          batchDetails = course.batches.find(b => b.id === e.batch_id);
+        }
+        return {
+          id: e.id,
+          courseId: e.course_id,
+          courseTitle: course ? course.title : 'Unknown Course',
+          courseDuration: course ? course.duration : 'N/A',
+          batch: batchDetails,
+          status: e.status
+        };
+      });
     },
 
     saveAttendanceRecords: async function (records) {
