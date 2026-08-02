@@ -1077,84 +1077,88 @@
     },
 
     getStudentPayments: async function (studentId) {
-      let payments = [];
-      let loadedFromSupabase = false;
-
       if (supabaseClient) {
         try {
           const { data, error } = await supabaseClient
             .from('payments')
             .select('*')
-            .eq('student_id', studentId);
+            .eq('student_id', studentId)
+            .order('date', { ascending: false });
           if (error) throw error;
-          if (data && data.length > 0) {
-            payments = data;
-            loadedFromSupabase = true;
-          }
+          return (data || []).map(p => ({
+            id: p.id,
+            studentId: p.student_id,
+            courseId: p.course_id,
+            description: p.description,
+            amount: p.amount ? p.amount.toString() : '0',
+            status: p.status,
+            date: p.date || p.payment_date || new Date().toISOString(),
+            monthsCovered: p.months_covered,
+            yearCovered: p.year_covered
+          }));
         } catch (e) {
           console.error("Supabase getStudentPayments failed:", e);
         }
       }
       
-      if (!loadedFromSupabase) {
-        // Fallback to LocalStorage
-        const db = loadDB();
-        if (!db.payments) db.payments = [];
-        payments = db.payments.filter(p => p.student_id === studentId);
-      }
+      // LocalStorage fallback
+      const db = loadDB();
+      if (!db.payments) db.payments = [];
+      return db.payments
+        .filter(p => p.student_id === studentId)
+        .map(p => ({
+          id: p.id,
+          studentId: p.student_id,
+          courseId: p.course_id,
+          description: p.description,
+          amount: p.amount ? p.amount.toString() : '0',
+          status: p.status,
+          date: p.date,
+          monthsCovered: p.monthsCovered || p.months_covered,
+          yearCovered: p.yearCovered || p.year_covered
+        }));
+    },
 
-      // SELF-HEALING: If payments count is less than enrollments count, generate missing invoices!
-      try {
-        const enrollments = await this.getStudentEnrollments(studentId);
-        if (enrollments && enrollments.length > 0) {
-          const db = loadDB();
-          if (!db.payments) db.payments = [];
-          
-          let updated = false;
-          for (const e of enrollments) {
-            const invoiceDescription = e.courseTitle + ' Tuition Installment';
-            
-            // Check if there is already a payment matching this description
-            const hasPayment = payments.some(p => p.description === invoiceDescription);
-            if (!hasPayment) {
-              const newInvoice = {
-                id: 'pay-' + Date.now().toString() + Math.random().toString().substring(2, 6),
-                student_id: studentId,
-                description: invoiceDescription,
-                date: new Date().toISOString().split('T')[0],
-                amount: e.courseFees || '2500',
-                status: 'pending'
-              };
-              
-              db.payments.push(newInvoice);
-              payments.push(newInvoice);
-              updated = true;
-
-              // Also try to push to Supabase if live
-              if (supabaseClient) {
-                try {
-                  await supabaseClient
-                    .from('payments')
-                    .insert({
-                      student_id: studentId,
-                      description: newInvoice.description,
-                      date: newInvoice.date,
-                      amount: newInvoice.amount.toString(),
-                      status: 'pending'
-                    });
-                } catch (sErr) {}
-              }
-            }
-          }
-          if (updated) {
-            saveDB(db);
-          }
+    saveStudentPayment: async function (paymentRecord) {
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('payments')
+            .insert({
+              id: paymentRecord.id,
+              student_id: paymentRecord.studentId,
+              course_id: paymentRecord.courseId ? parseInt(paymentRecord.courseId) : null,
+              description: paymentRecord.description,
+              amount: paymentRecord.amount.toString(),
+              status: paymentRecord.status,
+              date: paymentRecord.date,
+              months_covered: paymentRecord.monthsCovered,
+              year_covered: paymentRecord.yearCovered
+            });
+          if (error) throw error;
+          return true;
+        } catch (e) {
+          console.error("Supabase saveStudentPayment failed:", e);
+          throw e;
         }
-      } catch (err) {
-        console.warn("Self-healing payments generation failed:", err);
       }
 
-      return payments;
+      // LocalStorage fallback
+      const db = loadDB();
+      if (!db.payments) db.payments = [];
+      db.payments.push({
+        id: paymentRecord.id,
+        student_id: paymentRecord.studentId,
+        course_id: paymentRecord.courseId ? paymentRecord.courseId.toString() : null,
+        description: paymentRecord.description,
+        amount: paymentRecord.amount,
+        status: paymentRecord.status,
+        date: paymentRecord.date,
+        monthsCovered: paymentRecord.monthsCovered,
+        yearCovered: paymentRecord.yearCovered
+      });
+      saveDB(db);
+      return true;
     },
 
     payInvoice: async function (invoiceId) {
@@ -1165,7 +1169,6 @@
             .update({ status: 'paid' })
             .eq('id', invoiceId);
           if (error) {
-            // Try to match by description if it is a local invoice ID not present in Supabase
             const db = loadDB();
             const invoice = db.payments.find(p => p.id === invoiceId);
             if (invoice) {

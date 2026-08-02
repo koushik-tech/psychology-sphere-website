@@ -1425,3 +1425,25 @@ footer a:hover {
   }
 }
 
+/* Switch toggle styles */
+.switch input:checked + .slider {
+  background-color: var(--primary-color) !important;
+}
+.switch input:focus + .slider {
+  box-shadow: 0 0 1px var(--primary-color);
+}
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+

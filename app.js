@@ -396,20 +396,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // 3. Pending balance card
+      // 3. Pending balance card (Total Enrolled Course Fees - Total Paid Fees)
       const pendingInvoiceEl = document.getElementById("student-pending-invoice");
       const pendingInvoiceDueEl = document.getElementById("student-pending-invoice-due");
       if (pendingInvoiceEl && pendingInvoiceDueEl) {
-        const pendingPayments = payments.filter(p => p.status === "pending");
-        if (pendingPayments.length === 0) {
+        const totalCourseFees = enrollments.reduce((acc, curr) => acc + parseFloat(curr.courseFees || 0), 0);
+        const paidPayments = payments.filter(p => p.status === "paid");
+        const totalPaidFees = paidPayments.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
+        
+        const pendingAmount = Math.max(0, totalCourseFees - totalPaidFees);
+        if (pendingAmount === 0) {
           pendingInvoiceEl.textContent = "₹ 0";
           pendingInvoiceEl.style.color = "#059669";
           pendingInvoiceDueEl.textContent = "No fees pending";
         } else {
-          const totalAmount = pendingPayments.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
-          pendingInvoiceEl.textContent = `₹ ${totalAmount.toLocaleString('en-IN')}`;
+          pendingInvoiceEl.textContent = `₹ ${pendingAmount.toLocaleString('en-IN')}`;
           pendingInvoiceEl.style.color = "#dc2626";
-          pendingInvoiceDueEl.textContent = "Due on 15th";
+          pendingInvoiceDueEl.textContent = "Outstanding Balance";
         }
       }
 
@@ -457,7 +460,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function renderStudentPayments() {
     const tbody = document.getElementById("student-payments-tbody");
-    if (!tbody) return;
+    const courseSel = document.getElementById("student-pay-course-sel");
+    const yearSel = document.getElementById("student-pay-year-sel");
+    const monthsGrid = document.getElementById("payment-months-grid");
+    const selectedMonthsCountEl = document.getElementById("selected-months-count");
+    const monthlyInstallmentEl = document.getElementById("payment-monthly-installment");
+    const calculatedTotalEl = document.getElementById("payment-calculated-total");
+    const autoPayToggle = document.getElementById("student-autopay-toggle");
+    const payBtn = document.getElementById("btn-pay-selected-fees");
+
+    if (!tbody || !courseSel || !yearSel || !monthsGrid) return;
 
     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Loading transaction records...</td></tr>`;
 
@@ -470,49 +482,211 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const payments = await window.AppDB.getStudentPayments(studentProfile.id);
-      if (payments.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">No transactions or payments found.</td></tr>`;
-        return;
+      // Fetch student enrollments and payment history
+      const [enrollments, payments] = await Promise.all([
+        window.AppDB.getStudentEnrollments(studentProfile.id),
+        window.AppDB.getStudentPayments(studentProfile.id)
+      ]);
+
+      // 1. Populate enrolled course dropdown options
+      if (!courseSel.dataset.bound) {
+        courseSel.dataset.bound = "true";
+        if (enrollments.length === 0) {
+          courseSel.innerHTML = `<option value="">No enrolled programs found</option>`;
+        } else {
+          courseSel.innerHTML = enrollments.map(e => `<option value="${e.courseId}" data-duration="${e.courseDuration}" data-fees="${e.courseFees}">${e.courseTitle}</option>`).join("");
+        }
+        
+        // Bind change listeners to re-render month checkboxes on course or year selection change
+        courseSel.addEventListener("change", updateMonthsAndLedger);
+        yearSel.addEventListener("change", updateMonthsAndLedger);
       }
 
-      tbody.innerHTML = "";
-      payments.forEach(p => {
-        const row = document.createElement("tr");
-        row.setAttribute("data-invoice-id", p.id);
-        
-        let actionBtn = "";
-        let statusBadge = "";
-        
-        if (p.status === "paid") {
-          statusBadge = `<span class="badge badge-success">Paid</span>`;
-          actionBtn = `<button class="btn btn-outline btn-sm" style="border-radius:20px; font-size:0.75rem;"><i data-lucide="download" style="width:12px;"></i> Receipt</button>`;
-        } else {
-          statusBadge = `<span class="badge badge-danger">Pending</span>`;
-          actionBtn = `<button class="btn btn-primary btn-sm btn-pay-fees-mock" data-id="${p.id}" style="border-radius:20px; font-size:0.75rem;">Pay Now</button>`;
+      // Local helper to update months checklist and calculations
+      function updateMonthsAndLedger() {
+        const courseId = courseSel.value;
+        const year = yearSel.value;
+        if (!courseId) {
+          monthsGrid.innerHTML = `<div style="grid-column: span 3; font-size:0.8rem; color:var(--text-secondary); text-align:center; padding:1rem;">Select a course to begin.</div>`;
+          return;
         }
 
-        row.innerHTML = `
-          <td style="font-weight:600;">${p.description}</td>
-          <td>${p.date}</td>
-          <td>₹ ${parseFloat(p.amount).toLocaleString('en-IN')}</td>
-          <td>${statusBadge}</td>
-          <td>${actionBtn}</td>
-        `;
-        tbody.appendChild(row);
-      });
+        const selectedCourseOption = courseSel.options[courseSel.selectedIndex];
+        const totalFees = parseFloat(selectedCourseOption.getAttribute("data-fees") || "0");
+        const durationStr = selectedCourseOption.getAttribute("data-duration") || "6 Months";
+        const durationMonths = durationStr.toLowerCase().includes("month") ? parseInt(durationStr) : 6;
+        const monthlyInstallment = Math.round(totalFees / (durationMonths || 6));
 
-      // Bind Pay Now buttons
-      tbody.querySelectorAll(".btn-pay-fees-mock").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const invoiceId = btn.getAttribute("data-id");
+        monthlyInstallmentEl.textContent = `₹ ${monthlyInstallment.toLocaleString('en-IN')}`;
+
+        // Get paid months for this course and year from payment history
+        const paidMonths = new Set();
+        payments.forEach(p => {
+          if (p.courseId && p.courseId.toString() === courseId.toString() && p.yearCovered === year.toString() && p.status === 'paid') {
+            if (p.monthsCovered) {
+              p.monthsCovered.split(",").forEach(m => paidMonths.add(m.trim()));
+            }
+          }
+        });
+
+        // Generate month checklist
+        const monthsList = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+
+        monthsGrid.innerHTML = "";
+        monthsList.forEach(month => {
+          const isPaid = paidMonths.has(month);
+          const wrapper = document.createElement("label");
+          wrapper.style.cssText = "display:flex; align-items:center; gap:0.35rem; font-size:0.75rem; border:1px solid var(--border-color); padding:0.35rem 0.5rem; border-radius:4px; cursor:pointer; background:#ffffff;";
+          if (isPaid) {
+            wrapper.style.background = "#e0f2fe";
+            wrapper.style.borderColor = "#bae6fd";
+            wrapper.style.cursor = "not-allowed";
+          }
+          
+          wrapper.innerHTML = `
+            <input type="checkbox" value="${month}" ${isPaid ? "checked disabled" : ""} class="payment-month-cb" style="margin:0; accent-color:#3b20a6;">
+            <div style="flex:1;">
+              <div style="font-weight:600; color:${isPaid ? "#0284c7" : "var(--text-primary)};">${month}</div>
+              <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:0.05rem;">${isPaid ? "Paid" : `₹ ${monthlyInstallment.toLocaleString('en-IN')}`}</div>
+            </div>
+          `;
+          monthsGrid.appendChild(wrapper);
+        });
+
+        // Add event listeners to active checkboxes to update counts and sums
+        monthsGrid.querySelectorAll(".payment-month-cb:not(:disabled)").forEach(cb => {
+          cb.addEventListener("change", recalculateFees);
+        });
+
+        recalculateFees();
+      }
+
+      function recalculateFees() {
+        const checkedCbs = monthsGrid.querySelectorAll(".payment-month-cb:checked:not(:disabled)");
+        const selectedCount = checkedCbs.length;
+
+        const selectedCourseOption = courseSel.options[courseSel.selectedIndex];
+        if (!selectedCourseOption) return;
+
+        const totalFees = parseFloat(selectedCourseOption.getAttribute("data-fees") || "0");
+        const durationStr = selectedCourseOption.getAttribute("data-duration") || "6 Months";
+        const durationMonths = durationStr.toLowerCase().includes("month") ? parseInt(durationStr) : 6;
+        const monthlyInstallment = Math.round(totalFees / (durationMonths || 6));
+        const totalDue = selectedCount * monthlyInstallment;
+
+        selectedMonthsCountEl.textContent = selectedCount;
+        calculatedTotalEl.textContent = `₹ ${totalDue.toLocaleString('en-IN')}`;
+
+        if (selectedCount > 0) {
+          payBtn.removeAttribute("disabled");
+        } else {
+          payBtn.setAttribute("disabled", "true");
+        }
+      }
+
+      // Initial run for the currently selected course
+      updateMonthsAndLedger();
+
+      // 2. Render payments ledger table body (transaction history)
+      if (payments.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding:2rem;">No transaction receipts found.</td></tr>`;
+      } else {
+        tbody.innerHTML = "";
+        payments.forEach(p => {
+          const row = document.createElement("tr");
+          row.style.borderBottom = "1px solid var(--border-color)";
+
+          // Format Date & Time beautifully
+          let formattedDateTime = "";
+          try {
+            const d = new Date(p.date);
+            if (!isNaN(d.getTime())) {
+              formattedDateTime = d.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+              });
+            } else {
+              formattedDateTime = p.date;
+            }
+          } catch (e) {
+            formattedDateTime = p.date;
+          }
+
+          // Try to resolve Course Program name from course ID or description
+          const matchingEnrollment = enrollments.find(e => e.courseId.toString() === (p.courseId || "").toString());
+          const courseTitle = matchingEnrollment ? matchingEnrollment.courseTitle : p.description.split(" Tuition")[0];
+
+          // Format Months range, e.g. July - September
+          let coverageText = "Tuition Fee";
+          if (p.monthsCovered) {
+            const monthsArr = p.monthsCovered.split(",").map(m => m.trim());
+            if (monthsArr.length === 1) {
+              coverageText = `${monthsArr[0]} ${p.yearCovered || ""}`;
+            } else if (monthsArr.length > 1) {
+              coverageText = `${monthsArr[0]} - ${monthsArr[monthsArr.length - 1]} ${p.yearCovered || ""}`;
+            }
+          }
+
+          row.innerHTML = `
+            <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-weight:500;">${formattedDateTime}</td>
+            <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-weight:600; color:var(--text-primary);">${courseTitle}</td>
+            <td style="padding:0.75rem 0.5rem; font-size:0.8rem;"><span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:600; border-radius:4px; font-size:0.75rem;">${coverageText}</span></td>
+            <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-weight:700; color:#15803d;">₹ ${parseFloat(p.amount || 0).toLocaleString('en-IN')}</td>
+            <td style="padding:0.75rem 0.5rem; font-size:0.8rem;">
+              <button class="btn btn-outline btn-sm btn-receipt-download" style="border-radius:20px; font-size:0.7rem; padding:2px 8px;" data-id="${p.id}">
+                <i data-lucide="download" style="width:10px; margin-right:2px;"></i> Receipt
+              </button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        // Bind Receipt buttons
+        tbody.querySelectorAll(".btn-receipt-download").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const rId = btn.getAttribute("data-id");
+            showToast(`Receipt PDF download generated for transaction ${rId}!`, "success");
+          });
+        });
+      }
+
+      // Bind Pay Fees Button Click
+      if (!payBtn.dataset.bound) {
+        payBtn.dataset.bound = "true";
+        payBtn.addEventListener("click", () => {
+          const checkedCbs = monthsGrid.querySelectorAll(".payment-month-cb:checked:not(:disabled)");
+          const monthsToPay = Array.from(checkedCbs).map(cb => cb.value);
+          const courseId = courseSel.value;
+          const year = yearSel.value;
+          const isAutoPay = autoPayToggle.checked;
+
+          const selectedCourseOption = courseSel.options[courseSel.selectedIndex];
+          const totalFees = parseFloat(selectedCourseOption.getAttribute("data-fees") || "0");
+          const durationStr = selectedCourseOption.getAttribute("data-duration") || "6 Months";
+          const durationMonths = durationStr.toLowerCase().includes("month") ? parseInt(durationStr) : 6;
+          const monthlyInstallment = Math.round(totalFees / (durationMonths || 6));
+          const totalDue = monthsToPay.length * monthlyInstallment;
+
+          // Prepare checkout modal details
           const checkoutModal = document.getElementById("checkout-modal");
           if (checkoutModal) {
-            checkoutModal.setAttribute("data-current-invoice-id", invoiceId);
+            checkoutModal.setAttribute("data-pay-course-id", courseId);
+            checkoutModal.setAttribute("data-pay-year", year);
+            checkoutModal.setAttribute("data-pay-months", monthsToPay.join(","));
+            checkoutModal.setAttribute("data-pay-amount", totalDue);
+            checkoutModal.setAttribute("data-pay-autopay", isAutoPay ? "true" : "false");
+            checkoutModal.setAttribute("data-current-invoice-id", "dynamic-fee-checkout");
             checkoutModal.classList.add("active");
           }
         });
-      });
+      }
 
       if (window.lucide) {
         window.lucide.createIcons();
@@ -536,6 +710,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (checkoutModal) {
       checkoutModal.classList.remove("active");
       checkoutModal.removeAttribute("data-current-invoice-id");
+      checkoutModal.removeAttribute("data-pay-course-id");
+      checkoutModal.removeAttribute("data-pay-year");
+      checkoutModal.removeAttribute("data-pay-months");
+      checkoutModal.removeAttribute("data-pay-amount");
+      checkoutModal.removeAttribute("data-pay-autopay");
     }
   };
 
@@ -555,13 +734,50 @@ document.addEventListener("DOMContentLoaded", () => {
       const checkoutModal = document.getElementById("checkout-modal");
       const invoiceId = checkoutModal ? checkoutModal.getAttribute("data-current-invoice-id") : null;
       
-      if (invoiceId) {
+      if (invoiceId === "dynamic-fee-checkout") {
+        try {
+          const studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
+          const courseId = checkoutModal.getAttribute("data-pay-course-id");
+          const year = checkoutModal.getAttribute("data-pay-year");
+          const monthsStr = checkoutModal.getAttribute("data-pay-months");
+          const amount = checkoutModal.getAttribute("data-pay-amount");
+          const isAutoPay = checkoutModal.getAttribute("data-pay-autopay") === "true";
+
+          const courses = await window.AppDB.getCourses();
+          const course = courses.find(c => c.id.toString() === courseId.toString());
+          const courseTitle = course ? course.title : "Psychology Program";
+
+          const paymentRecord = {
+            id: 'pay-' + Date.now().toString() + Math.random().toString().substring(2, 6),
+            studentId: studentProfile.id,
+            courseId: courseId,
+            description: `${courseTitle} Tuition Fee ${isAutoPay ? '(Auto-Pay Configured)' : ''}`,
+            amount: amount,
+            status: 'paid',
+            date: new Date().toISOString(),
+            monthsCovered: monthsStr,
+            yearCovered: year
+          };
+
+          const success = await window.AppDB.saveStudentPayment(paymentRecord);
+          if (success) {
+            showToast(`UPI Payment transaction verified! Receipt generated for ${monthsStr.split(',').join(', ')}.`, "success");
+            closeCheckoutModal();
+            await renderStudentPayments();
+            await renderStudentOverview();
+          } else {
+            showToast("Failed to complete transaction.", "error");
+          }
+        } catch (err) {
+          console.error("Payment confirmation failed:", err);
+          showToast("Payment failed. Please try again.", "error");
+        }
+      } else if (invoiceId) {
         try {
           const paid = await window.AppDB.payInvoice(invoiceId);
           if (paid) {
             showToast("UPI Payment transaction verified! Receipt generated.", "success");
             closeCheckoutModal();
-            // Re-render payments and overview tabs
             await renderStudentPayments();
             await renderStudentOverview();
           } else {
@@ -572,7 +788,6 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast("Payment failed. Please try again.", "error");
         }
       } else {
-        // Fallback for default hardcoded invoice pay now button if click triggered
         showToast("UPI Payment transaction verified!", "success");
         closeCheckoutModal();
       }
