@@ -1,6 +1,7 @@
 /* Psychology Sphere - Client Interactions & Mock Portals */
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Psychology Sphere App controller (v1.0.5) successfully loaded.");
   let loggedInUser = null;
 
   function generateUUID() {
