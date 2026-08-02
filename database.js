@@ -932,6 +932,7 @@
               courseId: e.courses.id,
               courseTitle: e.courses.title,
               courseDuration: e.courses.duration,
+              courseFees: e.courses.fees,
               batch: batchDetails,
               status: e.status
             };
@@ -956,6 +957,7 @@
           courseId: e.course_id,
           courseTitle: course ? course.title : 'Unknown Course',
           courseDuration: course ? course.duration : 'N/A',
+          courseFees: course ? course.fees : '0',
           batch: batchDetails,
           status: e.status
         };

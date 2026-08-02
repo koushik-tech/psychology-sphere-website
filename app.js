@@ -1111,10 +1111,28 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
           }
 
+          const feeVal = Number(e.courseFees);
+          const feeFormatted = isNaN(feeVal) ? e.courseFees : `₹ ${feeVal.toLocaleString("en-IN")}`;
+          const durationMonths = e.courseDuration.toLowerCase().includes("month") ? parseInt(e.courseDuration) : 6;
+          const installmentVal = isNaN(feeVal) ? 2500 : Math.round(feeVal / (durationMonths || 6));
+          const installmentFormatted = `₹ ${installmentVal.toLocaleString("en-IN")}/month`;
+
           card.innerHTML = `
             <span class="badge badge-primary" style="margin-bottom:0.75rem;">Active Program</span>
             <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">${e.courseTitle}</h3>
             <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.75rem;">Duration: ${e.courseDuration}</p>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; margin-bottom:0.75rem; font-size:0.75rem; background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:8px;">
+              <div>
+                <strong style="color:var(--text-secondary);">Total Program Fee</strong>
+                <div style="font-weight:700; color:#3b20a6; font-size:0.9rem; margin-top:0.15rem;">${feeFormatted}</div>
+              </div>
+              <div>
+                <strong style="color:var(--text-secondary);">Installment Plan</strong>
+                <div style="font-weight:700; color:#059669; font-size:0.9rem; margin-top:0.15rem;">${installmentFormatted}</div>
+              </div>
+            </div>
+
             <div style="background:#f8fafc; border:1px solid var(--border-color); padding:0.75rem; border-radius:8px; font-size:0.8rem;">
               <strong>Status:</strong> <span style="font-weight:600; color:#3b20a6;">${e.status.charAt(0).toUpperCase() + e.status.slice(1)}</span>
             </div>
