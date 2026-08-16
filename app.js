@@ -359,6 +359,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (tabId === "student-courses") {
       renderStudentCourses();
     }
+
+    if (tabId === "admin-payment-settings") {
+      renderAdminPaymentSettings();
+    }
     
     if (window.lucide) {
       window.lucide.createIcons();
@@ -520,12 +524,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         monthlyInstallmentEl.textContent = `₹ ${monthlyInstallment.toLocaleString('en-IN')}`;
 
-        // Get paid months for this course and year from payment history
+        // Get paid and pending verification months for this course and year from payment history
         const paidMonths = new Set();
+        const pendingVerifyMonths = new Set();
         payments.forEach(p => {
-          if (p.courseId && p.courseId.toString() === courseId.toString() && p.yearCovered === year.toString() && p.status === 'paid') {
-            if (p.monthsCovered) {
+          if (p.courseId && p.courseId.toString() === courseId.toString() && p.yearCovered === year.toString()) {
+            if (p.status === 'paid' && p.monthsCovered) {
               p.monthsCovered.split(",").forEach(m => paidMonths.add(m.trim()));
+            } else if (p.status === 'pending' && p.transactionId && p.monthsCovered) {
+              p.monthsCovered.split(",").forEach(m => pendingVerifyMonths.add(m.trim()));
             }
           }
         });
@@ -539,19 +546,29 @@ document.addEventListener("DOMContentLoaded", () => {
         monthsGrid.innerHTML = "";
         monthsList.forEach(month => {
           const isPaid = paidMonths.has(month);
+          const isPendingVerify = pendingVerifyMonths.has(month);
+          const isDisabled = isPaid || isPendingVerify;
           const wrapper = document.createElement("label");
-          wrapper.style.cssText = "display:flex; align-items:center; gap:0.35rem; font-size:0.75rem; border:1px solid var(--border-color); padding:0.35rem 0.5rem; border-radius:4px; cursor:pointer; background:#ffffff;";
+          wrapper.style.cssText = "display:flex; align-items:center; gap:0.35rem; font-size:0.75rem; border:1px solid var(--border-color); padding:0.35rem 0.5rem; border-radius:4px; cursor:pointer; background:#ffffff; transition: all 0.2s;";
+          
+          let subLabel = `₹ ${monthlyInstallment.toLocaleString('en-IN')}`;
           if (isPaid) {
-            wrapper.style.background = "#e0f2fe";
-            wrapper.style.borderColor = "#bae6fd";
+            wrapper.style.background = "#dcfce7";
+            wrapper.style.borderColor = "#bbf7d0";
             wrapper.style.cursor = "not-allowed";
+            subLabel = "Paid";
+          } else if (isPendingVerify) {
+            wrapper.style.background = "#fffbeb";
+            wrapper.style.borderColor = "#fef3c7";
+            wrapper.style.cursor = "not-allowed";
+            subLabel = "Under Verification";
           }
           
           wrapper.innerHTML = `
-            <input type="checkbox" value="${month}" ${isPaid ? "checked disabled" : ""} class="payment-month-cb" style="margin:0; accent-color:#3b20a6;">
+            <input type="checkbox" value="${month}" ${isDisabled ? "checked disabled" : ""} class="payment-month-cb" style="margin:0; accent-color:#3b20a6;">
             <div style="flex:1;">
-              <div style="font-weight:600; color:${isPaid ? "#0284c7" : "var(--text-primary)"};">${month}</div>
-              <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:0.05rem;">${isPaid ? "Paid" : `₹ ${monthlyInstallment.toLocaleString('en-IN')}`}</div>
+              <div style="font-weight:600; color:${isPaid ? "#166534" : (isPendingVerify ? "#d97706" : "var(--text-primary)")};">${month}</div>
+              <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:0.05rem;">${subLabel}</div>
             </div>
           `;
           monthsGrid.appendChild(wrapper);
@@ -635,15 +652,40 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           }
 
+          // Status & Action buttons
+          let statusBadge = "";
+          let actionButton = "";
+
+          if (p.status === "paid") {
+            statusBadge = `<span class="badge" style="background:#dcfce7; color:#15803d; font-weight:600; font-size:0.75rem; border-radius:4px; padding:2px 6px;">Paid</span>`;
+            actionButton = `
+              <button class="btn btn-outline btn-sm btn-receipt-download" style="border-radius:20px; font-size:0.7rem; padding:2px 8px; margin-left:0.5rem;" data-id="${p.id}">
+                <i data-lucide="download" style="width:10px; margin-right:2px;"></i> Receipt
+              </button>
+            `;
+          } else if (p.status === "pending" && p.transactionId) {
+            statusBadge = `<span class="badge" style="background:#fffbeb; color:#d97706; font-weight:600; font-size:0.75rem; border-radius:4px; padding:2px 6px;">Verifying</span>`;
+            actionButton = `<span style="font-size:0.7rem; color:#94a3b8; font-style:italic; margin-left:0.5rem;">Awaiting verification</span>`;
+          } else if (p.status === "failed") {
+            statusBadge = `<span class="badge" style="background:#fee2e2; color:#b91c1c; font-weight:600; font-size:0.75rem; border-radius:4px; padding:2px 6px;">Failed</span>`;
+            actionButton = `<span style="font-size:0.7rem; color:#ef4444; font-weight:600; margin-left:0.5rem;">Declined</span>`;
+          } else { // pending unpaid invoice
+            statusBadge = `<span class="badge" style="background:#ffedd5; color:#ea580c; font-weight:600; font-size:0.75rem; border-radius:4px; padding:2px 6px;">Pending</span>`;
+            actionButton = `
+              <button class="btn btn-sm btn-pay-pending-invoice" style="border-radius:20px; font-size:0.7rem; padding:2px 8px; margin-left:0.5rem; background:#3b20a6; color:white; border:none; cursor:pointer;" data-id="${p.id}" data-amount="${p.amount}" data-desc="${p.description}">
+                Pay Now
+              </button>
+            `;
+          }
+
           row.innerHTML = `
             <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-weight:500;">${formattedDateTime}</td>
             <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-weight:600; color:var(--text-primary);">${courseTitle}</td>
             <td style="padding:0.75rem 0.5rem; font-size:0.8rem;"><span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:600; border-radius:4px; font-size:0.75rem;">${coverageText}</span></td>
             <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-weight:700; color:#15803d;">₹ ${parseFloat(p.amount || 0).toLocaleString('en-IN')}</td>
-            <td style="padding:0.75rem 0.5rem; font-size:0.8rem;">
-              <button class="btn btn-outline btn-sm btn-receipt-download" style="border-radius:20px; font-size:0.7rem; padding:2px 8px;" data-id="${p.id}">
-                <i data-lucide="download" style="width:10px; margin-right:2px;"></i> Receipt
-              </button>
+            <td style="padding:0.75rem 0.5rem; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem;">
+              ${statusBadge}
+              ${actionButton}
             </td>
           `;
           tbody.appendChild(row);
@@ -654,6 +696,16 @@ document.addEventListener("DOMContentLoaded", () => {
           btn.addEventListener("click", () => {
             const rId = btn.getAttribute("data-id");
             showToast(`Receipt PDF download generated for transaction ${rId}!`, "success");
+          });
+        });
+
+        // Bind Pay Now buttons for pending invoices
+        tbody.querySelectorAll(".btn-pay-pending-invoice").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const invoiceId = btn.getAttribute("data-id");
+            const amount = btn.getAttribute("data-amount");
+            const desc = btn.getAttribute("data-desc");
+            setupAndOpenCheckout(invoiceId, amount, desc);
           });
         });
       }
@@ -675,17 +727,19 @@ document.addEventListener("DOMContentLoaded", () => {
           const monthlyInstallment = Math.round(totalFees / (durationMonths || 6));
           const totalDue = monthsToPay.length * monthlyInstallment;
 
-          // Prepare checkout modal details
-          const checkoutModal = document.getElementById("checkout-modal");
-          if (checkoutModal) {
-            checkoutModal.setAttribute("data-pay-course-id", courseId);
-            checkoutModal.setAttribute("data-pay-year", year);
-            checkoutModal.setAttribute("data-pay-months", monthsToPay.join(","));
-            checkoutModal.setAttribute("data-pay-amount", totalDue);
-            checkoutModal.setAttribute("data-pay-autopay", isAutoPay ? "true" : "false");
-            checkoutModal.setAttribute("data-current-invoice-id", "dynamic-fee-checkout");
-            checkoutModal.classList.add("active");
-          }
+          const courseTitle = selectedCourseOption.text.split(" (")[0];
+
+          setupAndOpenCheckout(
+            "dynamic-fee-checkout",
+            totalDue,
+            `${courseTitle} Tuition Fee`,
+            {
+              courseId,
+              year,
+              months: monthsToPay.join(","),
+              isAutoPay
+            }
+          );
         });
       }
 
@@ -700,11 +754,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- STUDENT MOCK INVOICE UPI PAYMENT ---
   const checkoutModal = document.getElementById("checkout-modal");
-  const payTriggerBtns = document.querySelectorAll(".btn-pay-fees-mock");
+  
+  const setupAndOpenCheckout = async (invoiceId, amount, description, details = {}) => {
+    const checkoutModal = document.getElementById("checkout-modal");
+    if (!checkoutModal) return;
 
-  const openCheckoutModal = (e) => {
-    if (e) e.preventDefault();
-    if (checkoutModal) checkoutModal.classList.add("active");
+    // Fetch active settings
+    const settings = await window.AppDB.getPaymentSettings();
+    const payeeName = settings.payee_name || "Psychology Sphere";
+    const upiId = settings.upi_id || "payment@psychologysphere";
+    const staticQrUrl = settings.static_qr_url || "";
+    const isTestMode = settings.test_mode === true;
+    const qrAmount = isTestMode ? "1" : amount;
+
+    // Set attributes
+    checkoutModal.setAttribute("data-current-invoice-id", invoiceId);
+    checkoutModal.setAttribute("data-pay-amount", amount);
+    if (details.courseId) checkoutModal.setAttribute("data-pay-course-id", details.courseId);
+    if (details.year) checkoutModal.setAttribute("data-pay-year", details.year);
+    if (details.months) checkoutModal.setAttribute("data-pay-months", details.months);
+    checkoutModal.setAttribute("data-pay-autopay", details.isAutoPay ? "true" : "false");
+
+    // Pre-fill UI
+    document.getElementById("checkout-amount").textContent = "₹ " + parseFloat(amount).toLocaleString('en-IN');
+    document.getElementById("checkout-payee-name").textContent = payeeName;
+    document.getElementById("checkout-payee-upi").textContent = upiId;
+    document.getElementById("checkout-utr-input").value = ""; // clear previous
+
+    const testModeBadge = document.getElementById("checkout-test-mode-badge");
+    if (testModeBadge) {
+      testModeBadge.style.display = isTestMode ? "inline-block" : "none";
+    }
+
+    const qrImg = document.getElementById("checkout-qr-img");
+    const qrPlaceholder = document.getElementById("checkout-qr-placeholder");
+
+    if (staticQrUrl && staticQrUrl.trim() !== "") {
+      // Display static QR image
+      const directLink = window.AppDB.getGoogleDriveDirectLink(staticQrUrl);
+      qrImg.src = directLink;
+      qrImg.style.display = "block";
+      if (qrPlaceholder) qrPlaceholder.style.display = "none";
+    } else {
+      // Generate dynamic QR code
+      const transactionNote = encodeURIComponent(`Fees_${description.replace(/\s+/g, '_')}`);
+      const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${qrAmount}&cu=INR&tn=${transactionNote}`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+      
+      qrImg.src = qrApiUrl;
+      qrImg.style.display = "block";
+      if (qrPlaceholder) qrPlaceholder.style.display = "none";
+    }
+
+    checkoutModal.classList.add("active");
   };
 
   const closeCheckoutModal = () => {
@@ -719,8 +821,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  payTriggerBtns.forEach(btn => btn.addEventListener("click", openCheckoutModal));
-
   if (checkoutModal) {
     checkoutModal.addEventListener("click", (e) => {
       if (e.target.closest("#checkout-modal-close") || e.target === checkoutModal) {
@@ -729,12 +829,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const mockPayBtn = document.getElementById("btn-mock-pay");
-  if (mockPayBtn) {
-    mockPayBtn.addEventListener("click", async () => {
+  const submitPaymentBtn = document.getElementById("btn-submit-payment");
+  if (submitPaymentBtn) {
+    submitPaymentBtn.addEventListener("click", async () => {
       const checkoutModal = document.getElementById("checkout-modal");
-      const invoiceId = checkoutModal ? checkoutModal.getAttribute("data-current-invoice-id") : null;
-      
+      if (!checkoutModal) return;
+
+      const invoiceId = checkoutModal.getAttribute("data-current-invoice-id");
+      const utrInput = document.getElementById("checkout-utr-input");
+      const utr = utrInput ? utrInput.value.trim() : "";
+
+      // Validate UTR (must be 12 digit numeric)
+      if (!/^\d{12}$/.test(utr)) {
+        showToast("Please enter a valid 12-digit UPI Transaction Ref (UTR) number.", "error");
+        return;
+      }
+
+      const settings = await window.AppDB.getPaymentSettings();
+      const status = settings.auto_approve ? "paid" : "pending";
+
       if (invoiceId === "dynamic-fee-checkout") {
         try {
           const studentProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
@@ -754,15 +867,20 @@ document.addEventListener("DOMContentLoaded", () => {
             courseId: courseId,
             description: `${courseTitle} Tuition Fee ${isAutoPay ? '(Auto-Pay Configured)' : ''}`,
             amount: amount,
-            status: 'paid',
+            status: status,
             date: new Date().toISOString(),
             monthsCovered: monthsStr,
-            yearCovered: year
+            yearCovered: year,
+            transactionId: utr
           };
 
           const success = await window.AppDB.saveStudentPayment(paymentRecord);
           if (success) {
-            showToast(`UPI Payment transaction verified! Receipt generated for ${monthsStr.split(',').join(', ')}.`, "success");
+            if (status === "paid") {
+              showToast(`UPI Payment verified! Receipt generated for ${monthsStr.split(',').join(', ')}.`, "success");
+            } else {
+              showToast(`Transaction UTR registered! Awaiting admin approval.`, "info");
+            }
             closeCheckoutModal();
             await renderStudentPayments();
             await renderStudentOverview();
@@ -775,9 +893,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } else if (invoiceId) {
         try {
-          const paid = await window.AppDB.payInvoice(invoiceId);
+          const paid = await window.AppDB.payInvoice(invoiceId, utr);
           if (paid) {
-            showToast("UPI Payment transaction verified! Receipt generated.", "success");
+            if (status === "paid") {
+              showToast("UPI Payment verified! Receipt generated.", "success");
+            } else {
+              showToast("Transaction UTR registered! Awaiting admin approval.", "info");
+            }
             closeCheckoutModal();
             await renderStudentPayments();
             await renderStudentOverview();
@@ -789,10 +911,211 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast("Payment failed. Please try again.", "error");
         }
       } else {
-        showToast("UPI Payment transaction verified!", "success");
+        showToast("Payment transaction submitted!", "success");
         closeCheckoutModal();
       }
     });
+  }
+
+  // --- ADMIN PAYMENT SETTINGS RENDERING & FORM HANDLING ---
+  async function renderAdminPaymentSettings() {
+    const form = document.getElementById("admin-payment-settings-form");
+    if (!form) return;
+
+    // Fetch active settings
+    const settings = await window.AppDB.getPaymentSettings();
+    
+    // Set inputs
+    document.getElementById("admin-pay-upi-id").value = settings.upi_id || "";
+    document.getElementById("admin-pay-payee-name").value = settings.payee_name || "";
+    document.getElementById("admin-pay-static-qr").value = settings.static_qr_url || "";
+    document.getElementById("admin-pay-auto-approve").checked = settings.auto_approve !== false;
+    document.getElementById("admin-pay-test-mode").checked = settings.test_mode === true;
+
+    // Update Live Preview QR Code
+    updateAdminPreviewQR();
+
+    // Render pending payment approval ledger
+    await renderAdminPendingPaymentsList();
+
+    // Setup live preview change triggers
+    const inputs = ["admin-pay-upi-id", "admin-pay-payee-name", "admin-pay-static-qr"];
+    inputs.forEach(id => {
+      const input = document.getElementById(id);
+      if (input) {
+        input.oninput = null;
+        input.oninput = updateAdminPreviewQR;
+      }
+    });
+
+    const checkboxes = ["admin-pay-test-mode", "admin-pay-auto-approve"];
+    checkboxes.forEach(id => {
+      const input = document.getElementById(id);
+      if (input) {
+        input.onchange = null;
+        input.onchange = updateAdminPreviewQR;
+      }
+    });
+  }
+
+  function updateAdminPreviewQR() {
+    const upiId = document.getElementById("admin-pay-upi-id").value.trim();
+    const payeeName = document.getElementById("admin-pay-payee-name").value.trim();
+    const staticQrUrl = document.getElementById("admin-pay-static-qr").value.trim();
+    const testMode = document.getElementById("admin-pay-test-mode").checked;
+
+    const previewName = payeeName || "Psychology Sphere";
+    const previewUpi = upiId || "payment@psychologysphere";
+    const previewAmount = testMode ? "1" : "2500";
+
+    document.getElementById("admin-preview-payee-tag").textContent = previewName;
+    document.getElementById("admin-preview-upi-tag").textContent = previewUpi;
+
+    // Update the visual amount label in preview card
+    const previewContainer = document.getElementById("admin-preview-qr-container");
+    if (previewContainer && previewContainer.parentElement) {
+      const amountTag = previewContainer.parentElement.querySelector("span:last-child");
+      if (amountTag) {
+        amountTag.textContent = "₹ " + parseFloat(previewAmount).toLocaleString('en-IN');
+      }
+    }
+
+    const qrImg = document.getElementById("admin-preview-qr-img");
+    const qrIcon = document.getElementById("admin-preview-qr-icon");
+
+    if (staticQrUrl) {
+      const directLink = window.AppDB.getGoogleDriveDirectLink(staticQrUrl);
+      qrImg.src = directLink;
+      qrImg.style.display = "block";
+      if (qrIcon) qrIcon.style.display = "none";
+    } else {
+      const upiUrl = `upi://pay?pa=${previewUpi}&pn=${encodeURIComponent(previewName)}&am=${previewAmount}&cu=INR&tn=Preview`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+      
+      qrImg.src = qrApiUrl;
+      qrImg.style.display = "block";
+      if (qrIcon) qrIcon.style.display = "none";
+    }
+  }
+
+  const settingsForm = document.getElementById("admin-payment-settings-form");
+  if (settingsForm) {
+    settingsForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const upiId = document.getElementById("admin-pay-upi-id").value.trim();
+      const payeeName = document.getElementById("admin-pay-payee-name").value.trim();
+      const staticQrUrl = document.getElementById("admin-pay-static-qr").value.trim();
+      const autoApprove = document.getElementById("admin-pay-auto-approve").checked;
+      const testMode = document.getElementById("admin-pay-test-mode").checked;
+
+      const success = await window.AppDB.savePaymentSettings({
+        upi_id: upiId,
+        payee_name: payeeName,
+        static_qr_url: staticQrUrl,
+        auto_approve: autoApprove,
+        test_mode: testMode
+      });
+
+      if (success) {
+        showToast("UPI settings updated successfully!", "success");
+        updateAdminPreviewQR();
+      } else {
+        showToast("Failed to save configurations.", "error");
+      }
+    });
+  }
+
+  async function renderAdminPendingPaymentsList() {
+    const tbody = document.getElementById("admin-pending-payments-tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-secondary);">Loading pending verifications...</td></tr>`;
+
+    try {
+      const payments = await window.AppDB.getAllPayments();
+      const pending = payments.filter(p => p.status === "pending" && p.transactionId);
+
+      if (pending.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center; padding:2rem; color:var(--text-secondary);">No payments pending verification.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = "";
+      pending.forEach(p => {
+        const row = document.createElement("tr");
+        row.style.borderBottom = "1px solid var(--border-color)";
+
+        let formattedDate = p.date;
+        try {
+          const d = new Date(p.date);
+          if (!isNaN(d.getTime())) {
+            formattedDate = d.toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            }) + " " + d.toLocaleTimeString('en-IN', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          }
+        } catch (e) {}
+
+        row.innerHTML = `
+          <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-weight:600; color:var(--text-primary);">${p.studentName}</td>
+          <td style="padding:0.75rem 0.5rem; font-size:0.8rem;">${p.description}</td>
+          <td style="padding:0.75rem 0.5rem; font-size:0.8rem; color:var(--text-secondary);">${formattedDate}</td>
+          <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-weight:700; color:#15803d;">₹ ${parseFloat(p.amount || 0).toLocaleString('en-IN')}</td>
+          <td style="padding:0.75rem 0.5rem; font-size:0.8rem; font-family:monospace; font-weight:700; color:#2563eb;">${p.transactionId || "N/A"}</td>
+          <td style="padding:0.75rem 0.5rem; font-size:0.8rem; text-align:center; display:flex; gap:0.5rem; justify-content:center;">
+            <button class="btn btn-sm btn-approve-pay" data-id="${p.id}" style="background:#10b981; color:white; border:none; padding:4px 10px; border-radius:4px; font-weight:700; cursor:pointer;">
+              Approve
+            </button>
+            <button class="btn btn-sm btn-reject-pay" data-id="${p.id}" style="background:#ef4444; color:white; border:none; padding:4px 10px; border-radius:4px; font-weight:700; cursor:pointer;">
+              Reject
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      // Bind action buttons
+      tbody.querySelectorAll(".btn-approve-pay").forEach(btn => {
+        btn.onclick = async () => {
+          const pId = btn.getAttribute("data-id");
+          const success = await window.AppDB.approvePayment(pId);
+          if (success) {
+            showToast("Payment transaction approved successfully!", "success");
+            await renderAdminPaymentSettings();
+          } else {
+            showToast("Failed to approve payment.", "error");
+          }
+        };
+      });
+
+      tbody.querySelectorAll(".btn-reject-pay").forEach(btn => {
+        btn.onclick = async () => {
+          if (confirm("Are you sure you want to reject this payment record?")) {
+            const pId = btn.getAttribute("data-id");
+            const success = await window.AppDB.rejectPayment(pId);
+            if (success) {
+              showToast("Payment transaction rejected.", "warning");
+              await renderAdminPaymentSettings();
+            } else {
+              showToast("Failed to reject payment.", "error");
+            }
+          }
+        };
+      });
+
+    } catch (e) {
+      console.error("Failed to render pending payments:", e);
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444;">Error loading pending verifications.</td></tr>`;
+    }
   }
 
   // --- FACULTY LIVE ATTENDANCE LOADING & REGISTERING ---
@@ -1690,6 +2013,46 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="db-input-group">
               <input type="text" class="db-link-input" placeholder="Paste Google Drive image link" value="${val || ''}">
               <button class="db-save-btn" data-key="${key}"><i data-lucide="save" style="width:14px; height:14px;"></i> Save</button>
+            </div>
+          </div>
+        `;
+        
+        explorer.appendChild(card);
+      });
+    } else if (tableName === "payments") {
+      const payments = await window.AppDB.getAllPayments();
+      payments.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "db-row-card";
+        
+        let statusColor = "#ea580c";
+        if (p.status === "paid") statusColor = "#166534";
+        if (p.status === "failed") statusColor = "#b91c1c";
+
+        let formattedDate = p.date;
+        try {
+          const d = new Date(p.date);
+          if (!isNaN(d.getTime())) {
+            formattedDate = d.toLocaleString('en-IN');
+          }
+        } catch (e) {}
+
+        card.innerHTML = `
+          <div class="db-preview-container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f8fafc; font-size:1.4rem; font-weight:800; color:${statusColor}; text-align:center; padding:1rem;">
+            ₹ ${parseFloat(p.amount || 0).toLocaleString('en-IN')}
+            <span style="font-size:0.65rem; font-weight:600; text-transform:uppercase; margin-top:0.25rem; color:${statusColor}; background:${p.status==='paid'?'#dcfce7':(p.status==='failed'?'#fee2e2':'#ffedd5')}; padding:2px 8px; border-radius:10px;">${p.status}</span>
+          </div>
+          <div class="db-row-details">
+            <div class="db-row-title" style="font-size:0.95rem;">${p.description}</div>
+            <div class="db-row-meta" style="margin-top:0.35rem;">
+              <strong>Student Name:</strong> ${p.studentName}<br>
+              <strong>UTR No:</strong> <code style="color:#2563eb; font-weight:bold;">${p.transactionId || 'None'}</code>
+            </div>
+            <div class="db-row-meta" style="margin-top:0.25rem;">
+              <strong>Date & Time:</strong> ${formattedDate}
+            </div>
+            <div style="margin-top:0.5rem; font-size:0.7rem; color:var(--text-secondary);">
+              Payment ID: <code>${p.id}</code>
             </div>
           </div>
         `;

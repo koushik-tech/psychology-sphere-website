@@ -388,6 +388,7 @@
           <li><a href="#" class="sidebar-link" data-tab="admin-courses"><i data-lucide="book-open"></i> Manage Courses</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-notices"><i data-lucide="megaphone"></i> Broadcast Notices</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-db"><i data-lucide="database"></i> Database Manager</a></li>
+          <li><a href="#" class="sidebar-link" data-tab="admin-payment-settings"><i data-lucide="settings"></i> Payment Settings</a></li>
         </ul>
 
         <div class="sidebar-footer-rewrite">
@@ -870,6 +871,7 @@
                   <button class="btn db-tab-btn active" data-table="courses" style="background:transparent; border:none; border-bottom:2px solid var(--primary-color); border-radius:0; padding:0.5rem 1rem; font-size:0.85rem; color:var(--primary-color); font-weight:700;">Courses Table</button>
                   <button class="btn db-tab-btn" data-table="faculty" style="background:transparent; border:none; border-bottom:2px solid transparent; border-radius:0; padding:0.5rem 1rem; font-size:0.85rem; color:var(--text-secondary); font-weight:500;">Faculty Table</button>
                   <button class="btn db-tab-btn" data-table="assets" style="background:transparent; border:none; border-bottom:2px solid transparent; border-radius:0; padding:0.5rem 1rem; font-size:0.85rem; color:var(--text-secondary); font-weight:500;">Site Assets Table</button>
+                  <button class="btn db-tab-btn" data-table="payments" style="background:transparent; border:none; border-bottom:2px solid transparent; border-radius:0; padding:0.5rem 1rem; font-size:0.85rem; color:var(--text-secondary); font-weight:500;">Payments Table</button>
                 </div>
                 
                 <!-- Helper Instructions Banner -->
@@ -891,6 +893,111 @@
                 <div id="db-table-explorer">
                   <!-- Dynamically populated rows by JS -->
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin Payment Settings Tab Panel -->
+          <div class="dashboard-tab-view" id="admin-payment-settings-tab" style="display:none;">
+            <div class="payment-grid-layout" style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; text-align:left; align-items:start; margin-bottom:2rem;">
+              
+              <!-- Left Column: Payment Config -->
+              <div class="card" style="padding:1.75rem; display:flex; flex-direction:column; gap:1.25rem;">
+                <h3 style="font-size:1.25rem; font-weight:700; color:var(--primary-color); display:flex; align-items:center; gap:0.5rem; margin:0;">
+                  <i data-lucide="settings"></i> UPI Gateway Settings
+                </h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">Configure the UPI payment coordinates that will be presented to students on checkout.</p>
+                
+                <form id="admin-payment-settings-form" style="display:flex; flex-direction:column; gap:1.25rem;">
+                  <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <label for="admin-pay-upi-id" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">Payee UPI ID (VPA)</label>
+                    <input type="text" id="admin-pay-upi-id" class="form-control" placeholder="e.g. yourname@okaxis" required style="width:100%;">
+                  </div>
+                  
+                  <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <label for="admin-pay-payee-name" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">Payee Merchant Name</label>
+                    <input type="text" id="admin-pay-payee-name" class="form-control" placeholder="e.g. Psychology Sphere" required style="width:100%;">
+                  </div>
+
+                  <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <label for="admin-pay-static-qr" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">Custom QR Code Image URL (Optional)</label>
+                    <input type="url" id="admin-pay-static-qr" class="form-control" placeholder="Optional Google Drive or image URL" style="width:100%;">
+                    <span style="font-size:0.7rem; color:var(--text-secondary);">If blank, a dynamic transaction-specific QR code will be generated automatically.</span>
+                  </div>
+
+                  <!-- Auto-Approve Switch -->
+                  <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0; border-top:1px solid var(--border-color);">
+                    <div style="display:flex; flex-direction:column; gap:0.15rem;">
+                      <span style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">Instant Auto-Approve Payments</span>
+                      <span style="font-size:0.7rem; color:var(--text-secondary);">Directly mark payments as paid on student submission</span>
+                    </div>
+                    <label class="switch" style="position:relative; display:inline-block; width:44px; height:24px; margin:0;">
+                      <input type="checkbox" id="admin-pay-auto-approve" style="opacity:0; width:0; height:0;">
+                      <span class="slider" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:.4s; border-radius:24px;"></span>
+                    </label>
+                  </div>
+
+                  <!-- Test Mode Switch -->
+                  <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0; border-top:1px solid var(--border-color); border-bottom:1px solid var(--border-color);">
+                    <div style="display:flex; flex-direction:column; gap:0.15rem;">
+                      <span style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">Enable ₹1 Test Mode</span>
+                      <span style="font-size:0.7rem; color:var(--text-secondary);">Force generated UPI QR payments to exactly ₹1 for testing</span>
+                    </div>
+                    <label class="switch" style="position:relative; display:inline-block; width:44px; height:24px; margin:0;">
+                      <input type="checkbox" id="admin-pay-test-mode" style="opacity:0; width:0; height:0;">
+                      <span class="slider" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:.4s; border-radius:24px;"></span>
+                    </label>
+                  </div>
+                  
+                  <button type="submit" class="btn btn-primary" style="width:100%; padding:0.75rem; border-radius:8px; font-weight:700;">
+                    Save Payment Configurations
+                  </button>
+                </form>
+              </div>
+              
+              <!-- Right Column: QR Code Preview -->
+              <div class="card" style="padding:1.75rem; display:flex; flex-direction:column; gap:1.25rem; align-items:center; text-align:center; min-height:350px;">
+                <h3 style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin:0;">Student QR Code Preview</h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">This is how the scannable payment QR code will appear during checkout (simulated for a ₹2,500 monthly fee).</p>
+                
+                <div style="background:#f8fafc; border:1px dashed #cbd5e1; padding:1.5rem; border-radius:12px; display:flex; flex-direction:column; align-items:center; width:100%; max-width:260px; margin:1rem auto 0;">
+                  <div id="admin-preview-qr-container" style="width:160px; height:160px; background:white; padding:0.5rem; border-radius:8px; border:1px solid #e2e8f0; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:1rem; position:relative;">
+                    <!-- Live Dynamic Preview Img or Placeholder -->
+                    <img id="admin-preview-qr-img" src="" alt="QR Code Preview" style="width:100%; height:100%; object-fit:contain; display:none;">
+                    <i id="admin-preview-qr-icon" data-lucide="qr-code" style="width:110px; height:110px; color:#94a3b8;"></i>
+                  </div>
+                  <span id="admin-preview-payee-tag" style="font-size:0.85rem; font-weight:700; color:var(--text-primary);">Psychology Sphere</span>
+                  <span id="admin-preview-upi-tag" style="font-size:0.75rem; color:#64748b; margin-top:0.15rem; word-break:break-all;">payment@psychologysphere</span>
+                  <span style="font-size:1.15rem; font-weight:800; color:#15803d; margin-top:0.75rem;">₹ 2,500</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Table: Pending Approvals -->
+            <div class="card" style="padding:1.75rem; text-align:left;">
+              <h3 style="font-size:1.25rem; font-weight:700; color:var(--primary-color); display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem; margin-top:0;">
+                <i data-lucide="check-square"></i> Student Payment Verification Desk
+              </h3>
+              <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.5rem;">Verify transactions submitted by students using direct UPI QR code scanning.</p>
+              
+              <div class="table-container-rewrite" style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;" id="admin-pending-payments-table">
+                  <thead>
+                    <tr>
+                      <th style="font-size:0.8rem; padding:0.75rem 0.5rem;">Student Name</th>
+                      <th style="font-size:0.8rem; padding:0.75rem 0.5rem;">Billing Description</th>
+                      <th style="font-size:0.8rem; padding:0.75rem 0.5rem;">Transaction Date</th>
+                      <th style="font-size:0.8rem; padding:0.75rem 0.5rem;">Amount Due</th>
+                      <th style="font-size:0.8rem; padding:0.75rem 0.5rem;">UPI Ref (UTR) No.</th>
+                      <th style="font-size:0.8rem; padding:0.75rem 0.5rem; text-align:center;">Action Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-pending-payments-tbody">
+                    <tr>
+                      <td colspan="6" style="text-align:center; padding:2rem; color:var(--text-secondary);">No payments pending verification.</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -1033,20 +1140,31 @@
     <div class="modal-box" style="max-width: 440px;">
       <i data-lucide="x" class="modal-close" id="checkout-modal-close"></i>
       <h3>Secure Student Checkout</h3>
-      <p style="margin-bottom:1.5rem; font-size:0.85rem; color:#64748b;">UPI payments cleared instantly in mock mode.</p>
+      <p style="margin-bottom:1.25rem; font-size:0.85rem; color:#64748b;">Scan the QR code below and enter your UPI Transaction Ref (UTR) number to clear the tuition fees.</p>
       
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:1rem; border-radius:8px; text-align:center; margin-bottom:1.5rem;">
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:1rem; border-radius:8px; text-align:center; margin-bottom:1.25rem; display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <span style="font-size:0.85rem; color:#64748b;">Tuition Balance Due</span>
-        <h2 style="color:#3b20a6; margin-top:0.25rem;">₹ 2,500</h2>
+        <h2 id="checkout-amount" style="color:#3b20a6; margin-top:0.25rem; font-weight:800; margin-bottom:0;">₹ 0</h2>
+        <span id="checkout-test-mode-badge" style="display:none; font-size:0.7rem; font-weight:700; color:#b91c1c; background:#fee2e2; padding:2px 8px; border-radius:12px; margin-top:0.35rem;">₹1 Test Mode Active</span>
       </div>
 
-      <div style="text-align:center; padding:1.25rem; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; margin-bottom:1.5rem;">
-        <p style="font-size:0.8rem; margin-bottom:1rem; color:#64748b; font-weight:600;">Scan with GPay, PhonePe, or Paytm</p>
-        <div style="width:130px; height:130px; background:white; margin:0 auto; padding:0.5rem; border-radius:8px; display:flex; align-items:center; justify-content:center; border:1px solid #e2e8f0;">
-          <i data-lucide="qr-code" style="width:110px; height:110px; color:black;"></i>
+      <div style="text-align:center; padding:1.25rem; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; margin-bottom:1.25rem; display:flex; flex-direction:column; align-items:center;">
+        <p style="font-size:0.8rem; margin-bottom:0.75rem; color:#64748b; font-weight:600;">Scan with GPay, PhonePe, Paytm, or BHIM</p>
+        <div style="width:160px; height:160px; background:white; margin:0 auto; padding:0.5rem; border-radius:8px; display:flex; align-items:center; justify-content:center; border:1px solid #e2e8f0; overflow:hidden; position:relative;">
+          <img id="checkout-qr-img" src="" alt="UPI QR Code" style="width:100%; height:100%; object-fit:contain; display:none;">
+          <i id="checkout-qr-placeholder" data-lucide="qr-code" style="width:110px; height:110px; color:#94a3b8;"></i>
         </div>
+        <p id="checkout-payee-name" style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin:0.55rem 0 0.15rem;"></p>
+        <p id="checkout-payee-upi" style="font-size:0.75rem; color:#64748b; margin:0; word-break:break-all; font-family:monospace;"></p>
       </div>
-      <button class="btn btn-primary" id="btn-mock-pay" style="width:100%; border-radius:30px; background-color:#3b20a6;">Simulate UPI Payment Success</button>
+
+      <div style="display:flex; flex-direction:column; gap:0.4rem; text-align:left; margin-bottom:1.25rem;">
+        <label for="checkout-utr-input" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">Enter 12-Digit UPI Transaction ID / UTR No.</label>
+        <input type="text" id="checkout-utr-input" class="form-control" placeholder="e.g. 621430958172" required maxlength="12" style="width:100%; padding:0.6rem 0.75rem; border-radius:6px; border:1px solid var(--border-color);">
+        <span style="font-size:0.7rem; color:var(--text-secondary);">Find the UTR number in your payment transaction receipt.</span>
+      </div>
+
+      <button class="btn btn-primary" id="btn-submit-payment" style="width:100%; border-radius:30px; background-color:#3b20a6; padding:0.75rem; font-weight:700;">Submit & Verify Payment</button>
     </div>
   </div>
 

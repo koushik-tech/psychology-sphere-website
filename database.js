@@ -324,7 +324,14 @@
         amount: '1200',
         status: 'paid'
       }
-    ]
+    ],
+    payment_settings: {
+      upi_id: 'payment@psychologysphere',
+      payee_name: 'Psychology Sphere',
+      static_qr_url: '',
+      auto_approve: true,
+      test_mode: false
+    }
   };
 
   // LocalStorage fallback utilities
@@ -337,7 +344,7 @@
       }
       const data = JSON.parse(raw);
       // Ensure all keys exist
-      if (!data.courses || !data.faculty || !data.assets || !data.profiles || !data.enrollments || !data.attendance || !data.payments) {
+      if (!data.courses || !data.faculty || !data.assets || !data.profiles || !data.enrollments || !data.attendance || !data.payments || !data.payment_settings) {
         const merged = Object.assign({}, defaultDB, data);
         saveDB(merged);
         return merged;
@@ -1120,6 +1127,7 @@
     },
 
     saveStudentPayment: async function (paymentRecord) {
+      const description = paymentRecord.description + (paymentRecord.transactionId ? ' (UTR: ' + paymentRecord.transactionId + ')' : '');
       if (supabaseClient) {
         try {
           const { error } = await supabaseClient
@@ -1128,7 +1136,7 @@
               id: paymentRecord.id,
               student_id: paymentRecord.studentId,
               course_id: paymentRecord.courseId ? parseInt(paymentRecord.courseId) : null,
-              description: paymentRecord.description,
+              description: description,
               amount: paymentRecord.amount.toString(),
               status: paymentRecord.status,
               date: paymentRecord.date,
@@ -1150,45 +1158,229 @@
         id: paymentRecord.id,
         student_id: paymentRecord.studentId,
         course_id: paymentRecord.courseId ? paymentRecord.courseId.toString() : null,
-        description: paymentRecord.description,
+        description: description,
         amount: paymentRecord.amount,
         status: paymentRecord.status,
         date: paymentRecord.date,
         monthsCovered: paymentRecord.monthsCovered,
-        yearCovered: paymentRecord.yearCovered
+        yearCovered: paymentRecord.yearCovered,
+        transactionId: paymentRecord.transactionId || null
       });
       saveDB(db);
       return true;
     },
 
-    payInvoice: async function (invoiceId) {
+    payInvoice: async function (invoiceId, transactionId) {
+      const db = loadDB();
+      if (!db.payments) db.payments = [];
+      const invoice = db.payments.find(p => p.id === invoiceId);
+      
+      let status = 'paid';
+      if (db.payment_settings && db.payment_settings.auto_approve === false) {
+        status = 'pending';
+      }
+
+      const descriptionSuffix = transactionId ? ' (UTR: ' + transactionId + ')' : '';
+      const updatedDescription = invoice ? (invoice.description + descriptionSuffix) : undefined;
+
       if (supabaseClient) {
         try {
+          const updateObj = { status: status };
+          if (updatedDescription) {
+            updateObj.description = updatedDescription;
+          }
           const { error } = await supabaseClient
             .from('payments')
-            .update({ status: 'paid' })
+            .update(updateObj)
             .eq('id', invoiceId);
-          if (error) {
-            const db = loadDB();
-            const invoice = db.payments.find(p => p.id === invoiceId);
-            if (invoice) {
-              await supabaseClient
-                .from('payments')
-                .update({ status: 'paid' })
-                .eq('student_id', invoice.student_id)
-                .eq('description', invoice.description);
-            }
+          if (error && invoice) {
+            await supabaseClient
+              .from('payments')
+              .update(updateObj)
+              .eq('student_id', invoice.student_id)
+              .eq('description', invoice.description);
           }
         } catch (e) {
           console.error("Supabase payInvoice failed:", e);
         }
       }
 
-      const db = loadDB();
-      if (!db.payments) db.payments = [];
-      const invoice = db.payments.find(p => p.id === invoiceId);
       if (invoice) {
-        invoice.status = 'paid';
+        invoice.status = status;
+        invoice.transactionId = transactionId || null;
+        if (updatedDescription) {
+          invoice.description = updatedDescription;
+        }
+        saveDB(db);
+        return true;
+      }
+      return false;
+    },
+
+    getPaymentSettings: async function () {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('payment_settings')
+            .select('*')
+            .limit(1)
+            .single();
+          if (!error && data) {
+            return {
+              upi_id: data.upi_id,
+              payee_name: data.payee_name,
+              static_qr_url: data.static_qr_url,
+              auto_approve: data.auto_approve,
+              test_mode: data.test_mode
+            };
+          }
+        } catch (e) {
+          console.warn("Supabase getPaymentSettings failed, using LocalStorage:", e);
+        }
+      }
+      const db = loadDB();
+      if (!db.payment_settings) {
+        db.payment_settings = {
+          upi_id: 'payment@psychologysphere',
+          payee_name: 'Psychology Sphere',
+          static_qr_url: '',
+          auto_approve: true,
+          test_mode: false
+        };
+        saveDB(db);
+      }
+      return db.payment_settings;
+    },
+
+    savePaymentSettings: async function (settings) {
+      if (supabaseClient) {
+        try {
+          await supabaseClient
+            .from('payment_settings')
+            .upsert({
+              id: 1,
+              upi_id: settings.upi_id,
+              payee_name: settings.payee_name,
+              static_qr_url: settings.static_qr_url,
+              auto_approve: settings.auto_approve,
+              test_mode: settings.test_mode,
+              updated_at: new Date().toISOString()
+            });
+        } catch (e) {
+          console.error("Supabase savePaymentSettings failed:", e);
+        }
+      }
+      const db = loadDB();
+      db.payment_settings = {
+        upi_id: settings.upi_id,
+        payee_name: settings.payee_name,
+        static_qr_url: settings.static_qr_url || '',
+        auto_approve: settings.auto_approve !== false,
+        test_mode: settings.test_mode === true
+      };
+      saveDB(db);
+      return true;
+    },
+
+    getAllPayments: async function () {
+      if (supabaseClient) {
+        try {
+          // Fetch payments
+          const { data: paymentsData, error: payErr } = await supabaseClient
+            .from('payments')
+            .select('*')
+            .order('date', { ascending: false });
+          if (payErr) throw payErr;
+
+          // Fetch student profiles
+          const { data: profilesData, error: profErr } = await supabaseClient
+            .from('profiles')
+            .select('id, full_name')
+            .eq('role', 'student');
+          
+          const profileMap = {};
+          if (!profErr && profilesData) {
+            profilesData.forEach(p => {
+              profileMap[p.id] = p.full_name;
+            });
+          }
+
+          if (paymentsData) {
+            return paymentsData.map(p => ({
+              id: p.id,
+              studentId: p.student_id,
+              studentName: profileMap[p.student_id] || 'Unknown Student',
+              courseId: p.course_id,
+              description: p.description,
+              amount: p.amount ? p.amount.toString() : '0',
+              status: p.status,
+              date: p.date,
+              monthsCovered: p.months_covered,
+              yearCovered: p.year_covered,
+              transactionId: p.transaction_id || (p.description && p.description.includes('(UTR: ') ? p.description.split('(UTR: ')[1].replace(')', '') : null)
+            }));
+          }
+        } catch (e) {
+          console.warn("Supabase getAllPayments failed, falling back to LocalStorage:", e);
+        }
+      }
+      const db = loadDB();
+      const payments = db.payments || [];
+      const profiles = db.profiles || [];
+      return payments.map(p => {
+        const student = profiles.find(pr => pr.id === p.student_id);
+        return {
+          id: p.id,
+          studentId: p.student_id,
+          studentName: student ? student.full_name : 'Unknown Student',
+          courseId: p.course_id,
+          description: p.description,
+          amount: p.amount,
+          status: p.status,
+          date: p.date,
+          monthsCovered: p.monthsCovered,
+          yearCovered: p.yearCovered,
+          transactionId: p.transactionId || (p.description && p.description.includes('(UTR: ') ? p.description.split('(UTR: ')[1].replace(')', '') : null)
+        };
+      });
+    },
+
+    approvePayment: async function (paymentId) {
+      if (supabaseClient) {
+        try {
+          await supabaseClient
+            .from('payments')
+            .update({ status: 'paid' })
+            .eq('id', paymentId);
+        } catch (e) {
+          console.error("Supabase approvePayment failed:", e);
+        }
+      }
+      const db = loadDB();
+      const payment = db.payments?.find(p => p.id === paymentId);
+      if (payment) {
+        payment.status = 'paid';
+        saveDB(db);
+        return true;
+      }
+      return false;
+    },
+
+    rejectPayment: async function (paymentId) {
+      if (supabaseClient) {
+        try {
+          await supabaseClient
+            .from('payments')
+            .update({ status: 'failed' })
+            .eq('id', paymentId);
+        } catch (e) {
+          console.error("Supabase rejectPayment failed:", e);
+        }
+      }
+      const db = loadDB();
+      const payment = db.payments?.find(p => p.id === paymentId);
+      if (payment) {
+        payment.status = 'failed';
         saveDB(db);
         return true;
       }
