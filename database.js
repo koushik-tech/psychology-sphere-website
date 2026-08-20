@@ -472,15 +472,16 @@
           return profile;
         } catch (e) {
           console.error("Supabase signIn failed:", e);
-          // If it is a standard authentication/credentials or role mismatch error, 
-          // throw it directly to the user instead of falling back to LocalStorage.
-          if (e.message && (
-            e.message.includes("credentials") || 
-            e.message.includes("not found") || 
-            e.message.includes("Portal mismatch") || 
-            e.message.includes("No associated user profile") ||
-            e.message.includes("confirmed")
-          )) {
+          
+          // Detect actual network/connectivity failures (e.g., offline, failed to fetch)
+          const isNetworkError = !e || !e.message || 
+            e.message.toLowerCase().includes("failed to fetch") || 
+            e.message.toLowerCase().includes("load failed") || 
+            e.message.toLowerCase().includes("network error") ||
+            e.message.toLowerCase().includes("networkerror");
+            
+          if (!isNetworkError) {
+            // Rethrow any server-side authentication error directly to the user
             throw e;
           }
           console.warn("Attempting LocalStorage fallback due to connection/network error...");
