@@ -459,17 +459,26 @@
           
           const profile = await this.getProfileByEmail(email);
           if (!profile) {
-            throw new Error("No associated user profile was found.");
+            throw new Error("No associated user profile was found in public.profiles table.");
           }
           if (profile.role !== role) {
             throw new Error("Portal mismatch: Selected role does not match account role.");
           }
           return profile;
         } catch (e) {
-          console.error("Supabase signIn failed, trying LocalStorage fallback:", e);
-          if (e.message && e.message.includes("Portal mismatch")) {
+          console.error("Supabase signIn failed:", e);
+          // If it is a standard authentication/credentials or role mismatch error, 
+          // throw it directly to the user instead of falling back to LocalStorage.
+          if (e.message && (
+            e.message.includes("credentials") || 
+            e.message.includes("not found") || 
+            e.message.includes("Portal mismatch") || 
+            e.message.includes("No associated user profile") ||
+            e.message.includes("confirmed")
+          )) {
             throw e;
           }
+          console.warn("Attempting LocalStorage fallback due to connection/network error...");
         }
       }
 
