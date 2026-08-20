@@ -113,6 +113,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const openLoginModal = (e) => {
     if (e) e.preventDefault();
     if (loginModal) loginModal.classList.add("active");
+    
+    // Update database status indicator
+    const statusIndicator = document.getElementById("db-status-indicator");
+    if (statusIndicator) {
+      if (window.AppDB.isSupabaseConnected()) {
+        statusIndicator.innerHTML = '<span style="color:#16a34a; font-weight:600;"><i data-lucide="database" style="width:12px; height:12px; display:inline-block; margin-right:3px; vertical-align:middle;"></i> Connected to Supabase</span>';
+      } else {
+        statusIndicator.innerHTML = '<span style="color:#d97706; font-weight:600;"><i data-lucide="database-backup" style="width:12px; height:12px; display:inline-block; margin-right:3px; vertical-align:middle;"></i> Running in LocalStorage Fallback Mode</span>';
+      }
+      if (window.lucide) window.lucide.createIcons();
+    }
   };
 
   const closeLoginModal = () => {

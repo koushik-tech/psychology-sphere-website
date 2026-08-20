@@ -395,6 +395,11 @@
     // Helper URL converter
     getGoogleDriveDirectLink: getGoogleDriveDirectLink,
 
+    // Connection checker
+    isSupabaseConnected: function () {
+      return supabaseClient !== null;
+    },
+
     // Secure authentication methods
     signIn: async function (email, password, role) {
       if (supabaseClient) {
