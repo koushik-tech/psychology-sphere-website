@@ -404,53 +404,55 @@
             password: password
           });
           if (error) {
-            // Check for Auto-activation: if password fails or user not found, 
-            // check if the user is a registered faculty or default seed profile in public.profiles.
-            let profile = await this.getProfileByEmail(email);
-            
-            // Check if it's one of our seeded default profiles
-            const defaultProfile = defaultDB.profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
-            if (!profile && defaultProfile && defaultProfile.role === role && password === 'demo1234') {
-              console.log("Seeding default profile. Registering Auth first...");
-              const signUpResult = await supabaseClient.auth.signUp({
-                email: email,
-                password: password
-              });
-              if (signUpResult.error) throw signUpResult.error;
+            // Only allow auto-activation/first-time setup for student/faculty roles.
+            // Admin accounts MUST be pre-created securely in the database.
+            if (role !== 'admin') {
+              let profile = await this.getProfileByEmail(email);
               
-              const user = signUpResult.data.user;
-              if (user) {
-                profile = await this.createProfile({
-                  id: user.id,
-                  email: defaultProfile.email,
-                  full_name: defaultProfile.full_name,
-                  role: defaultProfile.role,
-                  academic_role: defaultProfile.academic_role || null,
-                  specialization: defaultProfile.specialization || null,
-                  avatar: defaultProfile.avatar || null
+              // Check if it's one of our seeded default profiles
+              const defaultProfile = defaultDB.profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+              if (!profile && defaultProfile && defaultProfile.role === role && password === 'demo1234') {
+                console.log("Seeding default profile. Registering Auth first...");
+                const signUpResult = await supabaseClient.auth.signUp({
+                  email: email,
+                  password: password
                 });
+                if (signUpResult.error) throw signUpResult.error;
+                
+                const user = signUpResult.data.user;
+                if (user) {
+                  profile = await this.createProfile({
+                    id: user.id,
+                    email: defaultProfile.email,
+                    full_name: defaultProfile.full_name,
+                    role: defaultProfile.role,
+                    academic_role: defaultProfile.academic_role || null,
+                    specialization: defaultProfile.specialization || null,
+                    avatar: defaultProfile.avatar || null
+                  });
+                  return profile;
+                }
+              } else if (profile && profile.role === role) {
+                // Pre-registered profile exists (e.g. created by admin), register credentials in Auth
+                console.log("Auto-activating Supabase Auth account for profile:", email);
+                const signUpResult = await supabaseClient.auth.signUp({
+                  email: email,
+                  password: password
+                });
+                if (signUpResult.error) throw signUpResult.error;
+                
+                // Align profile id with the new Supabase Auth UUID if they differ
+                const user = signUpResult.data.user;
+                if (user && user.id !== profile.id) {
+                  console.log("Updating profile ID to match Supabase Auth UUID...");
+                  await supabaseClient
+                    .from('profiles')
+                    .update({ id: user.id })
+                    .eq('email', email);
+                  profile.id = user.id;
+                }
                 return profile;
               }
-            } else if (profile && profile.role === role) {
-              // Pre-registered profile exists (e.g. created by admin), register credentials in Auth
-              console.log("Auto-activating Supabase Auth account for profile:", email);
-              const signUpResult = await supabaseClient.auth.signUp({
-                email: email,
-                password: password
-              });
-              if (signUpResult.error) throw signUpResult.error;
-              
-              // Align profile id with the new Supabase Auth UUID if they differ
-              const user = signUpResult.data.user;
-              if (user && user.id !== profile.id) {
-                console.log("Updating profile ID to match Supabase Auth UUID...");
-                await supabaseClient
-                  .from('profiles')
-                  .update({ id: user.id })
-                  .eq('email', email);
-                profile.id = user.id;
-              }
-              return profile;
             }
             throw error;
           }
