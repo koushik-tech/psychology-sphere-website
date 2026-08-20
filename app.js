@@ -1226,7 +1226,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const adminAddCourseModal = document.getElementById("admin-add-course-modal");
   const adminAddCourseTrigger = document.getElementById("btn-admin-add-course");
 
-  const openAdminAddModal = () => {
+  // Dynamic faculty select populator
+  async function populateFacultySelect() {
+    const acFaculty = document.getElementById("ac-faculty");
+    if (!acFaculty) return;
+    try {
+      const facultyList = await window.AppDB.getFaculty();
+      acFaculty.innerHTML = "";
+      facultyList.forEach(faculty => {
+        const option = document.createElement("option");
+        option.value = faculty.name;
+        option.textContent = faculty.name;
+        acFaculty.appendChild(option);
+      });
+    } catch (e) {
+      console.error("Failed to populate faculty dropdown:", e);
+    }
+  }
+
+  const openAdminAddModal = async () => {
+    await populateFacultySelect();
     if (adminAddCourseModal) adminAddCourseModal.classList.add("active");
   };
 
@@ -1283,6 +1302,81 @@ document.addEventListener("DOMContentLoaded", () => {
       showToast(`New course offering "${title}" added successfully!`, "success");
       closeAdminAddModal();
       addCourseForm.reset();
+    });
+  }
+
+  // --- ADMIN FACULTY MANAGEMENT ---
+  const adminAddFacultyModal = document.getElementById("admin-add-faculty-modal");
+  
+  const openAdminAddFacultyModal = () => {
+    if (adminAddFacultyModal) {
+      adminAddFacultyModal.classList.add("active");
+      const passInp = document.getElementById("af-password");
+      if (passInp && !passInp.value) {
+        passInp.value = "demo1234";
+      }
+    }
+  };
+
+  const closeAdminAddFacultyModal = () => {
+    if (adminAddFacultyModal) adminAddFacultyModal.classList.remove("active");
+  };
+
+  if (adminAddFacultyModal) {
+    adminAddFacultyModal.addEventListener("click", (e) => {
+      if (e.target.closest("#admin-add-faculty-close") || e.target === adminAddFacultyModal) {
+        closeAdminAddFacultyModal();
+      }
+    });
+  }
+
+  const addFacultyForm = document.getElementById("admin-add-faculty-form");
+  if (addFacultyForm) {
+    addFacultyForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("af-name").value.trim();
+      const email = document.getElementById("af-email").value.trim();
+      const password = document.getElementById("af-password").value;
+      const designation = document.getElementById("af-role").value.trim();
+      const specialization = document.getElementById("af-specialization").value.trim();
+      const imageLink = document.getElementById("af-image").value.trim();
+
+      try {
+        const existingProfile = await window.AppDB.getProfileByEmail(email);
+        if (existingProfile) {
+          showToast("A user profile with this email already exists.", "error");
+          return;
+        }
+
+        const newProfile = {
+          id: generateUUID(),
+          full_name: name,
+          email: email,
+          role: "faculty",
+          password: password,
+          academic_role: designation,
+          specialization: specialization,
+          avatar: name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) || "FT",
+          image: imageLink
+        };
+
+        const result = await window.AppDB.createProfile(newProfile);
+        if (result) {
+          showToast(`Faculty profile for "${name}" created successfully!`, "success");
+          closeAdminAddFacultyModal();
+          addFacultyForm.reset();
+          
+          if (activeDbTable === "faculty") {
+            await renderDatabaseTable("faculty");
+          }
+          await renderMainWebsite();
+        } else {
+          showToast("Failed to create faculty profile. Please try again.", "error");
+        }
+      } catch (err) {
+        console.error("Faculty creation failed:", err);
+        showToast("An error occurred. Please try again.", "error");
+      }
     });
   }
 
@@ -1962,6 +2056,23 @@ document.addEventListener("DOMContentLoaded", () => {
         explorer.appendChild(card);
       });
     } else if (tableName === "faculty") {
+      // Add a header/button for creating new faculty profiles
+      const headerDiv = document.createElement("div");
+      headerDiv.style.marginBottom = "1.5rem";
+      headerDiv.style.display = "flex";
+      headerDiv.style.justifyContent = "flex-end";
+      headerDiv.innerHTML = `
+        <button class="btn btn-primary" id="btn-admin-add-faculty" style="border-radius:20px; font-size:0.8rem; padding:0.5rem 1.25rem;">
+          <i data-lucide="user-plus" style="width:14px; height:14px; margin-right:4px;"></i> Add Faculty Profile
+        </button>
+      `;
+      explorer.appendChild(headerDiv);
+      
+      const addFacultyBtn = headerDiv.querySelector("#btn-admin-add-faculty");
+      if (addFacultyBtn) {
+        addFacultyBtn.addEventListener("click", openAdminAddFacultyModal);
+      }
+
       const facultyList = await window.AppDB.getFaculty();
       facultyList.forEach(faculty => {
         const card = document.createElement("div");

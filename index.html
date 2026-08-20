@@ -1056,13 +1056,7 @@
           <label for="signup-password">Password</label>
           <input type="password" id="signup-password" class="form-control" required placeholder="Create a password">
         </div>
-        <div class="form-group">
-          <label for="signup-role">Join As</label>
-          <select id="signup-role" class="form-control">
-            <option value="student">Student Scholar</option>
-            <option value="faculty">Faculty Mentor (Teacher)</option>
-          </select>
-        </div>
+        <input type="hidden" id="signup-role" value="student">
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem; border-radius:30px; background-color:#3b20a6;">Create Account</button>
       </form>
 
@@ -1131,6 +1125,44 @@
         </div>
         
         <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; background-color:#3b20a6;">Create Course Record</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3.5. Admin Add Faculty Modal -->
+  <div class="modal-overlay" id="admin-add-faculty-modal">
+    <div class="modal-box" style="max-width:480px;">
+      <i data-lucide="x" class="modal-close" id="admin-add-faculty-close"></i>
+      <h3>Add New Faculty Profile</h3>
+      <p style="margin-bottom:1.5rem; font-size:0.85rem; color:#64748b;">Create a faculty profile. They can sign in using these credentials.</p>
+      
+      <form id="admin-add-faculty-form">
+        <div class="form-group">
+          <label for="af-name">Full Name</label>
+          <input type="text" id="af-name" class="form-control" required placeholder="e.g. Dr. John Doe">
+        </div>
+        <div class="form-group">
+          <label for="af-email">Email Address</label>
+          <input type="email" id="af-email" class="form-control" required placeholder="e.g. johndoe@psysphere.edu">
+        </div>
+        <div class="form-group">
+          <label for="af-password">Login Password</label>
+          <input type="text" id="af-password" class="form-control" required placeholder="Create temporary login password" value="demo1234">
+        </div>
+        <div class="form-group">
+          <label for="af-role">Academic Designation / Role</label>
+          <input type="text" id="af-role" class="form-control" required placeholder="e.g. Ph.D. / Associate Professor">
+        </div>
+        <div class="form-group">
+          <label for="af-specialization">Specialization / Bio</label>
+          <input type="text" id="af-specialization" class="form-control" required placeholder="e.g. Cognitive Psychology & Research">
+        </div>
+        <div class="form-group">
+          <label for="af-image">Profile Image URL (Google Drive/Direct Link)</label>
+          <input type="text" id="af-image" class="form-control" placeholder="Optional Google Drive sharing link">
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; background-color:#3b20a6; margin-top: 1rem;">Create Faculty Profile</button>
       </form>
     </div>
   </div>

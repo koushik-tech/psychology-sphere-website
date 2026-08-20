@@ -676,6 +676,16 @@
           } else {
             db.faculty.push(member);
           }
+          // Keep profiles in sync
+          if (!db.profiles) db.profiles = [];
+          const profIdx = db.profiles.findIndex(p => p.id === member.id);
+          if (profIdx !== -1) {
+            db.profiles[profIdx].full_name = member.name;
+            db.profiles[profIdx].academic_role = member.role;
+            db.profiles[profIdx].specialization = member.specialization;
+            db.profiles[profIdx].avatar = member.avatar;
+            db.profiles[profIdx].image = member.image;
+          }
           saveDB(db);
           return member;
         }
@@ -686,6 +696,16 @@
           db.faculty[existingIdx] = member;
         } else {
           db.faculty.push(member);
+        }
+        // Keep profiles in sync
+        if (!db.profiles) db.profiles = [];
+        const profIdx = db.profiles.findIndex(p => p.id === member.id);
+        if (profIdx !== -1) {
+          db.profiles[profIdx].full_name = member.name;
+          db.profiles[profIdx].academic_role = member.role;
+          db.profiles[profIdx].specialization = member.specialization;
+          db.profiles[profIdx].avatar = member.avatar;
+          db.profiles[profIdx].image = member.image;
         }
         saveDB(db);
         return member;
