@@ -220,29 +220,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const role = document.getElementById("login-role").value;
       
       try {
-        const profile = await window.AppDB.getProfileByEmail(email);
-        if (!profile) {
-          showToast("No account found with this email. Please sign up.", "error");
-          return;
-        }
-
-        // Verify password
-        if (profile.password && profile.password !== password) {
-          showToast("Incorrect password. Please try again.", "error");
-          return;
-        }
-
-        // Verify role
-        if (profile.role !== role) {
-          showToast("Incorrect portal selected. Choose your correct dashboard.", "error");
-          return;
-        }
-
+        const profile = await window.AppDB.signIn(email, password, role);
         loginAndMountDashboard(profile);
         loginForm.reset();
       } catch (err) {
         console.error("Login verification failed:", err);
-        showToast("An error occurred during log in. Please try again.", "error");
+        showToast(err.message || "An error occurred during log in. Please try again.", "error");
       }
     });
   }
@@ -265,23 +248,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Build new profile payload
         const newProfile = {
-          id: generateUUID(),
           full_name: name,
           email: email,
-          role: role,
-          password: password
+          role: role
         };
 
-        // For Faculty, set extra details so they are listed properly
-        if (role === "faculty") {
-          newProfile.academic_role = "Lecturer / Mentor";
-          newProfile.specialization = "General Psychology & Counseling";
-          newProfile.avatar = name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) || "FT";
-          newProfile.image = "";
-        }
-
-        // Create profile
-        const result = await window.AppDB.createProfile(newProfile);
+        // Create profile using AppDB.signUp
+        const result = await window.AppDB.signUp(email, password, newProfile);
         if (result) {
           loginAndMountDashboard(result);
           signupForm.reset();
@@ -290,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (err) {
         console.error("Signup failed:", err);
-        showToast("An error occurred during sign up. Please try again.", "error");
+        showToast(err.message || "An error occurred during sign up. Please try again.", "error");
       }
     });
   }

@@ -61,6 +61,20 @@
     return urlStr;
   }
 
+  // Helper to hash password using SHA-256 (asynchronously, native browser Web Crypto API)
+  async function hashPassword(password) {
+    if (!password) return '';
+    try {
+      const msgBuffer = new TextEncoder().encode(password);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      console.error("SHA-256 Hashing failed, returning plain text fallback:", e);
+      return password;
+    }
+  }
+
   // Initial Seed Data
   const defaultDB = {
     courses: [
@@ -380,6 +394,143 @@
   const AppDB = {
     // Helper URL converter
     getGoogleDriveDirectLink: getGoogleDriveDirectLink,
+
+    // Secure authentication methods
+    signIn: async function (email, password, role) {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+          if (error) {
+            // Check for Auto-activation: if password fails or user not found, 
+            // check if the user is a registered faculty or default seed profile in public.profiles.
+            const profile = await this.getProfileByEmail(email);
+            if (profile && profile.role === role) {
+              // Attempt to auto-activate the faculty / admin / seed student profile
+              console.log("Profile found in profiles table. Auto-activating auth account...");
+              const signUpResult = await supabaseClient.auth.signUp({
+                email: email,
+                password: password
+              });
+              if (signUpResult.error) throw signUpResult.error;
+              return profile;
+            }
+            throw error;
+          }
+          
+          const profile = await this.getProfileByEmail(email);
+          if (!profile) {
+            throw new Error("No associated user profile was found.");
+          }
+          if (profile.role !== role) {
+            throw new Error("Portal mismatch: Selected role does not match account role.");
+          }
+          return profile;
+        } catch (e) {
+          console.error("Supabase signIn failed, trying LocalStorage fallback:", e);
+          if (e.message && e.message.includes("Portal mismatch")) {
+            throw e;
+          }
+        }
+      }
+
+      // LocalStorage / Fallback Auth
+      const db = loadDB();
+      if (!db.profiles) db.profiles = [];
+      const profile = db.profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+      if (!profile) {
+        throw new Error("No account found with this email. Please check your credentials.");
+      }
+
+      if (profile.role !== role) {
+        throw new Error("Portal mismatch: Selected role does not match account role.");
+      }
+
+      // Compare password
+      const enteredHash = await hashPassword(password);
+      const savedPassword = profile.password;
+      const isDefaultMockAccount = (email.toLowerCase() === 'student@psysphere.edu' || email.toLowerCase() === 'faculty@psysphere.edu' || email.toLowerCase() === 'admin@psysphere.edu');
+
+      const match = (savedPassword === enteredHash || (isDefaultMockAccount && savedPassword === password) || savedPassword === password);
+      if (!match) {
+        throw new Error("Incorrect password. Please try again.");
+      }
+      return profile;
+    },
+
+    signUp: async function (email, password, profileDetails) {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password
+          });
+          if (error) throw error;
+
+          const user = data.user;
+          if (!user) throw new Error("Auth user creation failed.");
+
+          const newProfile = {
+            id: user.id,
+            email: email,
+            full_name: profileDetails.full_name,
+            role: profileDetails.role,
+            academic_role: profileDetails.academic_role || null,
+            specialization: profileDetails.specialization || null,
+            avatar: profileDetails.avatar || null,
+            image: profileDetails.image || null
+          };
+
+          const savedProfile = await this.createProfile(newProfile);
+          
+          // Sync with LocalStorage backup
+          const db = loadDB();
+          if (!db.profiles) db.profiles = [];
+          const existingIdx = db.profiles.findIndex(p => p.email.toLowerCase() === email.toLowerCase());
+          const hashedPassword = await hashPassword(password);
+          const localProfile = { ...newProfile, password: hashedPassword };
+          if (existingIdx !== -1) {
+            db.profiles[existingIdx] = localProfile;
+          } else {
+            db.profiles.push(localProfile);
+          }
+          saveDB(db);
+
+          return { ...savedProfile, password: password };
+        } catch (e) {
+          console.error("Supabase signUp failed, falling back to LocalStorage:", e);
+          throw e;
+        }
+      }
+
+      // LocalStorage mode
+      const db = loadDB();
+      if (!db.profiles) db.profiles = [];
+      const existingProfile = db.profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+      if (existingProfile) {
+        throw new Error("An account with this email already exists.");
+      }
+
+      const hashedPassword = await hashPassword(password);
+      const generatedId = profileDetails.id || (typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36));
+      const newProfile = {
+        id: generatedId,
+        email: email,
+        full_name: profileDetails.full_name,
+        role: profileDetails.role,
+        academic_role: profileDetails.academic_role || null,
+        specialization: profileDetails.specialization || null,
+        avatar: profileDetails.avatar || null,
+        image: profileDetails.image || null,
+        password: hashedPassword
+      };
+      
+      db.profiles.push(newProfile);
+      saveDB(db);
+      return newProfile;
+    },
 
     // Course Methods
     getCourses: async function () {
