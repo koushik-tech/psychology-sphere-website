@@ -402,6 +402,31 @@
 
     // Secure authentication methods
     signIn: async function (email, password, role) {
+      if (role === 'admin') {
+        if (!supabaseClient) {
+          throw new Error("Supabase is not configured or offline. Admin authentication requires a database connection.");
+        }
+        try {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+          if (error) throw error;
+          
+          const profile = await this.getProfileByEmail(email);
+          if (!profile) {
+            throw new Error("No associated user profile was found in public.profiles table.");
+          }
+          if (profile.role !== 'admin') {
+            throw new Error("Portal mismatch: Selected role does not match account role.");
+          }
+          return profile;
+        } catch (e) {
+          console.error("Admin Supabase signIn failed:", e);
+          throw e; // Do NOT fall back to LocalStorage
+        }
+      }
+
       if (supabaseClient) {
         try {
           const { data, error } = await supabaseClient.auth.signInWithPassword({
