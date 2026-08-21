@@ -1635,6 +1635,80 @@
       return false;
     },
 
+    getAllStudentEnrollments: async function () {
+      let supabaseEnrollments = [];
+      let supabaseProfiles = [];
+      let supabaseCourses = [];
+
+      if (supabaseClient) {
+        try {
+          const { data: enrollData } = await supabaseClient
+            .from('enrollments')
+            .select('*');
+          if (enrollData) supabaseEnrollments = enrollData;
+
+          const { data: profilesData } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('role', 'student');
+          if (profilesData) supabaseProfiles = profilesData;
+
+          const { data: coursesData } = await supabaseClient
+            .from('courses')
+            .select('*');
+          if (coursesData) supabaseCourses = coursesData;
+        } catch (e) {
+          console.error("Supabase getAllStudentEnrollments failed, using LocalStorage backup logic:", e);
+        }
+      }
+
+      // LocalStorage lookup
+      const db = loadDB();
+      const localEnrollments = db.enrollments || [];
+      const localProfiles = db.profiles || [];
+      const localCourses = db.courses || [];
+
+      // If we got data from Supabase, map it. Otherwise, use local data.
+      const enrollments = supabaseEnrollments.length > 0 ? supabaseEnrollments : localEnrollments;
+      const profiles = supabaseProfiles.length > 0 ? supabaseProfiles : localProfiles.filter(p => p.role === 'student');
+      const courses = supabaseCourses.length > 0 ? supabaseCourses : localCourses;
+
+      // Map together
+      return enrollments.map(e => {
+        const student = profiles.find(p => p.id === e.student_id);
+        const course = courses.find(c => c.id.toString() === e.course_id.toString());
+        
+        let batchName = 'N/A';
+        if (course && course.batches && e.batch_id) {
+          const batch = course.batches.find(b => b.id === e.batch_id);
+          if (batch) {
+            batchName = `${batch.type} (${batch.name})`;
+          } else {
+            batchName = e.batch_id;
+          }
+        } else if (e.batch_id) {
+          batchName = e.batch_id;
+        }
+
+        // Get enrollment year/session
+        const enrolledDate = e.enrolled_at || e.created_at || new Date().toISOString();
+        const year = new Date(enrolledDate).getFullYear().toString();
+
+        return {
+          id: e.id,
+          studentId: e.student_id,
+          studentName: student ? student.full_name : 'Unknown Student',
+          studentEmail: student ? student.email : 'N/A',
+          courseId: e.course_id,
+          courseTitle: course ? course.title : 'Unknown Course',
+          batchName: batchName,
+          enrolledAt: enrolledDate,
+          session: year,
+          status: e.status || 'active'
+        };
+      });
+    },
+
     isLive: function () {
       return supabaseClient !== null;
     },

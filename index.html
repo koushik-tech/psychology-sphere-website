@@ -386,6 +386,7 @@
         <ul class="sidebar-menu-rewrite" id="admin-menu" style="display:none;">
           <li><a href="#" class="sidebar-link active" data-tab="admin-analytics"><i data-lucide="bar-chart-2"></i> Analytics</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-courses"><i data-lucide="book-open"></i> Manage Courses</a></li>
+          <li><a href="#" class="sidebar-link" data-tab="admin-students"><i data-lucide="users"></i> Manage Students</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-notices"><i data-lucide="megaphone"></i> Broadcast Notices</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-db"><i data-lucide="database"></i> Database Manager</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-payment-settings"><i data-lucide="settings"></i> Payment Settings</a></li>
@@ -812,6 +813,49 @@
             </div>
           </div>
 
+          <!-- Admin Manage Students Tab Panel -->
+          <div class="dashboard-tab-view" id="admin-students-tab" style="display:none;">
+            <div class="card" style="text-align:left; margin-bottom:1.5rem;">
+              <h3 style="font-size:1.15rem; margin-bottom:1rem;">Manage Enrolled Students</h3>
+              <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+                Filter and view students enrolled across various courses and academic sessions (years).
+              </p>
+              
+              <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:0;">
+                <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+                  <label for="student-filter-course" style="font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.35rem; display:block;">Filter by Course</label>
+                  <select id="student-filter-course" class="form-control" style="padding:0.5rem; border-radius:6px; border:1px solid var(--border-color);">
+                    <option value="all">All Courses</option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+                  <label for="student-filter-session" style="font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.35rem; display:block;">Filter by Session / Year</label>
+                  <select id="student-filter-session" class="form-control" style="padding:0.5rem; border-radius:6px; border:1px solid var(--border-color);">
+                    <option value="all">All Sessions</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-container-rewrite" style="text-align:left;">
+              <table id="admin-students-table">
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Enrolled Course</th>
+                    <th>Batch</th>
+                    <th>Date / Session</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <div class="dashboard-tab-view" id="admin-notices-tab" style="display:none;">
             <div class="grid-2" style="text-align:left;">
               <div class="card">
@@ -1090,7 +1134,7 @@
   <div class="modal-overlay" id="admin-add-course-modal">
     <div class="modal-box" style="max-width:480px;">
       <i data-lucide="x" class="modal-close" id="admin-add-course-close"></i>
-      <h3>Add New Course Offering</h3>
+      <h3 id="admin-course-modal-title">Add New Course Offering</h3>
       <p style="margin-bottom:1.5rem; font-size:0.85rem; color:#64748b;">Fill in details to list a new academic program.</p>
       
       <form id="admin-add-course-form">
@@ -1127,7 +1171,7 @@
           </div>
         </div>
         
-        <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; background-color:#3b20a6;">Create Course Record</button>
+        <button type="submit" id="admin-course-modal-submit" class="btn btn-primary" style="width:100%; border-radius:30px; background-color:#3b20a6;">Create Course Record</button>
       </form>
     </div>
   </div>

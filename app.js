@@ -3,6 +3,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Psychology Sphere App controller (v1.0.6) successfully loaded.");
   let loggedInUser = null;
+  let editingCourseId = null;
 
   function generateUUID() {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -346,6 +347,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (tabId === "admin-payment-settings") {
       renderAdminPaymentSettings();
+    }
+
+    if (tabId === "admin-students") {
+      renderAdminStudents();
     }
     
     if (window.lucide) {
@@ -1230,6 +1235,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const openAdminAddModal = async () => {
     await populateFacultySelect();
+    editingCourseId = null;
+    const titleEl = document.getElementById("admin-course-modal-title");
+    const submitEl = document.getElementById("admin-course-modal-submit");
+    if (titleEl) titleEl.textContent = "Add New Course Offering";
+    if (submitEl) submitEl.textContent = "Create Course Record";
+    if (addCourseForm) addCourseForm.reset();
     if (adminAddCourseModal) adminAddCourseModal.classList.add("active");
   };
 
@@ -1258,32 +1269,65 @@ document.addEventListener("DOMContentLoaded", () => {
       const onlineTimings = document.getElementById("ac-online-timings").value.trim() || "Mon, Wed, Fri 8 AM";
       const offlineTimings = document.getElementById("ac-offline-timings").value.trim() || "Mon 2 PM, Wed 5 PM, Sat 7 PM";
 
-      const courseId = Date.now().toString();
-      const newCourse = {
-        id: courseId,
-        title: title,
-        description: `Complete study program in ${title} assigned under our expert guidance.`,
-        duration: duration,
-        fees: fees,
-        faculty: faculty,
-        image: '', // default placeholder
-        batches: [
-          { id: courseId + '_online', type: 'Online', name: 'Batch 1', timings: onlineTimings },
-          { id: courseId + '_offline', type: 'Offline', name: 'Batch 2', timings: offlineTimings },
-          { id: courseId + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
-        ]
-      };
-      
-      await window.AppDB.saveCourse(newCourse);
-      await renderMainWebsite();
+      if (editingCourseId) {
+        // Edit mode
+        const updatedCourse = {
+          id: editingCourseId,
+          title: title,
+          description: `Complete study program in ${title} assigned under our expert guidance.`,
+          duration: duration,
+          fees: fees,
+          faculty: faculty,
+          image: '',
+          batches: [
+            { id: editingCourseId + '_online', type: 'Online', name: 'Batch 1', timings: onlineTimings },
+            { id: editingCourseId + '_offline', type: 'Offline', name: 'Batch 2', timings: offlineTimings },
+            { id: editingCourseId + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+          ]
+        };
 
-      // Update analytics stats
-      const studentsVal = document.getElementById("admin-students-val");
-      if (studentsVal) {
-        studentsVal.textContent = parseInt(studentsVal.textContent) + 15; // mock increase
+        // Keep old description and image if they exist
+        try {
+          const courses = await window.AppDB.getCourses();
+          const orig = courses.find(c => c.id === editingCourseId);
+          if (orig) {
+            updatedCourse.image = orig.image;
+            updatedCourse.description = orig.description;
+          }
+        } catch (err) {}
+
+        await window.AppDB.saveCourse(updatedCourse);
+        showToast(`Course details for "${title}" updated successfully!`, "success");
+      } else {
+        // Add mode
+        const courseId = Date.now().toString();
+        const newCourse = {
+          id: courseId,
+          title: title,
+          description: `Complete study program in ${title} assigned under our expert guidance.`,
+          duration: duration,
+          fees: fees,
+          faculty: faculty,
+          image: '',
+          batches: [
+            { id: courseId + '_online', type: 'Online', name: 'Batch 1', timings: onlineTimings },
+            { id: courseId + '_offline', type: 'Offline', name: 'Batch 2', timings: offlineTimings },
+            { id: courseId + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+          ]
+        };
+        
+        await window.AppDB.saveCourse(newCourse);
+
+        // Update analytics stats
+        const studentsVal = document.getElementById("admin-students-val");
+        if (studentsVal) {
+          studentsVal.textContent = parseInt(studentsVal.textContent) + 15;
+        }
+
+        showToast(`New course offering "${title}" added successfully!`, "success");
       }
-
-      showToast(`New course offering "${title}" added successfully!`, "success");
+      
+      await renderMainWebsite();
       closeAdminAddModal();
       addCourseForm.reset();
     });
@@ -1373,6 +1417,49 @@ document.addEventListener("DOMContentLoaded", () => {
           await window.AppDB.deleteCourse(courseId);
           await renderMainWebsite();
           showToast("Course record successfully deleted from database.", "success");
+        }
+      };
+    });
+  }
+
+  function bindEditCourseButtons() {
+    document.querySelectorAll(".btn-edit-course").forEach(btn => {
+      btn.onclick = null;
+      btn.onclick = async () => {
+        const courseId = btn.getAttribute("data-id");
+        try {
+          const courses = await window.AppDB.getCourses();
+          const course = courses.find(c => c.id === courseId);
+          if (course) {
+            editingCourseId = courseId;
+            await populateFacultySelect();
+
+            document.getElementById("ac-title").value = course.title;
+            document.getElementById("ac-duration").value = course.duration;
+            document.getElementById("ac-fees").value = course.fees;
+            document.getElementById("ac-faculty").value = course.faculty;
+
+            let onlineTimings = "Mon, Wed, Fri 8 AM";
+            let offlineTimings = "Mon 2 PM, Wed 5 PM, Sat 7 PM";
+            if (course.batches) {
+              const onlineBatch = course.batches.find(b => b.type === "Online");
+              if (onlineBatch) onlineTimings = onlineBatch.timings;
+              const offlineBatch = course.batches.find(b => b.type === "Offline");
+              if (offlineBatch) offlineTimings = offlineBatch.timings;
+            }
+            document.getElementById("ac-online-timings").value = onlineTimings;
+            document.getElementById("ac-offline-timings").value = offlineTimings;
+
+            const titleEl = document.getElementById("admin-course-modal-title");
+            const submitEl = document.getElementById("admin-course-modal-submit");
+            if (titleEl) titleEl.textContent = "Edit Course Details";
+            if (submitEl) submitEl.textContent = "Update Course Record";
+
+            if (adminAddCourseModal) adminAddCourseModal.classList.add("active");
+          }
+        } catch (e) {
+          console.error("Failed to load course details for edit:", e);
+          showToast("Failed to load course details.", "error");
         }
       };
     });
@@ -1613,11 +1700,15 @@ document.addEventListener("DOMContentLoaded", () => {
           <td>${course.duration}</td>
           <td>${feeFormatted}</td>
           <td>${course.faculty}</td>
-          <td><button class="btn btn-outline btn-sm btn-delete-course-mock" data-id="${course.id}" style="border-color:#ef4444; color:#ef4444; padding:0.25rem 0.5rem;"><i data-lucide="trash-2" style="width:16px;"></i></button></td>
+          <td>
+            <button class="btn btn-outline btn-sm btn-edit-course" data-id="${course.id}" style="border-color:#3b20a6; color:#3b20a6; padding:0.25rem 0.5rem; margin-right: 0.25rem;"><i data-lucide="edit-3" style="width:16px;"></i></button>
+            <button class="btn btn-outline btn-sm btn-delete-course-mock" data-id="${course.id}" style="border-color:#ef4444; color:#ef4444; padding:0.25rem 0.5rem;"><i data-lucide="trash-2" style="width:16px;"></i></button>
+          </td>
         `;
         coursesTableBody.appendChild(row);
       });
       bindDeleteCourseMockButtons();
+      bindEditCourseButtons();
     }
 
     // Dynamic Program Select for Mark Attendance
@@ -2215,5 +2306,99 @@ document.addEventListener("DOMContentLoaded", () => {
         await renderDatabaseTable(tableName);
       });
     });
+  }
+
+  async function renderAdminStudents() {
+    const tableBody = document.querySelector("#admin-students-table tbody");
+    if (!tableBody) return;
+
+    tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Loading student records...</td></tr>`;
+
+    try {
+      const enrollments = await window.AppDB.getAllStudentEnrollments();
+
+      const courseFilter = document.getElementById("student-filter-course");
+      const sessionFilter = document.getElementById("student-filter-session");
+
+      const selectedCourse = courseFilter ? courseFilter.value : "all";
+      const selectedSession = sessionFilter ? sessionFilter.value : "all";
+
+      if (courseFilter) {
+        const uniqueCourses = [...new Set(enrollments.map(e => e.courseTitle))].sort();
+        courseFilter.innerHTML = '<option value="all">All Courses</option>' + 
+          uniqueCourses.map(title => `<option value="${title}">${title}</option>`).join('');
+        courseFilter.value = selectedCourse;
+        
+        if (courseFilter.value !== selectedCourse) {
+          courseFilter.value = "all";
+        }
+      }
+
+      if (sessionFilter) {
+        const uniqueSessions = [...new Set(enrollments.map(e => e.session))].sort((a, b) => b.localeCompare(a));
+        sessionFilter.innerHTML = '<option value="all">All Sessions</option>' + 
+          uniqueSessions.map(yr => `<option value="${yr}">Session ${yr}</option>`).join('');
+        sessionFilter.value = selectedSession;
+
+        if (sessionFilter.value !== selectedSession) {
+          sessionFilter.value = "all";
+        }
+      }
+
+      function updateTable() {
+        const cVal = courseFilter ? courseFilter.value : "all";
+        const sVal = sessionFilter ? sessionFilter.value : "all";
+
+        const filtered = enrollments.filter(e => {
+          const matchCourse = (cVal === "all" || e.courseTitle === cVal);
+          const matchSession = (sVal === "all" || e.session === sVal);
+          return matchCourse && matchSession;
+        });
+
+        if (filtered.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">No student records found matching the selected filters.</td></tr>`;
+          return;
+        }
+
+        tableBody.innerHTML = filtered.map(e => {
+          const statusClean = (e.status || "active").toLowerCase();
+          const badgeClass = statusClean === "active" ? "badge-success" : "badge-secondary";
+          
+          let formattedDate = e.enrolledAt;
+          try {
+            const d = new Date(e.enrolledAt);
+            if (!isNaN(d.getTime())) {
+              formattedDate = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            }
+          } catch (err) {}
+
+          return `
+            <tr>
+              <td style="font-weight:600;">${e.studentName}</td>
+              <td style="font-size:0.8rem; font-family:monospace; color:var(--text-secondary);">${e.studentEmail}</td>
+              <td style="font-weight:500;">${e.courseTitle}</td>
+              <td>${e.batchName}</td>
+              <td>${formattedDate} <span style="font-size:0.7rem; color:#64748b; font-weight:600; display:block;">(Session ${e.session})</span></td>
+              <td><span class="badge ${badgeClass}" style="text-transform:uppercase; font-size:0.65rem;">${e.status}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      if (courseFilter) {
+        courseFilter.onchange = null;
+        courseFilter.onchange = () => updateTable();
+      }
+      if (sessionFilter) {
+        sessionFilter.onchange = null;
+        sessionFilter.onchange = () => updateTable();
+      }
+
+      updateTable();
+
+    } catch (e) {
+      console.error("Failed to render admin student management table:", e);
+      tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444;">Error loading student records.</td></tr>`;
+    }
   }
 });
