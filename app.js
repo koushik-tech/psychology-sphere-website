@@ -227,17 +227,33 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const submitBtn = loginForm.querySelector("button[type='submit']");
+      const originalText = submitBtn ? submitBtn.textContent : "Login";
+
       const email = document.getElementById("login-email").value.trim();
       const password = document.getElementById("login-password").value;
       const role = document.getElementById("login-role").value;
       
       try {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Verifying...";
+        }
         const profile = await window.AppDB.signIn(email, password, role);
         loginAndMountDashboard(profile);
         loginForm.reset();
       } catch (err) {
         console.error("Login verification failed:", err);
-        showToast(err.message || "An error occurred during log in. Please try again.", "error");
+        let errorMsg = err.message || "An error occurred during log in. Please try again.";
+        if (errorMsg.toLowerCase().includes("rate limit")) {
+          errorMsg = "Supabase Email Rate Limit Exceeded. Please wait a minute, or adjust Auth Rate Limits in your Supabase project dashboard.";
+        }
+        showToast(errorMsg, "error");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
       }
     });
   }
@@ -245,16 +261,27 @@ document.addEventListener("DOMContentLoaded", () => {
   if (signupForm) {
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const submitBtn = signupForm.querySelector("button[type='submit']");
+      const originalText = submitBtn ? submitBtn.textContent : "Register";
+
       const name = document.getElementById("signup-name").value.trim();
       const email = document.getElementById("signup-email").value.trim();
       const password = document.getElementById("signup-password").value;
       const role = document.getElementById("signup-role").value;
 
       try {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Registering...";
+        }
         // Verify email doesn't already exist
         const existingProfile = await window.AppDB.getProfileByEmail(email);
         if (existingProfile) {
           showToast("An account with this email already exists.", "error");
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
           return;
         }
 
@@ -275,7 +302,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (err) {
         console.error("Signup failed:", err);
-        showToast(err.message || "An error occurred during sign up. Please try again.", "error");
+        let errorMsg = err.message || "An error occurred during sign up. Please try again.";
+        if (errorMsg.toLowerCase().includes("rate limit")) {
+          errorMsg = "Supabase Email Rate Limit Exceeded. Please wait a minute, or adjust Auth Rate Limits in your Supabase project dashboard.";
+        }
+        showToast(errorMsg, "error");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
       }
     });
   }
