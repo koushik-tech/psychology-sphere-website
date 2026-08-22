@@ -1713,10 +1713,14 @@
     approvePayment: async function (paymentId) {
       if (supabaseClient) {
         try {
-          await supabaseClient
+          const { data, error } = await supabaseClient
             .from('payments')
             .update({ status: 'paid' })
-            .eq('id', paymentId);
+            .eq('id', paymentId)
+            .select();
+          if (!error && data && data.length > 0) {
+            return true;
+          }
         } catch (e) {
           console.error("Supabase approvePayment failed:", e);
         }
@@ -1734,10 +1738,14 @@
     rejectPayment: async function (paymentId) {
       if (supabaseClient) {
         try {
-          await supabaseClient
+          const { data, error } = await supabaseClient
             .from('payments')
             .update({ status: 'failed' })
-            .eq('id', paymentId);
+            .eq('id', paymentId)
+            .select();
+          if (!error && data && data.length > 0) {
+            return true;
+          }
         } catch (e) {
           console.error("Supabase rejectPayment failed:", e);
         }
