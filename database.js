@@ -1671,19 +1671,26 @@
           }
 
           if (paymentsData) {
-            return paymentsData.map(p => ({
-              id: p.id,
-              studentId: p.student_id,
-              studentName: profileMap[p.student_id] || 'Unknown Student',
-              courseId: p.course_id,
-              description: p.description,
-              amount: p.amount ? p.amount.toString() : '0',
-              status: p.status,
-              date: p.date,
-              monthsCovered: p.months_covered,
-              yearCovered: p.year_covered,
-              transactionId: p.transaction_id || (p.description && p.description.includes('(UTR: ') ? p.description.split('(UTR: ')[1].replace(')', '') : null)
-            }));
+            return paymentsData.map(p => {
+              let txnId = p.transaction_id;
+              if (!txnId && p.description) {
+                const match = p.description.match(/\((?:UTR|Cash\/Offline Ref):\s*([^)]+)\)/i);
+                txnId = match ? match[1].trim() : null;
+              }
+              return {
+                id: p.id,
+                studentId: p.student_id,
+                studentName: profileMap[p.student_id] || 'Unknown Student',
+                courseId: p.course_id,
+                description: p.description,
+                amount: p.amount ? p.amount.toString() : '0',
+                status: p.status,
+                date: p.date,
+                monthsCovered: p.months_covered,
+                yearCovered: p.year_covered,
+                transactionId: txnId
+              };
+            });
           }
         } catch (e) {
           console.warn("Supabase getAllPayments failed, falling back to LocalStorage:", e);
@@ -1694,6 +1701,11 @@
       const profiles = db.profiles || [];
       return payments.map(p => {
         const student = profiles.find(pr => pr.id === p.student_id);
+        let txnId = p.transactionId;
+        if (!txnId && p.description) {
+          const match = p.description.match(/\((?:UTR|Cash\/Offline Ref):\s*([^)]+)\)/i);
+          txnId = match ? match[1].trim() : null;
+        }
         return {
           id: p.id,
           studentId: p.student_id,
@@ -1705,7 +1717,7 @@
           date: p.date,
           monthsCovered: p.monthsCovered,
           yearCovered: p.yearCovered,
-          transactionId: p.transactionId || (p.description && p.description.includes('(UTR: ') ? p.description.split('(UTR: ')[1].replace(')', '') : null)
+          transactionId: txnId
         };
       });
     },
