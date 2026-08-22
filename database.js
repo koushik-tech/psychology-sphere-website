@@ -730,9 +730,9 @@
             image: course.image || ''
           };
 
-          // Try to parse id to use for upsert. If it is client-generated, use it.
+          // Try to parse id to use for upsert. If it is set, use it.
           const numericId = parseInt(course.id);
-          if (course.id && !isNaN(numericId) && numericId > 1000000000) {
+          if (course.id && !isNaN(numericId)) {
             payload.id = numericId;
           }
 
