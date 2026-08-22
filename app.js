@@ -1990,7 +1990,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const enrolledIds = enrollments.map(e => e.courseId.toString());
       const availableCourses = allCourses.filter(c => !enrolledIds.includes(c.id.toString()));
 
-      const enrollBtn = document.getElementById("btn-student-enroll-now");
+      let enrollBtn = document.getElementById("btn-student-enroll-now");
+      if (enrollBtn) {
+        const newEnrollBtn = enrollBtn.cloneNode(true);
+        enrollBtn.parentNode.replaceChild(newEnrollBtn, enrollBtn);
+        enrollBtn = newEnrollBtn;
+      }
+
       if (availableCourses.length === 0) {
         select.innerHTML = `<option value="">No new programs available</option>`;
         if (batchSelect) {
@@ -2094,11 +2100,8 @@ document.addEventListener("DOMContentLoaded", () => {
         select.onchange = updateBatchDropdown;
         batchSelect.onchange = updateEnrollmentTimings;
         updateBatchDropdown();
-      }
 
-      // 5. Bind Enroll button click (one-time setup if not already bound)
-      if (enrollBtn && !enrollBtn.dataset.bound) {
-        enrollBtn.dataset.bound = "true";
+        // Bind Enroll button click dynamically (always gets latest closure values)
         enrollBtn.addEventListener("click", async () => {
           const courseId = select.value;
           const batchId = batchSelect ? batchSelect.value : null;
