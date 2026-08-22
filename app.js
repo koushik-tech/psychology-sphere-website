@@ -111,10 +111,51 @@ document.addEventListener("DOMContentLoaded", () => {
   if (toggleToSignup) toggleToSignup.addEventListener("click", showSignupForm);
   if (toggleToLogin) toggleToLogin.addEventListener("click", showLoginForm);
 
+  const loginRoleSelect = document.getElementById("login-role");
+  const signupLinkContainer = document.getElementById("signup-link-container");
+  const signupNoteContainer = document.getElementById("signup-note-container");
+
+  const updateLoginModalFooter = () => {
+    if (!loginRoleSelect || !signupLinkContainer || !signupNoteContainer) return;
+    const selectedRole = loginRoleSelect.value;
+    
+    if (selectedRole === "student") {
+      signupLinkContainer.style.display = "block";
+      signupNoteContainer.style.display = "none";
+    } else if (selectedRole === "faculty") {
+      signupLinkContainer.style.display = "none";
+      signupNoteContainer.style.display = "block";
+      signupNoteContainer.innerHTML = `
+        <div style="display:flex; gap:0.5rem; align-items:start;">
+          <i data-lucide="info" style="width:16px; height:16px; color:#3b20a6; flex-shrink:0; margin-top:2px;"></i>
+          <span>Faculty accounts are registered securely by coordinators. Please request credentials from administration.</span>
+        </div>
+      `;
+    } else if (selectedRole === "admin") {
+      signupLinkContainer.style.display = "none";
+      signupNoteContainer.style.display = "block";
+      signupNoteContainer.innerHTML = `
+        <div style="display:flex; gap:0.5rem; align-items:start;">
+          <i data-lucide="info" style="width:16px; height:16px; color:#3b20a6; flex-shrink:0; margin-top:2px;"></i>
+          <span>Admin accounts cannot be registered publicly. Please consult the system database administrator.</span>
+        </div>
+      `;
+    }
+    
+    if (window.lucide) window.lucide.createIcons();
+  };
+
+  if (loginRoleSelect) {
+    loginRoleSelect.addEventListener("change", updateLoginModalFooter);
+  }
+
   const openLoginModal = (e) => {
     if (e) e.preventDefault();
     if (loginModal) loginModal.classList.add("active");
     
+    // Ensure correct footer layout is rendered on open
+    updateLoginModalFooter();
+
     // Update database status indicator
     const statusIndicator = document.getElementById("db-status-indicator");
     if (statusIndicator) {
@@ -129,6 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const closeLoginModal = () => {
     if (loginModal) loginModal.classList.remove("active");
+    if (loginRoleSelect) {
+      loginRoleSelect.value = "student";
+      updateLoginModalFooter();
+    }
     showLoginForm();
     if (loginForm) loginForm.reset();
     if (signupForm) signupForm.reset();
