@@ -1233,6 +1233,79 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function renderAdminBatches(batches) {
+    const container = document.getElementById("admin-batches-container");
+    if (!container) return;
+    container.innerHTML = "";
+
+    if (!batches || batches.length === 0) {
+      container.innerHTML = `<div style="text-align:center; color:var(--text-secondary); font-size:0.85rem; padding:1rem;">No batches configured. Click 'Add Batch' to create one.</div>`;
+      return;
+    }
+
+    batches.forEach((batch, idx) => {
+      const batchDiv = document.createElement("div");
+      batchDiv.className = "admin-batch-item";
+      batchDiv.style.cssText = "border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px; background: #f8fafc; position: relative;";
+      
+      const timingsStr = Array.isArray(batch.timings) ? batch.timings.join(', ') : (batch.timings || '');
+      const maxSel = batch.maxSelectable !== undefined ? batch.maxSelectable : (batch.max_selectable !== undefined ? batch.max_selectable : 0);
+
+      batchDiv.innerHTML = `
+        <span class="btn-remove-batch" style="position: absolute; top: 8px; right: 8px; cursor: pointer; color: #dc2626; font-size: 0.75rem; font-weight: bold; background: #fee2e2; border-radius: 12px; padding: 2px 6px;">Remove &times;</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <div>
+            <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); display:block; margin-bottom: 2px;">Batch Name</label>
+            <input type="text" class="form-control batch-name-input" placeholder="e.g. Weekday Morning" value="${batch.name || ''}" style="height: 30px; font-size: 0.8rem; padding: 0 0.5rem; border-radius: 4px; width:100%;" required>
+          </div>
+          <div>
+            <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); display:block; margin-bottom: 2px;">Type</label>
+            <select class="form-control batch-type-select" style="height: 30px; font-size: 0.8rem; padding: 0 0.5rem; border-radius: 4px; width:100%;" required>
+              <option value="Online" ${batch.type === 'Online' ? 'selected' : ''}>Online</option>
+              <option value="Offline" ${batch.type === 'Offline' ? 'selected' : ''}>Offline</option>
+              <option value="Custom" ${batch.type === 'Custom' ? 'selected' : ''}>Custom</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom: 0.5rem;">
+          <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); display:block; margin-bottom: 2px;">Timings (comma separated)</label>
+          <input type="text" class="form-control batch-timings-input" placeholder="e.g. Mon 10 AM, Wed 12 PM" value="${timingsStr}" style="height: 30px; font-size: 0.8rem; padding: 0 0.5rem; border-radius: 4px; width:100%;" required>
+        </div>
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); display:block; margin-bottom: 2px;">Selection Rule</label>
+          <select class="form-control batch-rule-select" style="height: 30px; font-size: 0.8rem; padding: 0 0.5rem; border-radius: 4px; width:100%;" required>
+            <option value="0" ${Number(maxSel) === 0 ? 'selected' : ''}>Student must attend all timings</option>
+            <option value="1" ${Number(maxSel) === 1 ? 'selected' : ''}>Student must select exactly 1 timing</option>
+            <option value="2" ${Number(maxSel) === 2 ? 'selected' : ''}>Student can select up to 2 timings</option>
+          </select>
+        </div>
+        <input type="hidden" class="batch-id-input" value="${batch.id || ''}">
+      `;
+
+      // Bind delete button
+      batchDiv.querySelector(".btn-remove-batch").addEventListener("click", () => {
+        batchDiv.remove();
+        if (container.querySelectorAll(".admin-batch-item").length === 0) {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-secondary); font-size:0.85rem; padding:1rem;">No batches configured. Click 'Add Batch' to create one.</div>`;
+        }
+      });
+
+      container.appendChild(batchDiv);
+    });
+  }
+
+  // Bind Add Batch button
+  const adminAddBatchBtn = document.getElementById("btn-admin-add-batch");
+  if (adminAddBatchBtn) {
+    adminAddBatchBtn.onclick = () => {
+      const container = document.getElementById("admin-batches-container");
+      if (container && container.querySelectorAll(".admin-batch-item").length === 0) {
+        container.innerHTML = "";
+      }
+      renderAdminBatches([{ id: '', name: '', type: 'Online', timings: [], maxSelectable: 0 }]);
+    };
+  }
+
   const openAdminAddModal = async () => {
     await populateFacultySelect();
     editingCourseId = null;
@@ -1241,6 +1314,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (titleEl) titleEl.textContent = "Add New Course Offering";
     if (submitEl) submitEl.textContent = "Create Course Record";
     if (addCourseForm) addCourseForm.reset();
+    
+    // Render default batches
+    renderAdminBatches([
+      { id: '', name: 'Weekday Batch', type: 'Online', timings: ['Mon 10 AM', 'Wed 12 PM', 'Sat 7 PM'], maxSelectable: 0 },
+      { id: '', name: 'Weekend Intensive', type: 'Offline', timings: ['Sun 10 AM', 'Wed 5 PM'], maxSelectable: 0 }
+    ]);
+
     if (adminAddCourseModal) adminAddCourseModal.classList.add("active");
   };
 
@@ -1266,8 +1346,26 @@ document.addEventListener("DOMContentLoaded", () => {
       const duration = document.getElementById("ac-duration").value;
       const fees = document.getElementById("ac-fees").value;
       const faculty = document.getElementById("ac-faculty").value;
-      const onlineTimings = document.getElementById("ac-online-timings").value.trim() || "Mon, Wed, Fri 8 AM";
-      const offlineTimings = document.getElementById("ac-offline-timings").value.trim() || "Mon 2 PM, Wed 5 PM, Sat 7 PM";
+
+      // Extract dynamic batches from UI
+      const batchItems = document.querySelectorAll(".admin-batch-item");
+      const batches = [];
+      batchItems.forEach(item => {
+        const id = item.querySelector(".batch-id-input").value;
+        const name = item.querySelector(".batch-name-input").value.trim();
+        const type = item.querySelector(".batch-type-select").value;
+        const timingsVal = item.querySelector(".batch-timings-input").value;
+        const timings = timingsVal.split(",").map(t => t.trim()).filter(t => t.length > 0);
+        const maxSelectable = parseInt(item.querySelector(".batch-rule-select").value);
+
+        batches.push({
+          id: id,
+          name: name,
+          type: type,
+          timings: timings,
+          maxSelectable: maxSelectable
+        });
+      });
 
       if (editingCourseId) {
         // Edit mode
@@ -1279,11 +1377,7 @@ document.addEventListener("DOMContentLoaded", () => {
           fees: fees,
           faculty: faculty,
           image: '',
-          batches: [
-            { id: editingCourseId + '_online', type: 'Online', name: 'Batch 1', timings: onlineTimings },
-            { id: editingCourseId + '_offline', type: 'Offline', name: 'Batch 2', timings: offlineTimings },
-            { id: editingCourseId + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
-          ]
+          batches: batches
         };
 
         // Keep old description and image if they exist
@@ -1301,6 +1395,12 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         // Add mode
         const courseId = Date.now().toString();
+        // Scope new batches with course IDs
+        batches.forEach((b, idx) => {
+          if (!b.id) {
+            b.id = courseId + '_' + b.name.replace(/\s+/g, '_').toLowerCase() + '_' + Math.random().toString(36).substring(2, 6);
+          }
+        });
         const newCourse = {
           id: courseId,
           title: title,
@@ -1309,11 +1409,7 @@ document.addEventListener("DOMContentLoaded", () => {
           fees: fees,
           faculty: faculty,
           image: '',
-          batches: [
-            { id: courseId + '_online', type: 'Online', name: 'Batch 1', timings: onlineTimings },
-            { id: courseId + '_offline', type: 'Offline', name: 'Batch 2', timings: offlineTimings },
-            { id: courseId + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
-          ]
+          batches: batches
         };
         
         await window.AppDB.saveCourse(newCourse);
@@ -1439,16 +1535,15 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("ac-fees").value = course.fees;
             document.getElementById("ac-faculty").value = course.faculty;
 
-            let onlineTimings = "Mon, Wed, Fri 8 AM";
-            let offlineTimings = "Mon 2 PM, Wed 5 PM, Sat 7 PM";
-            if (course.batches) {
-              const onlineBatch = course.batches.find(b => b.type === "Online");
-              if (onlineBatch) onlineTimings = onlineBatch.timings;
-              const offlineBatch = course.batches.find(b => b.type === "Offline");
-              if (offlineBatch) offlineTimings = offlineBatch.timings;
+            if (course.batches && course.batches.length > 0) {
+              renderAdminBatches(course.batches);
+            } else {
+              renderAdminBatches([
+                { id: course.id + '_online', name: 'Batch 1', type: 'Online', timings: ['Mon 8 AM', 'Wed 8 AM', 'Fri 8 AM'], maxSelectable: 0 },
+                { id: course.id + '_offline', name: 'Batch 2', type: 'Offline', timings: ['Mon 2 PM', 'Wed 5 PM', 'Sat 7 PM'], maxSelectable: 0 },
+                { id: course.id + '_custom', name: 'Custom', type: 'Custom', timings: ['Flexible Timings'], maxSelectable: 0 }
+              ]);
             }
-            document.getElementById("ac-online-timings").value = onlineTimings;
-            document.getElementById("ac-offline-timings").value = offlineTimings;
 
             const titleEl = document.getElementById("admin-course-modal-title");
             const submitEl = document.getElementById("admin-course-modal-submit");
@@ -1808,12 +1903,17 @@ document.addEventListener("DOMContentLoaded", () => {
               badgeStyle = "background:#fef3c7; color:#92400e;"; // Custom (amber)
             }
             
+            const timingsStr = (e.selectedTimings && e.selectedTimings.length > 0)
+              ? e.selectedTimings.join(', ')
+              : (Array.isArray(e.batch.timings) ? e.batch.timings.join(', ') : e.batch.timings);
+
             batchHtml = `
               <div style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--border-color); font-size:0.8rem;">
                 <strong>Batch:</strong> <span class="badge" style="${badgeStyle} padding:2px 6px; font-size:0.75rem; border-radius:4px; font-weight:600; text-transform:uppercase;">${e.batch.type}</span>
                 <span style="font-weight:600; color:var(--text-primary); margin-left:0.25rem;">${e.batch.name}</span>
                 <div style="margin-top:0.35rem; font-size:0.75rem; color:#64748b; display:flex; align-items:center; gap:0.25rem;">
-                  <i data-lucide="clock" style="width:12px; height:12px; flex-shrink:0;"></i> ${e.batch.timings}
+                  <i data-lucide="clock" style="width:12px; height:12px; flex-shrink:0;"></i> 
+                  <span><strong>Schedule:</strong> ${timingsStr}</span>
                 </div>
               </div>
             `;
@@ -1866,21 +1966,97 @@ document.addEventListener("DOMContentLoaded", () => {
         select.innerHTML = availableCourses.map(c => `<option value="${c.id}">${c.title}</option>`).join("");
         if (enrollBtn) enrollBtn.disabled = false;
         
+        const timingsGroup = document.getElementById("student-enroll-timings-group");
+        const timingsContainer = document.getElementById("student-enroll-timings-container");
+        const timingsLabel = document.getElementById("student-enroll-timings-label");
+
+        const updateEnrollmentTimings = () => {
+          if (!timingsGroup || !timingsContainer) return;
+          const courseId = select.value;
+          const batchId = batchSelect.value;
+          const course = availableCourses.find(c => c.id.toString() === courseId);
+          if (!course || !course.batches) {
+            timingsGroup.style.display = "none";
+            return;
+          }
+          const batch = course.batches.find(b => b.id === batchId);
+          if (!batch || !batch.timings || batch.timings.length === 0) {
+            timingsGroup.style.display = "none";
+            return;
+          }
+
+          timingsGroup.style.display = "block";
+          timingsContainer.innerHTML = "";
+
+          const maxSelectable = batch.maxSelectable !== undefined ? batch.maxSelectable : 0;
+
+          if (Number(maxSelectable) === 1) {
+            timingsLabel.textContent = "Select 1 Timing Option (Required)";
+            batch.timings.forEach((t, idx) => {
+              const itemDiv = document.createElement("div");
+              itemDiv.style.cssText = "display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;";
+              itemDiv.innerHTML = `
+                <input type="radio" name="enroll-timing-radio" id="timing-radio-${idx}" value="${t}" ${idx === 0 ? 'checked' : ''} style="cursor: pointer;">
+                <label for="timing-radio-${idx}" style="cursor: pointer; font-size: 0.85rem; font-weight: 500;">${t}</label>
+              `;
+              timingsContainer.appendChild(itemDiv);
+            });
+          } else if (Number(maxSelectable) > 1) {
+            timingsLabel.textContent = `Select Timings (Up to ${maxSelectable} slots)`;
+            batch.timings.forEach((t, idx) => {
+              const itemDiv = document.createElement("div");
+              itemDiv.style.cssText = "display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;";
+              itemDiv.innerHTML = `
+                <input type="checkbox" class="enroll-timing-checkbox" id="timing-checkbox-${idx}" value="${t}" style="cursor: pointer;">
+                <label for="timing-checkbox-${idx}" style="cursor: pointer; font-size: 0.85rem; font-weight: 500;">${t}</label>
+              `;
+              
+              const chk = itemDiv.querySelector("input");
+              chk.addEventListener("change", () => {
+                const checked = timingsContainer.querySelectorAll(".enroll-timing-checkbox:checked");
+                if (checked.length > maxSelectable) {
+                  chk.checked = false;
+                  showToast(`You can select at most ${maxSelectable} timings for this batch.`, "warning");
+                }
+              });
+
+              timingsContainer.appendChild(itemDiv);
+            });
+          } else {
+            timingsLabel.textContent = "Class Timings (You attend all sessions)";
+            batch.timings.forEach((t, idx) => {
+              const itemDiv = document.createElement("div");
+              itemDiv.style.cssText = "display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0;";
+              itemDiv.innerHTML = `
+                <input type="checkbox" id="timing-checkbox-${idx}" value="${t}" checked disabled style="cursor: default;">
+                <label for="timing-checkbox-${idx}" style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary);">${t}</label>
+              `;
+              timingsContainer.appendChild(itemDiv);
+            });
+          }
+        };
+
         // Populate batch options dynamically
         const updateBatchDropdown = () => {
           const courseId = select.value;
           const course = availableCourses.find(c => c.id.toString() === courseId);
           if (course && course.batches && batchSelect) {
-            batchSelect.innerHTML = course.batches.map(b => `<option value="${b.id}">[${b.type}] ${b.name} - ${b.timings}</option>`).join("");
+            batchSelect.innerHTML = course.batches.map(b => {
+              const timingsStr = Array.isArray(b.timings) ? b.timings.join(', ') : b.timings;
+              return `<option value="${b.id}">[${b.type}] ${b.name} - ${timingsStr}</option>`;
+            }).join("");
             batchSelect.disabled = false;
             if (batchGroup) batchGroup.style.display = "block";
+            updateEnrollmentTimings();
           } else if (batchSelect) {
             batchSelect.innerHTML = `<option value="">No slots available</option>`;
             batchSelect.disabled = true;
+            if (timingsGroup) timingsGroup.style.display = "none";
           }
         };
         
         select.onchange = updateBatchDropdown;
+        batchSelect.onchange = updateEnrollmentTimings;
         updateBatchDropdown();
       }
 
@@ -1892,6 +2068,33 @@ document.addEventListener("DOMContentLoaded", () => {
           const batchId = batchSelect ? batchSelect.value : null;
           if (!courseId) return;
 
+          let selectedTimings = [];
+          const course = availableCourses.find(c => c.id.toString() === courseId);
+          if (course && course.batches && batchId) {
+            const batch = course.batches.find(b => b.id === batchId);
+            if (batch) {
+              const maxSelectable = batch.maxSelectable !== undefined ? batch.maxSelectable : 0;
+              if (Number(maxSelectable) === 1) {
+                const checkedRadio = timingsContainer.querySelector("input[name='enroll-timing-radio']:checked");
+                if (checkedRadio) {
+                  selectedTimings.push(checkedRadio.value);
+                } else {
+                  showToast("Please select a timing slot to enroll.", "warning");
+                  return;
+                }
+              } else if (Number(maxSelectable) > 1) {
+                const checkboxes = timingsContainer.querySelectorAll(".enroll-timing-checkbox:checked");
+                checkboxes.forEach(cb => selectedTimings.push(cb.value));
+                if (selectedTimings.length === 0) {
+                  showToast("Please select at least one timing slot to enroll.", "warning");
+                  return;
+                }
+              } else {
+                selectedTimings = Array.isArray(batch.timings) ? batch.timings : [batch.timings];
+              }
+            }
+          }
+
           try {
             enrollBtn.disabled = true;
             enrollBtn.textContent = "Enrolling...";
@@ -1900,10 +2103,11 @@ document.addEventListener("DOMContentLoaded", () => {
               showToast("No active student profile found. Please log in again.", "error");
               return;
             }
-            await window.AppDB.enrollInCourse(courseId, currentProfile.id, batchId);
+            await window.AppDB.enrollInCourse(courseId, currentProfile.id, batchId, selectedTimings);
             await renderStudentCourses();
             await renderStudentOverview();
             showToast("Successfully enrolled in the program!", "success");
+            if (timingsGroup) timingsGroup.style.display = "none";
           } catch (err) {
             console.error("Dashboard enrollment failed:", err);
             showToast("Failed to complete enrollment. Please try again.", "error");

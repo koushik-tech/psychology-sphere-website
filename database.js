@@ -368,11 +368,26 @@
       data.courses.forEach(c => {
         if (!c.batches) {
           c.batches = [
-            { id: c.id + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-            { id: c.id + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-            { id: c.id + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+            { id: c.id + '_online', type: 'Online', name: 'Batch 1', timings: ['Mon 8 AM', 'Wed 8 AM', 'Fri 8 AM'], maxSelectable: 0 },
+            { id: c.id + '_offline', type: 'Offline', name: 'Batch 2', timings: ['Mon 2 PM', 'Wed 5 PM', 'Sat 7 PM'], maxSelectable: 0 },
+            { id: c.id + '_custom', type: 'Custom', name: 'Custom', timings: ['Flexible Timings'], maxSelectable: 0 }
           ];
           migrationUpdated = true;
+        } else {
+          c.batches.forEach(b => {
+            if (typeof b.timings === 'string') {
+              if (b.timings.includes(',')) {
+                b.timings = b.timings.split(',').map(t => t.trim());
+              } else {
+                b.timings = [b.timings.trim()];
+              }
+              migrationUpdated = true;
+            }
+            if (b.maxSelectable === undefined) {
+              b.maxSelectable = b.max_selectable !== undefined ? b.max_selectable : 0;
+              migrationUpdated = true;
+            }
+          });
         }
       });
       if (migrationUpdated) {
@@ -635,11 +650,22 @@
               batchesData.forEach(b => {
                 const cId = b.course_id.toString();
                 if (!batchesByCourse[cId]) batchesByCourse[cId] = [];
+                
+                let timingsArray = [];
+                if (b.timings) {
+                  if (typeof b.timings === 'string') {
+                    timingsArray = b.timings.split(',').map(t => t.trim());
+                  } else if (Array.isArray(b.timings)) {
+                    timingsArray = b.timings;
+                  }
+                }
+                
                 batchesByCourse[cId].push({
                   id: b.id,
                   type: b.type,
                   name: b.name,
-                  timings: b.timings
+                  timings: timingsArray,
+                  maxSelectable: b.max_selectable || 0
                 });
               });
             }
@@ -658,9 +684,9 @@
               faculty: c.profiles?.full_name || 'Dr. Sarah Jenkins',
               image: c.image || c.image_url || 'images/course_ugc_net.png',
               batches: batchesByCourse[courseIdStr] || [
-                { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-                { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-                { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+                { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: ['Mon 8 AM', 'Wed 8 AM', 'Fri 8 AM'], maxSelectable: 0 },
+                { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: ['Mon 2 PM', 'Wed 5 PM', 'Sat 7 PM'], maxSelectable: 0 },
+                { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: ['Flexible Timings'], maxSelectable: 0 }
               ]
             };
           });
@@ -746,11 +772,12 @@
           if (course.batches && dbCourseId) {
             try {
               const batchesPayload = course.batches.map(b => ({
-                id: b.id.includes('_') ? b.id : `${dbCourseId}_${b.type.toLowerCase()}`,
+                id: b.id && b.id.includes('_') ? b.id : `${dbCourseId}_${b.name.replace(/\s+/g, '_').toLowerCase()}_${Math.random().toString(36).substring(2, 6)}`,
                 course_id: dbCourseId,
                 type: b.type,
                 name: b.name,
-                timings: b.timings
+                timings: Array.isArray(b.timings) ? b.timings.join(', ') : b.timings,
+                max_selectable: b.maxSelectable || 0
               }));
               await supabaseClient
                 .from('batches')
@@ -766,17 +793,32 @@
           const db = loadDB();
           const existingIdx = db.courses.findIndex(c => c.id === course.id);
           if (existingIdx !== -1) {
-            if (!course.batches && db.courses[existingIdx].batches) {
+            if (course.batches) {
+              // Ensure clean schema format
+              course.batches.forEach(b => {
+                if (typeof b.timings === 'string') {
+                  b.timings = b.timings.split(',').map(t => t.trim());
+                }
+                if (b.maxSelectable === undefined) b.maxSelectable = 0;
+              });
+            } else if (db.courses[existingIdx].batches) {
               course.batches = db.courses[existingIdx].batches;
             }
             db.courses[existingIdx] = course;
           } else {
             if (!course.batches) {
               course.batches = [
-                { id: course.id + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-                { id: course.id + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-                { id: course.id + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+                { id: course.id + '_online', type: 'Online', name: 'Batch 1', timings: ['Mon 8 AM', 'Wed 8 AM', 'Fri 8 AM'], maxSelectable: 0 },
+                { id: course.id + '_offline', type: 'Offline', name: 'Batch 2', timings: ['Mon 2 PM', 'Wed 5 PM', 'Sat 7 PM'], maxSelectable: 0 },
+                { id: course.id + '_custom', type: 'Custom', name: 'Custom', timings: ['Flexible Timings'], maxSelectable: 0 }
               ];
+            } else {
+              course.batches.forEach(b => {
+                if (typeof b.timings === 'string') {
+                  b.timings = b.timings.split(',').map(t => t.trim());
+                }
+                if (b.maxSelectable === undefined) b.maxSelectable = 0;
+              });
             }
             db.courses.push(course);
           }
@@ -787,17 +829,31 @@
         const db = loadDB();
         const existingIdx = db.courses.findIndex(c => c.id === course.id);
         if (existingIdx !== -1) {
-          if (!course.batches && db.courses[existingIdx].batches) {
+          if (course.batches) {
+            course.batches.forEach(b => {
+              if (typeof b.timings === 'string') {
+                b.timings = b.timings.split(',').map(t => t.trim());
+              }
+              if (b.maxSelectable === undefined) b.maxSelectable = 0;
+            });
+          } else if (db.courses[existingIdx].batches) {
             course.batches = db.courses[existingIdx].batches;
           }
           db.courses[existingIdx] = course;
         } else {
           if (!course.batches) {
             course.batches = [
-              { id: course.id + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-              { id: course.id + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-              { id: course.id + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+              { id: course.id + '_online', type: 'Online', name: 'Batch 1', timings: ['Mon 8 AM', 'Wed 8 AM', 'Fri 8 AM'], maxSelectable: 0 },
+              { id: course.id + '_offline', type: 'Offline', name: 'Batch 2', timings: ['Mon 2 PM', 'Wed 5 PM', 'Sat 7 PM'], maxSelectable: 0 },
+              { id: course.id + '_custom', type: 'Custom', name: 'Custom', timings: ['Flexible Timings'], maxSelectable: 0 }
             ];
+          } else {
+            course.batches.forEach(b => {
+              if (typeof b.timings === 'string') {
+                b.timings = b.timings.split(',').map(t => t.trim());
+              }
+              if (b.maxSelectable === undefined) b.maxSelectable = 0;
+            });
           }
           db.courses.push(course);
         }
@@ -1017,17 +1073,21 @@
       return profile;
     },
 
-    enrollInCourse: async function (courseId, studentId, batchId) {
+    enrollInCourse: async function (courseId, studentId, batchId, selectedTimings) {
       if (supabaseClient) {
         try {
+          const payload = {
+            student_id: studentId,
+            course_id: parseInt(courseId),
+            batch_id: batchId,
+            status: 'active'
+          };
+          if (selectedTimings) {
+            payload.selected_timings = Array.isArray(selectedTimings) ? selectedTimings.join(', ') : selectedTimings;
+          }
           const { error } = await supabaseClient
             .from('enrollments')
-            .insert({
-              student_id: studentId,
-              course_id: parseInt(courseId),
-              batch_id: batchId,
-              status: 'active'
-            });
+            .insert(payload);
           if (error) {
             console.warn("Supabase enroll with batchId failed, retrying without batch:", error);
             const { error: retryError } = await supabaseClient
@@ -1210,12 +1270,35 @@
                 if (!batchDetails) {
                   // Generate standard mock batches for this course as fallback
                   const mockBatches = [
-                    { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: 'Mon, Wed, Fri 8 AM' },
-                    { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: 'Mon 2 PM, Wed 5 PM, Sat 7 PM' },
-                    { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: 'Flexible Timings' }
+                    { id: courseIdStr + '_online', type: 'Online', name: 'Batch 1', timings: ['Mon 8 AM', 'Wed 8 AM', 'Fri 8 AM'], maxSelectable: 0 },
+                    { id: courseIdStr + '_offline', type: 'Offline', name: 'Batch 2', timings: ['Mon 2 PM', 'Wed 5 PM', 'Sat 7 PM'], maxSelectable: 0 },
+                    { id: courseIdStr + '_custom', type: 'Custom', name: 'Custom', timings: ['Flexible Timings'], maxSelectable: 0 }
                   ];
                   batchDetails = mockBatches.find(b => b.id === e.batch_id) || mockBatches[0];
+                } else {
+                  // Parse timings list if it is a string
+                  let timingsArray = [];
+                  if (batchDetails.timings) {
+                    if (typeof batchDetails.timings === 'string') {
+                      timingsArray = batchDetails.timings.split(',').map(t => t.trim());
+                    } else if (Array.isArray(batchDetails.timings)) {
+                      timingsArray = batchDetails.timings;
+                    }
+                  }
+                  batchDetails = {
+                    id: batchDetails.id,
+                    type: batchDetails.type,
+                    name: batchDetails.name,
+                    timings: timingsArray,
+                    maxSelectable: batchDetails.max_selectable || 0
+                  };
                 }
+
+                let selectedTimingsArray = [];
+                if (e.selected_timings) {
+                  selectedTimingsArray = e.selected_timings.split(',').map(t => t.trim());
+                }
+
                 return {
                   id: e.id,
                   courseId: e.courses.id,
@@ -1223,6 +1306,7 @@
                   courseDuration: e.courses.duration,
                   courseFees: e.courses.fees,
                   batch: batchDetails,
+                  selectedTimings: selectedTimingsArray,
                   status: e.status
                 };
               });
@@ -1245,6 +1329,16 @@
         if (course && course.batches && e.batch_id) {
           batchDetails = course.batches.find(b => b.id === e.batch_id);
         }
+        
+        // Ensure timings are array format
+        if (batchDetails && typeof batchDetails.timings === 'string') {
+          batchDetails = {
+            ...batchDetails,
+            timings: batchDetails.timings.split(',').map(t => t.trim()),
+            maxSelectable: batchDetails.maxSelectable || 0
+          };
+        }
+
         return {
           id: e.id,
           courseId: e.course_id,
@@ -1252,6 +1346,7 @@
           courseDuration: course ? course.duration : 'N/A',
           courseFees: course ? course.fees : '0',
           batch: batchDetails,
+          selectedTimings: e.selected_timings || [],
           status: e.status
         };
       });
@@ -1688,6 +1783,10 @@
           }
         } else if (e.batch_id) {
           batchName = e.batch_id;
+        }
+
+        if (e.selected_timings) {
+          batchName += ` - ${e.selected_timings}`;
         }
 
         // Get enrollment year/session
