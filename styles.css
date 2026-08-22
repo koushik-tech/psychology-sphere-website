@@ -1030,7 +1030,7 @@ footer a:hover {
 .sidebar-rewrite {
   width: 260px;
   background: #0f1026; /* Deep Midnight */
-  padding: 2.25rem 1.25rem;
+  padding: 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -1038,10 +1038,22 @@ footer a:hover {
   height: 100vh;
   z-index: 10;
   transition: var(--transition);
+  overflow-y: auto;
+}
+
+.sidebar-rewrite::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-rewrite::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+.sidebar-rewrite::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
 }
 
 .sidebar-brand-rewrite {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -1073,7 +1085,7 @@ footer a:hover {
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  padding: 0.75rem 1.1rem;
+  padding: 0.6rem 1rem;
   border-radius: 8px;
   color: #94a3b8;
   font-weight: 600;
