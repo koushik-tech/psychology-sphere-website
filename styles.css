@@ -1459,3 +1459,82 @@ footer a:hover {
   border-radius: 50%;
 }
 
+/* ==================== NATIVE MOBILE APP FRIENDLINESS STYLES ==================== */
+@media (max-width: 768px) {
+  /* Show mobile navbar, hide default desktop top bar title */
+  .mobile-navbar-rewrite {
+    display: flex !important;
+  }
+  
+  .dashboard-navbar-rewrite {
+    display: none !important; /* Hide redundant desktop navbar header on mobile */
+  }
+
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  /* Fixed mobile sidebar drawer overlay */
+  .sidebar-rewrite {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: -270px; /* Hidden offscreen (width is 260px, so 270px is completely hidden) */
+    width: 260px;
+    height: 100%;
+    z-index: 1000 !important;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.25);
+    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar-rewrite.active {
+    left: 0 !important;
+  }
+
+  .sidebar-overlay-rewrite {
+    transition: opacity 0.25s ease;
+    opacity: 0;
+  }
+
+  /* Compact main panel margin/padding offsets */
+  .dashboard-main-rewrite {
+    width: 100% !important;
+    padding: 1rem !important;
+    min-height: calc(100vh - 56px); /* Fit mobile screen height minus mobile header */
+  }
+
+  .dashboard-scrollable-content {
+    padding-bottom: 3rem; /* Extra padding for mobile bottom thumb reachability */
+  }
+
+  /* Responsive Grids Stack */
+  .grid-3, .grid-2, .payment-grid-layout, .metrics-grid, .admin-analytics-summary {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Card and metric layout reductions */
+  .metric-card-rewrite {
+    padding: 1.25rem !important;
+  }
+
+  /* Modal scaling for smaller screens */
+  .modal-box {
+    width: 92% !important;
+    padding: 1.25rem !important;
+    border-radius: 12px !important;
+    margin: 1.5rem auto !important;
+    box-sizing: border-box;
+  }
+
+  /* Horizontal scrolling for native responsive tables */
+  .table-container-rewrite {
+    border-radius: 8px;
+    box-shadow: inset -10px 0 10px -10px rgba(0,0,0,0.15); /* Swipe indicator hint */
+  }
+
+  .table-container-rewrite table {
+    min-width: 600px; /* Guarantee content is readable, forcing clean swipe behavior */
+  }
+}
+

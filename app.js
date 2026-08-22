@@ -196,6 +196,51 @@ document.addEventListener("DOMContentLoaded", () => {
     openLoginModal();
   }
 
+  // --- MOBILE SIDEBAR DRAWER SYSTEM ---
+  const mobileToggleBtn = document.getElementById("mobile-sidebar-toggle");
+  const sidebarContainer = document.querySelector(".sidebar-rewrite");
+  const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+  const closeMobileSidebar = () => {
+    if (sidebarContainer) sidebarContainer.classList.remove("active");
+    if (sidebarOverlay) {
+      sidebarOverlay.style.opacity = "0";
+      setTimeout(() => {
+        if (sidebarContainer && !sidebarContainer.classList.contains("active")) {
+          sidebarOverlay.style.display = "none";
+        }
+      }, 250);
+    }
+  };
+
+  const openMobileSidebar = () => {
+    if (sidebarContainer) sidebarContainer.classList.add("active");
+    if (sidebarOverlay) {
+      sidebarOverlay.style.display = "block";
+      // Force layout reflow
+      sidebarOverlay.offsetHeight;
+      sidebarOverlay.style.opacity = "1";
+    }
+  };
+
+  if (mobileToggleBtn) {
+    mobileToggleBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openMobileSidebar();
+    });
+  }
+
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener("click", closeMobileSidebar);
+  }
+
+  // Auto-close mobile sidebar drawer when menu options are clicked
+  document.querySelectorAll(".sidebar-menu-rewrite a").forEach(link => {
+    link.addEventListener("click", () => {
+      closeMobileSidebar();
+    });
+  });
+
   // --- LOGIN LOGIC & DASHBOARD MOUNTING ---
   const publicWebsite = document.getElementById("public-website");
   const portalDashboard = document.getElementById("portal-dashboard");
@@ -216,6 +261,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Store user session details
     loggedInUser = { email: email, role: role };
+
+    // Sync mobile header avatar
+    const mobileAvatar = document.getElementById("mobile-avatar");
+    if (mobileAvatar) {
+      if (role === "student") {
+        mobileAvatar.textContent = displayName.charAt(0);
+      } else if (role === "faculty") {
+        const avatarText = profile.avatar || displayName.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) || "FT";
+        mobileAvatar.textContent = avatarText;
+      } else if (role === "admin") {
+        mobileAvatar.textContent = "A";
+      }
+    }
 
     // Hide public site and show dashboard container
     if (publicWebsite && portalDashboard) {
