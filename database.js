@@ -1073,6 +1073,163 @@
       return profile;
     },
 
+    updateFacultyProfile: async function (profileId, updatedFields) {
+      const db = loadDB();
+      if (db.profiles) {
+        const idx = db.profiles.findIndex(p => p.id === profileId);
+        if (idx !== -1) {
+          db.profiles[idx] = { ...db.profiles[idx], ...updatedFields };
+          saveDB(db);
+        }
+      }
+
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('profiles')
+            .update(updatedFields)
+            .eq('id', profileId);
+          if (error) throw error;
+          return true;
+        } catch (e) {
+          console.error("Supabase updateFacultyProfile failed:", e);
+          throw e;
+        }
+      }
+      return true;
+    },
+
+    deleteFacultyProfile: async function (profileId) {
+      const db = loadDB();
+      if (db.profiles) {
+        db.profiles = db.profiles.filter(p => p.id !== profileId);
+      }
+      if (db.schedules) {
+        db.schedules = db.schedules.filter(s => s.faculty_id !== profileId);
+      }
+      saveDB(db);
+
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('profiles')
+            .delete()
+            .eq('id', profileId);
+          if (error) throw error;
+          return true;
+        } catch (e) {
+          console.error("Supabase deleteFacultyProfile failed:", e);
+          throw e;
+        }
+      }
+      return true;
+    },
+
+    getFacultySchedules: async function (facultyId) {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('schedules')
+            .select('*, courses(title)')
+            .eq('faculty_id', facultyId)
+            .order('date_time', { ascending: true });
+          
+          if (error) throw error;
+          if (data) {
+            return data.map(s => ({
+              id: s.id,
+              courseId: s.course_id,
+              courseTitle: s.courses ? s.courses.title : "Psychology Program",
+              facultyId: s.faculty_id,
+              topic: s.topic,
+              dateTime: s.date_time,
+              meetingLink: s.meeting_link,
+              status: s.status
+            }));
+          }
+        } catch (e) {
+          console.error("Supabase getFacultySchedules failed, falling back to LocalStorage:", e);
+        }
+      }
+
+      const db = loadDB();
+      if (!db.schedules) db.schedules = [];
+      const schedules = db.schedules.filter(s => s.faculty_id === facultyId);
+      const courses = db.courses || [];
+      return schedules.map(s => {
+        const course = courses.find(c => c.id.toString() === s.course_id.toString());
+        return {
+          id: s.id,
+          courseId: s.course_id,
+          courseTitle: course ? course.title : "Psychology Program",
+          facultyId: s.faculty_id,
+          topic: s.topic,
+          dateTime: s.date_time,
+          meetingLink: s.meeting_link,
+          status: s.status
+        };
+      });
+    },
+
+    createLiveSchedule: async function (scheduleObj) {
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('schedules')
+            .insert({
+              course_id: parseInt(scheduleObj.courseId),
+              faculty_id: scheduleObj.facultyId,
+              topic: scheduleObj.topic,
+              date_time: scheduleObj.dateTime,
+              meeting_link: scheduleObj.meetingLink,
+              status: scheduleObj.status || 'scheduled'
+            });
+          if (error) throw error;
+          return true;
+        } catch (e) {
+          console.error("Supabase createLiveSchedule failed:", e);
+          throw e;
+        }
+      }
+
+      const db = loadDB();
+      if (!db.schedules) db.schedules = [];
+      db.schedules.push({
+        id: 'sch-' + Date.now().toString() + Math.random().toString().substring(2, 5),
+        course_id: scheduleObj.courseId,
+        faculty_id: scheduleObj.facultyId,
+        topic: scheduleObj.topic,
+        date_time: scheduleObj.dateTime,
+        meeting_link: scheduleObj.meetingLink,
+        status: scheduleObj.status || 'scheduled'
+      });
+      saveDB(db);
+      return true;
+    },
+
+    deleteLiveSchedule: async function (scheduleId) {
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from('schedules')
+            .delete()
+            .eq('id', scheduleId);
+          if (error) throw error;
+          return true;
+        } catch (e) {
+          console.error("Supabase deleteLiveSchedule failed:", e);
+          throw e;
+        }
+      }
+
+      const db = loadDB();
+      if (db.schedules) {
+        db.schedules = db.schedules.filter(s => s.id !== scheduleId);
+        saveDB(db);
+      }
+      return true;
+    },
+
     enrollInCourse: async function (courseId, studentId, batchId, selectedTimings) {
       if (supabaseClient) {
         try {

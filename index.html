@@ -387,6 +387,7 @@
           <li><a href="#" class="sidebar-link active" data-tab="admin-analytics"><i data-lucide="bar-chart-2"></i> Analytics</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-courses"><i data-lucide="book-open"></i> Manage Courses</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-students"><i data-lucide="users"></i> Manage Students</a></li>
+          <li><a href="#" class="sidebar-link" data-tab="admin-faculty"><i data-lucide="award"></i> Manage Faculty</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-notices"><i data-lucide="megaphone"></i> Broadcast Notices</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-db"><i data-lucide="database"></i> Database Manager</a></li>
           <li><a href="#" class="sidebar-link" data-tab="admin-payment-settings"><i data-lucide="settings"></i> Payment Settings</a></li>
@@ -862,6 +863,26 @@
             </div>
           </div>
 
+          <!-- Admin Faculty Management Desk tab -->
+          <div class="dashboard-tab-view" id="admin-faculty-tab" style="display:none;">
+            <div class="card" style="text-align:left; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+              <div>
+                <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">Faculty Management Desk</h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">
+                  Manage institutional mentors, academic roles, areas of specialization, and class schedule assignments.
+                </p>
+              </div>
+              <button class="btn btn-primary" id="btn-admin-add-faculty-custom" style="border-radius:20px; font-size:0.8rem; padding:0.5rem 1.25rem;">
+                <i data-lucide="user-plus" style="width:14px; height:14px; margin-right:4px;"></i> Add New Faculty
+              </button>
+            </div>
+
+            <!-- Faculty cards grid container -->
+            <div id="admin-faculty-grid" class="grid-3" style="text-align:left; gap:1.5rem; margin-bottom:2rem;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
           <div class="dashboard-tab-view" id="admin-notices-tab" style="display:none;">
             <div class="grid-2" style="text-align:left;">
               <div class="card">
@@ -1180,14 +1201,15 @@
     </div>
   </div>
 
-  <!-- 3.5. Admin Add Faculty Modal -->
+  <!-- 3.5. Admin Add/Edit Faculty Modal -->
   <div class="modal-overlay" id="admin-add-faculty-modal">
     <div class="modal-box" style="max-width:480px;">
       <i data-lucide="x" class="modal-close" id="admin-add-faculty-close"></i>
-      <h3>Add New Faculty Profile</h3>
-      <p style="margin-bottom:1.5rem; font-size:0.85rem; color:#64748b;">Create a faculty profile. They can sign in using these credentials.</p>
+      <h3 id="admin-faculty-modal-title">Add New Faculty Profile</h3>
+      <p id="admin-faculty-modal-desc" style="margin-bottom:1.5rem; font-size:0.85rem; color:#64748b;">Create a faculty profile. They can sign in using these credentials.</p>
       
       <form id="admin-add-faculty-form">
+        <input type="hidden" id="af-profile-id" value="">
         <div class="form-group">
           <label for="af-name">Full Name</label>
           <input type="text" id="af-name" class="form-control" required placeholder="e.g. Dr. John Doe">
@@ -1196,7 +1218,7 @@
           <label for="af-email">Email Address</label>
           <input type="email" id="af-email" class="form-control" required placeholder="e.g. johndoe@psysphere.edu">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="af-password-group">
           <label for="af-password">Login Password</label>
           <input type="text" id="af-password" class="form-control" required placeholder="Create temporary login password" value="demo1234">
         </div>
@@ -1213,7 +1235,44 @@
           <input type="text" id="af-image" class="form-control" placeholder="Optional Google Drive sharing link">
         </div>
         
-        <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; background-color:#3b20a6; margin-top: 1rem;">Create Faculty Profile</button>
+        <button type="submit" id="admin-faculty-modal-submit" class="btn btn-primary" style="width:100%; border-radius:30px; background-color:#3b20a6; margin-top: 1rem;">Create Faculty Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3.6. Admin Schedule Live Class Modal -->
+  <div class="modal-overlay" id="admin-schedule-class-modal">
+    <div class="modal-box" style="max-width:480px;">
+      <i data-lucide="x" class="modal-close" id="admin-schedule-class-close"></i>
+      <h3>Schedule Live Class</h3>
+      <p style="margin-bottom:1.5rem; font-size:0.85rem; color:#64748b;">Schedule a live session program link for this faculty mentor.</p>
+      
+      <form id="admin-schedule-class-form" style="text-align:left; display:flex; flex-direction:column; gap:1rem;">
+        <input type="hidden" id="as-faculty-id" value="">
+        <div class="form-group" style="margin-bottom:0;">
+          <label style="font-weight:600; font-size:0.85rem; color:var(--text-primary); margin-bottom:0.35rem; display:block;">Assign to Mentor</label>
+          <input type="text" id="as-faculty-name" class="form-control" readonly style="background:#f1f5f9; cursor:not-allowed; font-weight:600; padding:0.6rem 0.75rem; border-radius:6px; border:1px solid var(--border-color); width:100%;">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="as-course-select" style="font-weight:600; font-size:0.85rem; color:var(--text-primary); margin-bottom:0.35rem; display:block;">Select Course Program</label>
+          <select id="as-course-select" class="form-control" required style="padding:0.6rem 0.75rem; border-radius:6px; border:1px solid var(--border-color); width:100%;">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="as-topic" style="font-weight:600; font-size:0.85rem; color:var(--text-primary); margin-bottom:0.35rem; display:block;">Class Topic / Title</label>
+          <input type="text" id="as-topic" class="form-control" required placeholder="e.g. Cognitive Behavior Therapy (CBT) Foundations" style="padding:0.6rem 0.75rem; border-radius:6px; border:1px solid var(--border-color); width:100%;">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="as-date-time" style="font-weight:600; font-size:0.85rem; color:var(--text-primary); margin-bottom:0.35rem; display:block;">Scheduled Date & Time</label>
+          <input type="datetime-local" id="as-date-time" class="form-control" required style="padding:0.6rem 0.75rem; border-radius:6px; border:1px solid var(--border-color); width:100%;">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="as-meeting-link" style="font-weight:600; font-size:0.85rem; color:var(--text-primary); margin-bottom:0.35rem; display:block;">Live Meeting Link (Zoom / Meet / Teams)</label>
+          <input type="url" id="as-meeting-link" class="form-control" required placeholder="e.g. https://zoom.us/j/12345678" style="padding:0.6rem 0.75rem; border-radius:6px; border:1px solid var(--border-color); width:100%;">
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width:100%; border-radius:30px; background-color:#3b20a6; margin-top: 1rem; padding: 0.75rem; font-weight:700;">Schedule Live Class</button>
       </form>
     </div>
   </div>

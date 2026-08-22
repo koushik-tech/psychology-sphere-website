@@ -388,6 +388,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (tabId === "admin-students") {
       renderAdminStudents();
     }
+
+    if (tabId === "admin-faculty") {
+      renderAdminFaculty();
+    }
+
+    if (tabId === "faculty-classes") {
+      renderFacultyClasses();
+    }
     
     if (window.lucide) {
       window.lucide.createIcons();
@@ -1575,7 +1583,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- ADMIN FACULTY MANAGEMENT ---
   const adminAddFacultyModal = document.getElementById("admin-add-faculty-modal");
-  
+  const adminScheduleModal = document.getElementById("admin-schedule-class-modal");
+
   const openAdminAddFacultyModal = () => {
     if (adminAddFacultyModal) {
       adminAddFacultyModal.classList.add("active");
@@ -1598,10 +1607,49 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const closeAdminScheduleModal = () => {
+    if (adminScheduleModal) adminScheduleModal.classList.remove("active");
+  };
+
+  if (adminScheduleModal) {
+    adminScheduleModal.addEventListener("click", (e) => {
+      if (e.target.closest("#admin-schedule-class-close") || e.target === adminScheduleModal) {
+        closeAdminScheduleModal();
+      }
+    });
+  }
+
+  // Bind custom Add New Faculty button from the custom Faculty tab view
+  const addFacultyCustomBtn = document.getElementById("btn-admin-add-faculty-custom");
+  if (addFacultyCustomBtn) {
+    addFacultyCustomBtn.addEventListener("click", () => {
+      document.getElementById("af-profile-id").value = "";
+      document.getElementById("af-name").value = "";
+      document.getElementById("af-email").value = "";
+      document.getElementById("af-password").value = "demo1234";
+      document.getElementById("af-role").value = "";
+      document.getElementById("af-specialization").value = "";
+      document.getElementById("af-image").value = "";
+
+      // Show password field for new signups
+      const passGrp = document.getElementById("af-password-group");
+      if (passGrp) passGrp.style.display = "block";
+      const passInp = document.getElementById("af-password");
+      if (passInp) passInp.setAttribute("required", "required");
+
+      document.getElementById("admin-faculty-modal-title").textContent = "Add New Faculty Profile";
+      document.getElementById("admin-faculty-modal-desc").textContent = "Create a faculty profile. They can sign in using these credentials.";
+      document.getElementById("admin-faculty-modal-submit").textContent = "Create Faculty Profile";
+
+      openAdminAddFacultyModal();
+    });
+  }
+
   const addFacultyForm = document.getElementById("admin-add-faculty-form");
   if (addFacultyForm) {
     addFacultyForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const profileId = document.getElementById("af-profile-id").value;
       const name = document.getElementById("af-name").value.trim();
       const email = document.getElementById("af-email").value.trim();
       const password = document.getElementById("af-password").value;
@@ -1610,40 +1658,92 @@ document.addEventListener("DOMContentLoaded", () => {
       const imageLink = document.getElementById("af-image").value.trim();
 
       try {
-        const existingProfile = await window.AppDB.getProfileByEmail(email);
-        if (existingProfile) {
-          showToast("A user profile with this email already exists.", "error");
-          return;
-        }
-
-        const newProfile = {
-          id: generateUUID(),
-          full_name: name,
-          email: email,
-          role: "faculty",
-          password: password,
-          academic_role: designation,
-          specialization: specialization,
-          avatar: name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) || "FT",
-          image: imageLink
-        };
-
-        const result = await window.AppDB.createProfile(newProfile);
-        if (result) {
-          showToast(`Faculty profile for "${name}" created successfully!`, "success");
-          closeAdminAddFacultyModal();
-          addFacultyForm.reset();
-          
-          if (activeDbTable === "faculty") {
-            await renderDatabaseTable("faculty");
+        if (profileId) {
+          // Edit/Update mode
+          const updatedFields = {
+            full_name: name,
+            email: email,
+            academic_role: designation,
+            specialization: specialization,
+            image: imageLink
+          };
+          const success = await window.AppDB.updateFacultyProfile(profileId, updatedFields);
+          if (success) {
+            showToast(`Faculty profile for "${name}" updated successfully!`, "success");
+            closeAdminAddFacultyModal();
+            addFacultyForm.reset();
+            await renderAdminFaculty();
+          } else {
+            showToast("Failed to update faculty profile. Please try again.", "error");
           }
-          await renderMainWebsite();
         } else {
-          showToast("Failed to create faculty profile. Please try again.", "error");
+          // Create/Add mode
+          const existingProfile = await window.AppDB.getProfileByEmail(email);
+          if (existingProfile) {
+            showToast("A user profile with this email already exists.", "error");
+            return;
+          }
+
+          const newProfile = {
+            id: generateUUID(),
+            full_name: name,
+            email: email,
+            role: "faculty",
+            password: password,
+            academic_role: designation,
+            specialization: specialization,
+            avatar: name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) || "FT",
+            image: imageLink
+          };
+
+          const result = await window.AppDB.createProfile(newProfile);
+          if (result) {
+            showToast(`Faculty profile for "${name}" created successfully!`, "success");
+            closeAdminAddFacultyModal();
+            addFacultyForm.reset();
+            await renderAdminFaculty();
+          } else {
+            showToast("Failed to create faculty profile. Please try again.", "error");
+          }
         }
       } catch (err) {
-        console.error("Faculty creation failed:", err);
+        console.error("Faculty operation failed:", err);
         showToast("An error occurred. Please try again.", "error");
+      }
+    });
+  }
+
+  const scheduleForm = document.getElementById("admin-schedule-class-form");
+  if (scheduleForm) {
+    scheduleForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const facultyId = document.getElementById("as-faculty-id").value;
+      const courseId = document.getElementById("as-course-select").value;
+      const topic = document.getElementById("as-topic").value.trim();
+      const dateTime = document.getElementById("as-date-time").value;
+      const meetingLink = document.getElementById("as-meeting-link").value.trim();
+
+      try {
+        const scheduleObj = {
+          courseId: courseId,
+          facultyId: facultyId,
+          topic: topic,
+          dateTime: dateTime,
+          meetingLink: meetingLink,
+          status: 'scheduled'
+        };
+
+        const success = await window.AppDB.createLiveSchedule(scheduleObj);
+        if (success) {
+          showToast("Live class scheduled and assigned successfully!", "success");
+          closeAdminScheduleModal();
+          scheduleForm.reset();
+        } else {
+          showToast("Failed to schedule class. Please try again.", "error");
+        }
+      } catch (err) {
+        console.error("Failed to schedule live class:", err);
+        showToast("An error occurred during scheduling.", "error");
       }
     });
   }
@@ -2750,6 +2850,216 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {
       console.error("Failed to render admin student management table:", e);
       tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444;">Error loading student records.</td></tr>`;
+    }
+  }
+
+  // --- ADMIN FACULTY MANAGEMENT VIEW ---
+  async function renderAdminFaculty() {
+    const grid = document.getElementById("admin-faculty-grid");
+    if (!grid) return;
+
+    grid.innerHTML = `<div style="grid-column: span 3; text-align:center; padding: 2rem;">Loading faculty mentors list...</div>`;
+
+    try {
+      const facultyList = await window.AppDB.getFaculty();
+      if (facultyList.length === 0) {
+        grid.innerHTML = `<div style="grid-column: span 3; text-align:center; padding: 2rem; color:var(--text-secondary);">No faculty profiles registered.</div>`;
+        return;
+      }
+
+      grid.innerHTML = "";
+      facultyList.forEach(faculty => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.cssText = "padding:1.5rem; text-align:center; display:flex; flex-direction:column; gap:0.5rem; border: 1px solid var(--border-color); border-radius:12px; position:relative; overflow:hidden;";
+
+        const directLink = window.AppDB.getGoogleDriveDirectLink(faculty.image);
+        const avatarChar = faculty.avatar || faculty.full_name.charAt(0).toUpperCase();
+
+        card.innerHTML = `
+          <div style="width:70px; height:70px; border-radius:50%; margin:0 auto 0.5rem; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border:2px solid #3b20a6; overflow:hidden;">
+            ${faculty.image ? `<img src="${directLink}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : ''}
+            <div style="font-weight:700; color:#3b20a6; font-size:1.5rem; ${faculty.image ? 'display:none;' : 'display:flex;'}">${avatarChar}</div>
+          </div>
+          <h4 style="font-size:1rem; font-weight:700; color:var(--text-primary); margin:0;">${faculty.full_name}</h4>
+          <span class="badge" style="background:#e0e7ff; color:#3730a3; padding:2px 8px; font-size:0.75rem; border-radius:4px; font-weight:600; align-self:center; margin-bottom:0.25rem;">${faculty.academic_role || 'Faculty Mentor'}</span>
+          <p style="font-size:0.8rem; color:var(--text-secondary); margin:0 0 0.5rem; min-height:36px; line-height:1.3;">Specialization: <strong>${faculty.specialization || 'General'}</strong></p>
+          
+          <div style="font-size:0.75rem; color:#64748b; margin-bottom:0.75rem; border-top:1px solid #f1f5f9; padding-top:0.75rem; word-break:break-all;">
+            <i data-lucide="mail" style="width:12px; height:12px; display:inline-block; vertical-align:middle; margin-right:4px;"></i>${faculty.email}
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:auto;">
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-sm btn-edit-fac" data-id="${faculty.id}" style="flex:1; font-size:0.75rem; padding:6px 12px; border-radius:6px; font-weight:600; border:1px solid var(--border-color); background:transparent; color:var(--text-primary); cursor:pointer;">
+                <i data-lucide="edit-3" style="width:12px; height:12px; display:inline-block; vertical-align:middle; margin-right:2px;"></i>Edit Profile
+              </button>
+              <button class="btn btn-sm btn-delete-fac" data-id="${faculty.id}" style="flex:1; font-size:0.75rem; padding:6px 12px; border-radius:6px; font-weight:600; border:1px solid #ef4444; background:transparent; color:#ef4444; cursor:pointer;">
+                <i data-lucide="trash-2" style="width:12px; height:12px; display:inline-block; vertical-align:middle; margin-right:2px;"></i>Delete
+              </button>
+            </div>
+            <button class="btn btn-sm btn-sched-class" data-id="${faculty.id}" data-name="${faculty.full_name}" style="font-size:0.75rem; padding:8px 12px; border-radius:6px; font-weight:700; background:#3b20a6; border:none; color:white; cursor:pointer; width:100%;">
+              <i data-lucide="plus-circle" style="width:12px; height:12px; display:inline-block; vertical-align:middle; margin-right:4px;"></i>Schedule Live Class
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Bind edit buttons
+      grid.querySelectorAll(".btn-edit-fac").forEach(btn => {
+        btn.onclick = () => {
+          const facId = btn.getAttribute("data-id");
+          const faculty = facultyList.find(f => f.id === facId);
+          if (faculty) {
+            document.getElementById("af-profile-id").value = faculty.id;
+            document.getElementById("af-name").value = faculty.full_name;
+            document.getElementById("af-email").value = faculty.email;
+            document.getElementById("af-role").value = faculty.academic_role || "";
+            document.getElementById("af-specialization").value = faculty.specialization || "";
+            document.getElementById("af-image").value = faculty.image || "";
+            
+            // Hide password field for edits
+            const passGrp = document.getElementById("af-password-group");
+            if (passGrp) passGrp.style.display = "none";
+            const passInp = document.getElementById("af-password");
+            if (passInp) passInp.removeAttribute("required");
+
+            document.getElementById("admin-faculty-modal-title").textContent = "Edit Faculty Profile";
+            document.getElementById("admin-faculty-modal-desc").textContent = "Modify faculty details in the database.";
+            document.getElementById("admin-faculty-modal-submit").textContent = "Save Changes";
+            
+            if (adminAddFacultyModal) adminAddFacultyModal.classList.add("active");
+          }
+        };
+      });
+
+      // Bind delete buttons
+      grid.querySelectorAll(".btn-delete-fac").forEach(btn => {
+        btn.onclick = async () => {
+          const facId = btn.getAttribute("data-id");
+          const faculty = facultyList.find(f => f.id === facId);
+          if (faculty) {
+            if (confirm(`Are you sure you want to delete the faculty profile for ${faculty.full_name}? All associated scheduled classes will be removed.`)) {
+              const success = await window.AppDB.deleteFacultyProfile(facId);
+              if (success) {
+                showToast("Faculty profile deleted successfully.", "success");
+                await renderAdminFaculty();
+              } else {
+                showToast("Failed to delete faculty profile.", "error");
+              }
+            }
+          }
+        };
+      });
+
+      // Bind schedule class buttons
+      grid.querySelectorAll(".btn-sched-class").forEach(btn => {
+        btn.onclick = async () => {
+          const facId = btn.getAttribute("data-id");
+          const facName = btn.getAttribute("data-name");
+          
+          document.getElementById("as-faculty-id").value = facId;
+          document.getElementById("as-faculty-name").value = facName;
+          document.getElementById("as-topic").value = "";
+          document.getElementById("as-date-time").value = "";
+          document.getElementById("as-meeting-link").value = "";
+
+          // Populate courses select dropdown
+          const courses = await window.AppDB.getCourses();
+          const courseSel = document.getElementById("as-course-select");
+          if (courseSel) {
+            courseSel.innerHTML = courses.map(c => `<option value="${c.id}">${c.title}</option>`).join("");
+          }
+
+          if (adminScheduleModal) adminScheduleModal.classList.add("active");
+        };
+      });
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+
+    } catch (e) {
+      console.error("Failed to render admin faculty desk:", e);
+      grid.innerHTML = `<div style="grid-column: span 3; text-align:center; padding: 2rem; color:#ef4444;">Error loading faculty list from database.</div>`;
+    }
+  }
+
+  // --- FACULTY SCHEDULING VIEW ---
+  async function renderFacultyClasses() {
+    const tab = document.getElementById("faculty-classes-tab");
+    if (!tab) return;
+
+    const tbody = tab.querySelector("tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Loading scheduled classes...</td></tr>`;
+
+    if (!loggedInUser || loggedInUser.role !== "faculty") return;
+
+    try {
+      const facultyProfile = await window.AppDB.getProfileByEmail(loggedInUser.email);
+      if (!facultyProfile) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No faculty profile found.</td></tr>`;
+        return;
+      }
+
+      const schedules = await window.AppDB.getFacultySchedules(facultyProfile.id);
+      if (schedules.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary); padding:1.5rem;">No classes scheduled or assigned.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = "";
+      schedules.forEach(s => {
+        const row = document.createElement("tr");
+        row.style.borderBottom = "1px solid var(--border-color)";
+
+        let formattedDate = s.dateTime;
+        try {
+          const d = new Date(s.dateTime);
+          if (!isNaN(d.getTime())) {
+            formattedDate = d.toLocaleDateString('en-IN', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            }) + " at " + d.toLocaleTimeString('en-IN', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          }
+        } catch (e) {}
+
+        const statusClean = (s.status || "scheduled").toLowerCase();
+        const badgeClass = statusClean === "scheduled" ? "badge-primary" : 
+                            (statusClean === "completed" ? "badge-success" : "badge-danger");
+        const statusFormatted = statusClean.charAt(0).toUpperCase() + statusClean.slice(1);
+
+        row.innerHTML = `
+          <td style="font-weight:600; padding:0.75rem 0.5rem; text-align:left;">
+            <div>${s.topic}</div>
+            <div style="font-size:0.7rem; font-weight:normal; color:var(--text-secondary); margin-top:0.15rem;">Program: ${s.courseTitle}</div>
+          </td>
+          <td style="padding:0.75rem 0.5rem; font-size:0.85rem; text-align:left;">${formattedDate}</td>
+          <td style="padding:0.75rem 0.5rem; text-align:left;">
+            <a href="${s.meetingLink}" target="_blank" style="color:var(--primary-color); text-decoration:underline; font-weight:600; display:flex; align-items:center; gap:0.25rem;">
+              <i data-lucide="video" style="width:14px; height:14px;"></i> Join Class Link
+            </a>
+          </td>
+          <td style="padding:0.75rem 0.5rem; text-align:left;">
+            <span class="badge ${badgeClass}">${statusFormatted}</span>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    } catch (e) {
+      console.error("Failed to render faculty classes:", e);
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#ef4444;">Error loading class schedules from database.</td></tr>`;
     }
   }
 });
