@@ -779,6 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- STUDENT MOCK INVOICE UPI PAYMENT ---
   const checkoutModal = document.getElementById("checkout-modal");
+  let checkoutPaymentMethod = "UPI"; // track selected payment method ("UPI" or "Cash")
   
   const setupAndOpenCheckout = async (invoiceId, amount, description, details = {}) => {
     const checkoutModal = document.getElementById("checkout-modal");
@@ -789,8 +790,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const payeeName = settings.payee_name || "Psychology Sphere";
     const upiId = settings.upi_id || "payment@psychologysphere";
     const staticQrUrl = settings.static_qr_url || "";
-    const isTestMode = settings.test_mode === true;
-    const qrAmount = isTestMode ? "1" : amount;
 
     // Set attributes
     checkoutModal.setAttribute("data-current-invoice-id", invoiceId);
@@ -800,36 +799,129 @@ document.addEventListener("DOMContentLoaded", () => {
     if (details.months) checkoutModal.setAttribute("data-pay-months", details.months);
     checkoutModal.setAttribute("data-pay-autopay", details.isAutoPay ? "true" : "false");
 
+    // Grab DOM Elements
+    const upiTab = document.getElementById("btn-pay-method-upi");
+    const offlineTab = document.getElementById("btn-pay-method-offline");
+    const upiQrContainer = document.getElementById("checkout-upi-qr-container");
+    const testToggleContainer = document.getElementById("checkout-test-toggle-container");
+    const offlineInstructions = document.getElementById("checkout-offline-instructions");
+    const refLabel = document.getElementById("checkout-ref-label");
+    const refInput = document.getElementById("checkout-utr-input");
+    const refHelp = document.getElementById("checkout-ref-help");
+    const testToggle = document.getElementById("checkout-test-mode-toggle");
+
     // Pre-fill UI
-    document.getElementById("checkout-amount").textContent = "₹ " + parseFloat(amount).toLocaleString('en-IN');
+    if (refInput) refInput.value = ""; // clear previous
+    if (testToggle) testToggle.checked = false;
+    checkoutPaymentMethod = "UPI";
+
+    const updateMethodUI = () => {
+      if (checkoutPaymentMethod === "UPI") {
+        if (upiTab) {
+          upiTab.style.background = "#3b20a6";
+          upiTab.style.color = "#ffffff";
+        }
+        if (offlineTab) {
+          offlineTab.style.background = "transparent";
+          offlineTab.style.color = "#64748b";
+        }
+        if (upiQrContainer) upiQrContainer.style.display = "flex";
+        if (testToggleContainer) testToggleContainer.style.display = "flex";
+        if (offlineInstructions) offlineInstructions.style.display = "none";
+        
+        if (refLabel) refLabel.textContent = "Enter 12-Digit UPI Transaction ID / UTR No.";
+        if (refInput) {
+          refInput.placeholder = "e.g. 621430958172";
+          refInput.maxLength = 12;
+        }
+        if (refHelp) refHelp.textContent = "Find the UTR number in your payment transaction receipt.";
+      } else {
+        if (offlineTab) {
+          offlineTab.style.background = "#3b20a6";
+          offlineTab.style.color = "#ffffff";
+        }
+        if (upiTab) {
+          upiTab.style.background = "transparent";
+          upiTab.style.color = "#64748b";
+        }
+        if (upiQrContainer) upiQrContainer.style.display = "none";
+        if (testToggleContainer) testToggleContainer.style.display = "none";
+        if (offlineInstructions) offlineInstructions.style.display = "block";
+        
+        if (refLabel) refLabel.textContent = "Enter Cash Receipt No. or Deposit Reference";
+        if (refInput) {
+          refInput.placeholder = "e.g. Cash Receipt #1042 or Branch deposit ref";
+          refInput.removeAttribute("maxlength");
+        }
+        if (refHelp) refHelp.textContent = "Input the receipt number or deposit reference details provided by the office.";
+      }
+    };
+
+    const generateQRCode = () => {
+      const isTestActive = testToggle ? testToggle.checked : false;
+      const qrAmount = isTestActive ? "1" : amount;
+      
+      const checkoutAmountText = document.getElementById("checkout-amount");
+      if (checkoutAmountText) {
+        checkoutAmountText.textContent = isTestActive 
+          ? "₹ 1" 
+          : "₹ " + parseFloat(amount).toLocaleString('en-IN');
+      }
+
+      const testModeBadge = document.getElementById("checkout-test-mode-badge");
+      if (testModeBadge) {
+        testModeBadge.style.display = isTestActive ? "inline-block" : "none";
+      }
+
+      const qrImg = document.getElementById("checkout-qr-img");
+      const qrPlaceholder = document.getElementById("checkout-qr-placeholder");
+
+      if (staticQrUrl && staticQrUrl.trim() !== "") {
+        const directLink = window.AppDB.getGoogleDriveDirectLink(staticQrUrl);
+        if (qrImg) {
+          qrImg.src = directLink;
+          qrImg.style.display = "block";
+        }
+        if (qrPlaceholder) qrPlaceholder.style.display = "none";
+      } else {
+        const transactionNote = encodeURIComponent(`Fees_${description.replace(/\s+/g, '_')}`);
+        const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${qrAmount}&cu=INR&tn=${transactionNote}`;
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+        
+        if (qrImg) {
+          qrImg.src = qrApiUrl;
+          qrImg.style.display = "block";
+        }
+        if (qrPlaceholder) qrPlaceholder.style.display = "none";
+      }
+    };
+
+    // Bind tab clicks
+    if (upiTab) {
+      upiTab.onclick = () => {
+        checkoutPaymentMethod = "UPI";
+        updateMethodUI();
+        generateQRCode();
+      };
+    }
+    if (offlineTab) {
+      offlineTab.onclick = () => {
+        checkoutPaymentMethod = "Cash";
+        updateMethodUI();
+      };
+    }
+    if (testToggle) {
+      testToggle.onchange = () => {
+        generateQRCode();
+      };
+    }
+
+    // Initialize UI
+    updateMethodUI();
+    generateQRCode();
+
     document.getElementById("checkout-payee-name").textContent = payeeName;
     document.getElementById("checkout-payee-upi").textContent = upiId;
-    document.getElementById("checkout-utr-input").value = ""; // clear previous
-
-    const testModeBadge = document.getElementById("checkout-test-mode-badge");
-    if (testModeBadge) {
-      testModeBadge.style.display = isTestMode ? "inline-block" : "none";
-    }
-
-    const qrImg = document.getElementById("checkout-qr-img");
-    const qrPlaceholder = document.getElementById("checkout-qr-placeholder");
-
-    if (staticQrUrl && staticQrUrl.trim() !== "") {
-      // Display static QR image
-      const directLink = window.AppDB.getGoogleDriveDirectLink(staticQrUrl);
-      qrImg.src = directLink;
-      qrImg.style.display = "block";
-      if (qrPlaceholder) qrPlaceholder.style.display = "none";
-    } else {
-      // Generate dynamic QR code
-      const transactionNote = encodeURIComponent(`Fees_${description.replace(/\s+/g, '_')}`);
-      const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${qrAmount}&cu=INR&tn=${transactionNote}`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
-      
-      qrImg.src = qrApiUrl;
-      qrImg.style.display = "block";
-      if (qrPlaceholder) qrPlaceholder.style.display = "none";
-    }
 
     checkoutModal.classList.add("active");
   };
@@ -864,14 +956,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const utrInput = document.getElementById("checkout-utr-input");
       const utr = utrInput ? utrInput.value.trim() : "";
 
-      // Validate UTR (must be 12 digit numeric)
-      if (!/^\d{12}$/.test(utr)) {
-        showToast("Please enter a valid 12-digit UPI Transaction Ref (UTR) number.", "error");
-        return;
+      const isUpi = (checkoutPaymentMethod === "UPI");
+
+      // Validate reference based on method
+      if (isUpi) {
+        if (!/^\d{12}$/.test(utr)) {
+          showToast("Please enter a valid 12-digit UPI Transaction Ref (UTR) number.", "error");
+          return;
+        }
+      } else {
+        if (utr.length === 0) {
+          showToast("Please enter your cash receipt number or bank deposit reference.", "error");
+          return;
+        }
       }
 
+      // Bypass auto-approve for Cash/Offline payments
       const settings = await window.AppDB.getPaymentSettings();
-      const status = settings.auto_approve ? "paid" : "pending";
+      const status = (!isUpi || settings.auto_approve === false) ? "pending" : "paid";
 
       if (invoiceId === "dynamic-fee-checkout") {
         try {
@@ -899,12 +1001,15 @@ document.addEventListener("DOMContentLoaded", () => {
             transactionId: utr
           };
 
-          const success = await window.AppDB.saveStudentPayment(paymentRecord);
+          const success = await window.AppDB.saveStudentPayment(paymentRecord, checkoutPaymentMethod);
           if (success) {
             if (status === "paid") {
               showToast(`UPI Payment verified! Receipt generated for ${monthsStr.split(',').join(', ')}.`, "success");
             } else {
-              showToast(`Transaction UTR registered! Awaiting admin approval.`, "info");
+              const notice = isUpi 
+                ? "Transaction UTR registered! Awaiting admin approval." 
+                : "Offline/Cash details submitted successfully! Awaiting admin verification.";
+              showToast(notice, "info");
             }
             closeCheckoutModal();
             await renderStudentPayments();
@@ -918,12 +1023,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } else if (invoiceId) {
         try {
-          const paid = await window.AppDB.payInvoice(invoiceId, utr);
+          const paid = await window.AppDB.payInvoice(invoiceId, utr, checkoutPaymentMethod);
           if (paid) {
             if (status === "paid") {
               showToast("UPI Payment verified! Receipt generated.", "success");
             } else {
-              showToast("Transaction UTR registered! Awaiting admin approval.", "info");
+              const notice = isUpi 
+                ? "Transaction UTR registered! Awaiting admin approval." 
+                : "Offline/Cash details submitted successfully! Awaiting admin verification.";
+              showToast(notice, "info");
             }
             closeCheckoutModal();
             await renderStudentPayments();

@@ -1469,8 +1469,23 @@
         }));
     },
 
-    saveStudentPayment: async function (paymentRecord) {
-      const description = paymentRecord.description + (paymentRecord.transactionId ? ' (UTR: ' + paymentRecord.transactionId + ')' : '');
+    saveStudentPayment: async function (paymentRecord, method) {
+      const isCash = method === 'Cash' || paymentRecord.method === 'Cash';
+      let status = paymentRecord.status;
+      if (isCash) {
+        status = 'pending';
+      }
+
+      let suffix = paymentRecord.transactionId ? ' (UTR: ' + paymentRecord.transactionId + ')' : '';
+      if (isCash && paymentRecord.transactionId) {
+        suffix = ' (Cash/Offline Ref: ' + paymentRecord.transactionId + ')';
+      }
+
+      let description = paymentRecord.description + suffix;
+      if (isCash && !description.toLowerCase().includes('(cash/offline)')) {
+        description += ' (Cash/Offline)';
+      }
+
       if (supabaseClient) {
         try {
           const { error } = await supabaseClient
@@ -1481,7 +1496,7 @@
               course_id: paymentRecord.courseId ? parseInt(paymentRecord.courseId) : null,
               description: description,
               amount: paymentRecord.amount.toString(),
-              status: paymentRecord.status,
+              status: status,
               date: paymentRecord.date,
               months_covered: paymentRecord.monthsCovered,
               year_covered: paymentRecord.yearCovered
@@ -1503,7 +1518,7 @@
         course_id: paymentRecord.courseId ? paymentRecord.courseId.toString() : null,
         description: description,
         amount: paymentRecord.amount,
-        status: paymentRecord.status,
+        status: status,
         date: paymentRecord.date,
         monthsCovered: paymentRecord.monthsCovered,
         yearCovered: paymentRecord.yearCovered,
@@ -1513,18 +1528,25 @@
       return true;
     },
 
-    payInvoice: async function (invoiceId, transactionId) {
+    payInvoice: async function (invoiceId, transactionId, method) {
       const db = loadDB();
       if (!db.payments) db.payments = [];
       const invoice = db.payments.find(p => p.id === invoiceId);
       
       let status = 'paid';
-      if (db.payment_settings && db.payment_settings.auto_approve === false) {
+      if (method === 'Cash' || (db.payment_settings && db.payment_settings.auto_approve === false)) {
         status = 'pending';
       }
 
-      const descriptionSuffix = transactionId ? ' (UTR: ' + transactionId + ')' : '';
-      const updatedDescription = invoice ? (invoice.description + descriptionSuffix) : undefined;
+      let descriptionSuffix = transactionId ? ' (UTR: ' + transactionId + ')' : '';
+      if (method === 'Cash' && transactionId) {
+        descriptionSuffix = ' (Cash/Offline Ref: ' + transactionId + ')';
+      }
+      
+      let updatedDescription = invoice ? (invoice.description + descriptionSuffix) : undefined;
+      if (invoice && method === 'Cash' && updatedDescription && !updatedDescription.toLowerCase().includes('(cash/offline)')) {
+        updatedDescription += ' (Cash/Offline)';
+      }
 
       if (supabaseClient) {
         try {

@@ -1223,15 +1223,28 @@
     <div class="modal-box" style="max-width: 440px;">
       <i data-lucide="x" class="modal-close" id="checkout-modal-close"></i>
       <h3>Secure Student Checkout</h3>
-      <p style="margin-bottom:1.25rem; font-size:0.85rem; color:#64748b;">Scan the QR code below and enter your UPI Transaction Ref (UTR) number to clear the tuition fees.</p>
+      <p style="margin-bottom:1.25rem; font-size:0.85rem; color:#64748b;">Choose your payment method and submit details to settle your tuition balance.</p>
       
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:1rem; border-radius:8px; text-align:center; margin-bottom:1.25rem; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <!-- Payment Method Tab Selection -->
+      <div style="display:flex; gap:0.5rem; margin-bottom:1.25rem; background:#f1f5f9; padding:4px; border-radius:8px;">
+        <button type="button" id="btn-pay-method-upi" style="flex:1; border:none; padding:0.5rem; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; text-align:center; background:#3b20a6; color:#ffffff; transition:all 0.2s;">UPI Online</button>
+        <button type="button" id="btn-pay-method-offline" style="flex:1; border:none; padding:0.5rem; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; text-align:center; background:transparent; color:#64748b; transition:all 0.2s;">Cash / Offline</button>
+      </div>
+
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:1rem; border-radius:8px; text-align:center; margin-bottom:1rem; display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <span style="font-size:0.85rem; color:#64748b;">Tuition Balance Due</span>
         <h2 id="checkout-amount" style="color:#3b20a6; margin-top:0.25rem; font-weight:800; margin-bottom:0;">₹ 0</h2>
         <span id="checkout-test-mode-badge" style="display:none; font-size:0.7rem; font-weight:700; color:#b91c1c; background:#fee2e2; padding:2px 8px; border-radius:12px; margin-top:0.35rem;">₹1 Test Mode Active</span>
       </div>
 
-      <div style="text-align:center; padding:1.25rem; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; margin-bottom:1.25rem; display:flex; flex-direction:column; align-items:center;">
+      <!-- UPI Student Test Mode Checkbox Toggle -->
+      <div id="checkout-test-toggle-container" style="display:flex; align-items:center; justify-content:center; gap:0.35rem; margin-bottom:1.25rem;">
+        <input type="checkbox" id="checkout-test-mode-toggle" style="cursor:pointer; width:16px; height:16px;">
+        <label for="checkout-test-mode-toggle" style="font-size:0.8rem; font-weight:600; color:#3b20a6; cursor:pointer; margin:0;">Pay ₹1 test amount first</label>
+      </div>
+
+      <!-- UPI QR Code Scannable Container -->
+      <div id="checkout-upi-qr-container" style="text-align:center; padding:1.25rem; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; margin-bottom:1.25rem; display:flex; flex-direction:column; align-items:center;">
         <p style="font-size:0.8rem; margin-bottom:0.75rem; color:#64748b; font-weight:600;">Scan with GPay, PhonePe, Paytm, or BHIM</p>
         <div style="width:160px; height:160px; background:white; margin:0 auto; padding:0.5rem; border-radius:8px; display:flex; align-items:center; justify-content:center; border:1px solid #e2e8f0; overflow:hidden; position:relative;">
           <img id="checkout-qr-img" src="" alt="UPI QR Code" style="width:100%; height:100%; object-fit:contain; display:none;">
@@ -1241,10 +1254,19 @@
         <p id="checkout-payee-upi" style="font-size:0.75rem; color:#64748b; margin:0; word-break:break-all; font-family:monospace;"></p>
       </div>
 
+      <!-- Cash / Offline Guidelines Instructions Container -->
+      <div id="checkout-offline-instructions" style="display:none; text-align:left; padding:1rem; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:1.25rem; font-size:0.8rem; color:#475569; line-height:1.4;">
+        <p style="margin:0 0 0.5rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.25rem;">
+          <i data-lucide="info" style="width:14px; height:14px; color:#3b20a6;"></i> Cash / Offline Guidelines:
+        </p>
+        Please pay the tuition fee in cash directly to the office coordinator or perform a direct branch deposit. Once done, type your Cash Receipt Number or bank deposit reference details below for admin manual verification.
+      </div>
+
+      <!-- Transaction Reference Input Box -->
       <div style="display:flex; flex-direction:column; gap:0.4rem; text-align:left; margin-bottom:1.25rem;">
-        <label for="checkout-utr-input" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">Enter 12-Digit UPI Transaction ID / UTR No.</label>
+        <label id="checkout-ref-label" for="checkout-utr-input" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">Enter 12-Digit UPI Transaction ID / UTR No.</label>
         <input type="text" id="checkout-utr-input" class="form-control" placeholder="e.g. 621430958172" required maxlength="12" style="width:100%; padding:0.6rem 0.75rem; border-radius:6px; border:1px solid var(--border-color);">
-        <span style="font-size:0.7rem; color:var(--text-secondary);">Find the UTR number in your payment transaction receipt.</span>
+        <span id="checkout-ref-help" style="font-size:0.7rem; color:var(--text-secondary);">Find the UTR number in your payment transaction receipt.</span>
       </div>
 
       <button class="btn btn-primary" id="btn-submit-payment" style="width:100%; border-radius:30px; background-color:#3b20a6; padding:0.75rem; font-weight:700;">Submit & Verify Payment</button>
